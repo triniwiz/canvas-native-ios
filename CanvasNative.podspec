@@ -31,5 +31,5 @@ Pod::Spec.new do |s|
   s.public_header_files = 'include/*.h'
   s.vendored_library = 'libs/*.a'
   s.swift_versions = ['4.0', '4.2','5.0']
-  spec.source_files = [ 'CanvasNative/CanvasTests/**' ]
+  s.source_files = [ 'CanvasNative/CanvasTests/**' ]
   end

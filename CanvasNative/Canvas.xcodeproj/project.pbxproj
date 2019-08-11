@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		F162422922DA6EFA007FBF7B /* Canvas.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F162421F22DA6EFA007FBF7B /* Canvas.framework */; };
-		F162422E22DA6EFA007FBF7B /* CanvasTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F162422D22DA6EFA007FBF7B /* CanvasTests.swift */; };
 		F162423022DA6EFA007FBF7B /* Canvas.h in Headers */ = {isa = PBXBuildFile; fileRef = F162422222DA6EFA007FBF7B /* Canvas.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F162424E22DACC47007FBF7B /* Source in Resources */ = {isa = PBXBuildFile; fileRef = F162424D22DACC47007FBF7B /* Source */; };
 		F162425222DAE28B007FBF7B /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F162425122DAE28B007FBF7B /* libresolv.tbd */; };
@@ -31,8 +30,6 @@
 		F162422222DA6EFA007FBF7B /* Canvas.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Canvas.h; sourceTree = "<group>"; };
 		F162422322DA6EFA007FBF7B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F162422822DA6EFA007FBF7B /* CanvasTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CanvasTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		F162422D22DA6EFA007FBF7B /* CanvasTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasTests.swift; sourceTree = "<group>"; };
-		F162422F22DA6EFA007FBF7B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F162423F22DA84F1007FBF7B /* MoltenVK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MoltenVK.framework; path = frameworks/MoltenVK.framework; sourceTree = "<group>"; };
 		F162424122DA924B007FBF7B /* libcanvasnative.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcanvasnative.a; path = frameworks/libcanvasnative.a; sourceTree = "<group>"; };
 		F162424322DA95BF007FBF7B /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
@@ -76,7 +73,6 @@
 				F162425322DAE342007FBF7B /* CanvasNative.h */,
 				F162424D22DACC47007FBF7B /* Source */,
 				F162422122DA6EFA007FBF7B /* Canvas */,
-				F162422C22DA6EFA007FBF7B /* CanvasTests */,
 				F162422022DA6EFA007FBF7B /* Products */,
 				F162423E22DA84F1007FBF7B /* Frameworks */,
 			);
@@ -101,15 +97,6 @@
 				F16242A122DBAC08007FBF7B /* Canvas-Swift.h */,
 			);
 			path = Canvas;
-			sourceTree = "<group>";
-		};
-		F162422C22DA6EFA007FBF7B /* CanvasTests */ = {
-			isa = PBXGroup;
-			children = (
-				F162422D22DA6EFA007FBF7B /* CanvasTests.swift */,
-				F162422F22DA6EFA007FBF7B /* Info.plist */,
-			);
-			path = CanvasTests;
 			sourceTree = "<group>";
 		};
 		F162423E22DA84F1007FBF7B /* Frameworks */ = {
@@ -254,7 +241,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F162422E22DA6EFA007FBF7B /* CanvasTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

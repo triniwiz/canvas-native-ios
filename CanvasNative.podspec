@@ -28,7 +28,7 @@ Pod::Spec.new do |s|
 'MODULEMAP_PRIVATE_FILE' => '"${PODS_ROOT}/CanvasNative/CanvasNative/Canvas/Canvas.private.modulemap"',
 'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES'
  }
-  s.private_header_files = 'include/*.h'
+  s.public_header_files = 'include/*.h'
   s.vendored_library = 'libs/*.a'
   s.swift_versions = ['4.0', '4.2','5.0']
   end

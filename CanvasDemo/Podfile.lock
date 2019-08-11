@@ -10,7 +10,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   CanvasNative:
-    :commit: 4329b74e57389d444c0e4c29c8ead63a4d3d72ef
+    :commit: 788b4554c996127eacc445139590b05fa31bc262
     :git: https://github.com/triniwiz/canvas-native-ios
 
 SPEC CHECKSUMS:

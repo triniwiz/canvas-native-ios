@@ -1,6 +1,5 @@
 //
-//  Canvas.swift
-//  CanvasDemo
+//  CanvasNative.swift
 //
 //  Created by Osei Fortune on 7/14/19.
 //  Copyright © 2019 Osei Fortune. All rights reserved.
@@ -10,8 +9,8 @@ import Foundation
 import UIKit
 import OpenGLES
 import GLKit
-@objc(Canvas)
-public class Canvas: GLKView, GLKViewDelegate {
+@objc(CanvasNative)
+public class CanvasNative: GLKView, GLKViewDelegate {
     var canvas: Int64 = 0
     var canvasState: [Int64] = []
     private var renderingContext2d: CanvasRenderingContext?

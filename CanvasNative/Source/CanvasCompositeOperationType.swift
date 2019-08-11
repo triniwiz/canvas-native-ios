@@ -1,6 +1,5 @@
 //
 //  CanvasCompositeOperationType.swift
-//  CanvasDemo
 //
 //  Created by Osei Fortune on 7/17/19.
 //  Copyright © 2019 Osei Fortune. All rights reserved.
@@ -35,9 +34,9 @@ public enum CanvasCompositeOperationType: Int, RawRepresentable {
     case Saturation
     case Color
     case Luminosity
-    
+
     public typealias RawValue = String
-    
+
     public var rawValue: RawValue {
         switch self {
         case .SourceOver:
@@ -94,8 +93,8 @@ public enum CanvasCompositeOperationType: Int, RawRepresentable {
             return "luminosity"
         }
     }
-    
-    
+
+
     public init?(rawValue: RawValue) {
         switch rawValue {
         case "source-in":
@@ -149,5 +148,5 @@ public enum CanvasCompositeOperationType: Int, RawRepresentable {
         default:
             self = .SourceOver
         }
-    }    
+    }
 }

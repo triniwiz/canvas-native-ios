@@ -30,5 +30,4 @@ Pod::Spec.new do |s|
  }
   s.public_header_files = 'include/*.h'
   s.vendored_library = 'libs/*.a'
-  s.exclude_files = 'CanvasNative/CanvasTests/**'
   end

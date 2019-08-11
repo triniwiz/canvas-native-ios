@@ -1,6 +1,6 @@
 //
-//  Canvas.h
-//  Canvas
+//  CanvasNative.h
+//  CanvasNative
 //
 //  Created by Osei Fortune on 7/13/19.
 //  Copyright © 2019 Osei Fortune. All rights reserved.

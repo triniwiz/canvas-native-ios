@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Canvas
+import CanvasNative
 class ViewController: UIViewController {
     var canvas1: Canvas?
     var canvas2: Canvas?

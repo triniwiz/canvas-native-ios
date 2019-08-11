@@ -26,7 +26,7 @@ public class CanvasNative: GLKView, GLKViewDelegate {
         drawableStencilFormat = .format8
         drawableColorFormat = .RGBA8888
         delegate = self
-        ensureIsContextIsCurrent()
+        let _ = ensureIsContextIsCurrent()
     }
 
 

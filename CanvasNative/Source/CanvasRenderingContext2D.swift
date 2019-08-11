@@ -8,13 +8,13 @@
 import Foundation
 import UIKit
 public class CanvasRenderingContext2D: CanvasRenderingContext {
-    var canvas: Canvas
+    var canvas: CanvasNative
     private var _fillStyle: ICanvasColorStyle = CanvasColorStyle.Color(color: .black)
     private var _strokeStyle: ICanvasColorStyle = CanvasColorStyle.Color(color: .black)
     private var _lineWidth: Float = 1.0
     private var _globalCompositeOperation = CanvasCompositeOperationType.SourceOver
     private var _font = "10px sans-serif"
-    public init(canvas: Canvas) {
+    public init(canvas: CanvasNative) {
         self.canvas = canvas
     }
 
@@ -224,7 +224,7 @@ public class CanvasRenderingContext2D: CanvasRenderingContext {
     }
 
     public func fillRect(x: Float, y: Float, width: Float, height: Float) {
-        let currentContext = Canvas.currentContext()
+        let currentContext = CanvasNative.currentContext()
         if currentContext != nil && currentContext != canvas.context {
             let _ = canvas.ensureIsContextIsCurrent()
         }
@@ -234,7 +234,7 @@ public class CanvasRenderingContext2D: CanvasRenderingContext {
     }
 
     public func strokeRect(x: Float, y: Float, width: Float, height: Float) {
-        let currentContext = Canvas.currentContext()
+        let currentContext = CanvasNative.currentContext()
         if currentContext != nil && currentContext != canvas.context {
             let _ = canvas.ensureIsContextIsCurrent()
         }
@@ -247,7 +247,7 @@ public class CanvasRenderingContext2D: CanvasRenderingContext {
     }
 
     public func fillText(text: String, x: Float, y:Float, width: Float) {
-        let currentContext = Canvas.currentContext()
+        let currentContext = CanvasNative.currentContext()
         if currentContext != nil && currentContext != canvas.context {
             let _ = canvas.ensureIsContextIsCurrent()
         }
@@ -261,7 +261,7 @@ public class CanvasRenderingContext2D: CanvasRenderingContext {
     }
 
     public func strokeText(text: String, x: Float, y:Float, width: Float) {
-        let currentContext = Canvas.currentContext()
+        let currentContext = CanvasNative.currentContext()
         if currentContext != nil && currentContext != canvas.context {
             let _ = canvas.ensureIsContextIsCurrent()
         }
@@ -274,7 +274,7 @@ public class CanvasRenderingContext2D: CanvasRenderingContext {
     }
 
     public func fill() {
-        let currentContext = Canvas.currentContext()
+        let currentContext = CanvasNative.currentContext()
         if currentContext != nil && currentContext != canvas.context {
             let _ = canvas.ensureIsContextIsCurrent()
         }
@@ -283,7 +283,7 @@ public class CanvasRenderingContext2D: CanvasRenderingContext {
     }
 
     public func stroke() {
-        let currentContext = Canvas.currentContext()
+        let currentContext = CanvasNative.currentContext()
         if currentContext != nil && currentContext != canvas.context {
             let _ = canvas.ensureIsContextIsCurrent()
         }
@@ -336,7 +336,7 @@ public class CanvasRenderingContext2D: CanvasRenderingContext {
     }
 
     public func clearRect(x: Float, y: Float, width: Float, height: Float){
-        let currentContext = Canvas.currentContext()
+        let currentContext = CanvasNative.currentContext()
         if currentContext != nil && currentContext != canvas.context {
             let _ = canvas.ensureIsContextIsCurrent()
         }
@@ -350,7 +350,7 @@ public class CanvasRenderingContext2D: CanvasRenderingContext {
         canvas.canvas = native_set_line_dash(canvas.canvas, segments.count, &array)
     }
 
-    public func getCanvas() -> Canvas{
+    public func getCanvas() -> CanvasNative {
         return canvas
     }
 
@@ -368,7 +368,7 @@ public class CanvasRenderingContext2D: CanvasRenderingContext {
      }
 
     public func setTransform(a: Float, b: Float, c: Float, d: Float, e: Float, f: Float){
-        let currentContext = Canvas.currentContext()
+        let currentContext = CanvasNative.currentContext()
         if currentContext != nil && currentContext != canvas.context {
             let _ = canvas.ensureIsContextIsCurrent()
         }
@@ -377,7 +377,7 @@ public class CanvasRenderingContext2D: CanvasRenderingContext {
     }
 
     public func scale(x: Float, y: Float){
-        let currentContext = Canvas.currentContext()
+        let currentContext = CanvasNative.currentContext()
         if currentContext != nil && currentContext != canvas.context {
             let _ = canvas.ensureIsContextIsCurrent()
         }
@@ -386,7 +386,7 @@ public class CanvasRenderingContext2D: CanvasRenderingContext {
     }
 
     public func rotate(angle: Float){
-        let currentContext = Canvas.currentContext()
+        let currentContext = CanvasNative.currentContext()
         if currentContext != nil && currentContext != canvas.context {
             let _ = canvas.ensureIsContextIsCurrent()
         }
@@ -395,7 +395,7 @@ public class CanvasRenderingContext2D: CanvasRenderingContext {
     }
 
     public func translate(x: Float, y: Float){
-        let currentContext = Canvas.currentContext()
+        let currentContext = CanvasNative.currentContext()
         if currentContext != nil && currentContext != canvas.context {
             let _ = canvas.ensureIsContextIsCurrent()
         }
@@ -408,7 +408,7 @@ public class CanvasRenderingContext2D: CanvasRenderingContext {
     }
 
     public func drawImage(image: UIImage, dx: Float, dy: Float){
-        let currentContext = Canvas.currentContext()
+        let currentContext = CanvasNative.currentContext()
         if currentContext != nil && currentContext != canvas.context {
             let _ = canvas.ensureIsContextIsCurrent()
         }
@@ -435,7 +435,7 @@ public class CanvasRenderingContext2D: CanvasRenderingContext {
     }
 
     public func drawImage(image: UIImage, dx: Float, dy: Float, dWidth: Float, dHeight: Float){
-        let currentContext = Canvas.currentContext()
+        let currentContext = CanvasNative.currentContext()
         if currentContext != nil && currentContext != canvas.context {
             let _ = canvas.ensureIsContextIsCurrent()
         }

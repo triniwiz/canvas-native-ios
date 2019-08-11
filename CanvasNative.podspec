@@ -19,14 +19,13 @@ Pod::Spec.new do |s|
     s.source       = { :git => "https://github.com/triniwiz/canvas-native-ios.git", :tag => "#{s.version}" }
 
     s.source_files  = 'CanvasNative/**/*.{swift,m,h,modulemap,a}'
-    s.preserve_paths = 'CanvasNative/Canvas/*.modulemap','CanvasNative/Canvas/**/*.modulemap' , 'CanvasNative/libs/*.a'
+    s.preserve_paths = 'CanvasNative/Canvas/*.modulemap','CanvasNative/Canvas/**/*.modulemap' , 'CanvasNative/libs/*.a', 'CanvasNative/include/*.h', 'CanvasNative/include/**/*.h'
     s.pod_target_xcconfig = {
 'USER_HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/CanvasNative/CanvasNative/include"',
 'LIBRARY_SEARCH_PATHS' => '"${PODS_ROOT}/CanvasNative/CanvasNative/libs"',
 'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/CanvasNative/CanvasNative/include" "${PODS_ROOT}/CanvasNative/CanvasNative/Canvas"',
 'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES'
  }
-  s.public_header_files = 'include/*.h'
-  s.vendored_library = 'libs/*.a'
+ s.pod_target_xcconfig = { 'VALID_ARCHS' => 'arm64 x86_64' }
   s.swift_versions = ['4.0','4.2', '5.0']
   end

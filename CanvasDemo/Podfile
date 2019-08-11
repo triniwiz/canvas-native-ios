@@ -1,0 +1,4 @@
+target 'CanvasDemo' do
+pod 'CanvasNative', :path => '../'
+#pod 'Canvas', :git => 'https://github.com/triniwiz/fancy-canvas-ios'
+end

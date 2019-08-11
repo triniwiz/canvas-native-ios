@@ -1,4 +1,0 @@
-module CanvasPrivate {
-  header "../include/canvas_native.h"
-  export *
-}

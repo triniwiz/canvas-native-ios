@@ -9,7 +9,6 @@
 import Foundation
 import UIKit
 import OpenGLES
-import CanvasPrivate
 import GLKit
 @objc(Canvas)
 public class Canvas: GLKView, GLKViewDelegate {
@@ -30,28 +29,28 @@ public class Canvas: GLKView, GLKViewDelegate {
         delegate = self
         ensureIsContextIsCurrent()
     }
-    
-    
+
+
     static func currentContext() -> EAGLContext? {
         return EAGLContext.current()
     }
     public required init?(coder aDecoder: NSCoder) {
         fatalError("Canvas init(coder:) Not Supported!")
     }
-    
+
     func getFrameBufferId() -> GLint {
         var defaultFBO = GLint()
         glGetIntegerv(GLenum(GL_FRAMEBUFFER_BINDING_OES), &defaultFBO);
         return defaultFBO
     }
-    
+
     func getStencil() -> GLint {
         var stencil = GLint()
         glGetIntegerv(GLenum(GL_STENCIL_BITS), &stencil)
         return stencil
     }
-    
-    
+
+
     public func ensureIsContextIsCurrent() -> Bool{
         return EAGLContext.setCurrent(context)
     }
@@ -81,27 +80,27 @@ public class Canvas: GLKView, GLKViewDelegate {
             glBindRenderbufferOES(GLenum(GL_RENDERBUFFER_OES), depthRenderbuffer);
             glRenderbufferStorageOES(GLenum(GL_RENDERBUFFER_OES), GLenum(GL_DEPTH_COMPONENT24_OES), width, height);
             glFramebufferRenderbufferOES(GLenum(GL_FRAMEBUFFER_OES), GLenum(GL_DEPTH_ATTACHMENT_OES), GLenum(GL_RENDERBUFFER_OES), depthRenderbuffer);
-            
-        
+
+
              let degrees = 180.0
              transform = CGAffineTransform(rotationAngle: CGFloat(Float(degrees * .pi/180)))
              transform = CGAffineTransform(scaleX: 1, y: -1)
-        
-            self.canvas = native_init(width,height, defaultFBO)
+
+            self.canvas = native_init(width,height, defaultFBO, Float(scale))
             done = true
         }
-        
+
         glClear(GLbitfield(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT))
-        
+
     }
-    
+
     public func getContext(type: String) -> CanvasRenderingContext? {
         if type.elementsEqual("2d"){
             return CanvasRenderingContext2D(canvas: self)
         }
         return nil
     }
-    
+
 }
 
 
@@ -127,8 +126,8 @@ extension UIColor {
             alpha: CGFloat(1.0)
         )
     }
-    
-    
+
+
     var colorCode: Int {
         get {
             var fRed : CGFloat = 0
@@ -140,7 +139,7 @@ extension UIColor {
                 let iGreen = Int(fGreen * 255.0)
                 let iBlue = Int(fBlue * 255.0)
                 let iAlpha = Int(fAlpha * 255.0)
-                
+
                 //  (Bits 24-31 are alpha, 16-23 are red, 8-15 are green, 0-7 are blue).
                 return (iAlpha << 24) + (iRed << 16) + (iGreen << 8) + iBlue
             } else {
@@ -149,8 +148,8 @@ extension UIColor {
                 let iGreen = Int(0.0 * 255.0)
                 let iBlue = Int(0.0 * 255.0)
                 let iAlpha = Int(1.0 * 255.0)
-                
-                
+
+
                 return (iAlpha << 24) + (iRed << 16) + (iGreen << 8) + iBlue
             }
         }

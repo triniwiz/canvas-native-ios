@@ -1,0 +1,21 @@
+PODS:
+  - CanvasNative (0.0.1)
+
+DEPENDENCIES:
+  - CanvasNative (from `https://github.com/triniwiz/canvas-native-ios`)
+
+EXTERNAL SOURCES:
+  CanvasNative:
+    :git: https://github.com/triniwiz/canvas-native-ios
+
+CHECKOUT OPTIONS:
+  CanvasNative:
+    :commit: 42a6ab2081d5a014e58950475ede7e35b9d02ed5
+    :git: https://github.com/triniwiz/canvas-native-ios
+
+SPEC CHECKSUMS:
+  CanvasNative: f0f409a0f285f06b3d4af1dbbe09ee7b9f3306f0
+
+PODFILE CHECKSUM: e39cdc863b13ba4434936a67ddf687e133ec5ba3
+
+COCOAPODS: 1.7.5

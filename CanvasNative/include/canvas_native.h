@@ -5,8 +5,8 @@
 
 #define SK_SCALAR1 1
 
-
-typedef struct {
+typedef struct
+{
   float width;
 } CanvasTextMetrics;
 
@@ -42,6 +42,8 @@ long long native_clear_rect(long long canvas_native_ptr,
                             float y,
                             float width,
                             float height);
+
+long long native_clip(long long canvas_native_ptr, const char *fill_rule);
 
 long long native_close_path(long long canvas_native_ptr);
 

@@ -28,6 +28,6 @@ Pod::Spec.new do |s|
  }
 s.pod_target_xcconfig = { 'VALID_ARCHS' => 'arm64 x86_64' }
   s.swift_versions = ['4.0','4.2', '5.0']
-  s.vendored_libraries = 'CanvasNative/libs/*.a'
+  #s.vendored_libraries = 'CanvasNative/libs/*.a'
   s.public_header_files = 'CanvasNative/include/*.h'
   end

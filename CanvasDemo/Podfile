@@ -1,12 +1,5 @@
 target 'CanvasDemo' do
 #pod 'CanvasNative', :path => '../'
 pod 'CanvasNative', :git => 'https://github.com/triniwiz/canvas-native-ios'
-target 'CanvasDemoUITests' do
-  inherit! :search_paths
-  # Pods for testing
-end
-target 'CanvasDemoTests' do
-  inherit! :search_paths
-  # Pods for testing
-end
+
 end

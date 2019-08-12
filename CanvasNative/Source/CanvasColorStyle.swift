@@ -80,8 +80,12 @@ public protocol ICanvasColorStyle {
 public class CanvasColorStyle: NSObject {
     public class Color:ICanvasColorStyle {
         var color: UIColor
-        public init(color: UIColor) {
-            self.color = color
+        public init(color: UIColor?) {
+            if(color == nil){
+                self.color = .black
+            }else {
+                self.color = color!
+            }
         }
 
         public func getStyleType() -> CanvasColorStyleType {

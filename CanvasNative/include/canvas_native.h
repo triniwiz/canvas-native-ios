@@ -5,8 +5,7 @@
 
 #define SK_SCALAR1 1
 
-typedef struct
-{
+typedef struct {
   float width;
 } CanvasTextMetrics;
 

@@ -179,7 +179,7 @@ class ViewController: UIViewController {
         ctx.moveTo(x: 0, y: 200);
         ctx.lineTo(x: 200, y: 0);
         ctx.stroke();
-        ctx.clearRect(x: 0, y: 0, width: getCanvasWidth(canvas: ctx.canvas), height: getCanvasHeight(canvas: ctx.canvas))
+        ctx.clearRect(x: 0, y: 0, width: getCanvasWidth(canvas: ctx.getCanvas()), height: getCanvasHeight(canvas: ctx.getCanvas()))
         ctx.setLineDash(segments: []);
         ctx.beginPath();
         ctx.ellipse(x: 100, y: 100, radiusX: 50, radiusY: 75, rotation: (PI / 4), startAngle: 0, endAngle: TWO_PI);
@@ -290,7 +290,7 @@ class ViewController: UIViewController {
         let t0 = t / 1000;
         let a  = t0.truncatingRemainder(dividingBy: PI2);
         let rr = abs(cos(a) * r);
-        ctx.clearRect(x: 0, y: 0, width: getCanvasWidth(canvas: ctx.canvas),height: getCanvasHeight(canvas: ctx.canvas));
+        ctx.clearRect(x: 0, y: 0, width: getCanvasWidth(canvas: ctx.getCanvas()),height: getCanvasHeight(canvas: ctx.getCanvas()));
         drawArc(ctx: ctx,points: points, r: rr)
         drawPoints(ctx: ctx,points: points)
         requestAnimationFrame(ctx: ctx) { (id) in
@@ -320,7 +320,7 @@ class ViewController: UIViewController {
 
     
     func draw(ctx: CanvasRenderingContext2D) {
-    let canvas = ctx.canvas
+    let canvas = ctx.getCanvas()
     ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 0.3))
         let width = canvas.frame.width * UIScreen.main.scale
         let height = canvas.frame.height * UIScreen.main.scale
@@ -444,8 +444,8 @@ class ViewController: UIViewController {
     
     func clearRectExample(ctx: CanvasRenderingContext2D){
         // Draw yellow background
-        let width = Float(ctx.canvas.frame.size.width * UIScreen.main.scale)
-        let height = Float(ctx.canvas.frame.size.height * UIScreen.main.scale)
+        let width = Float(ctx.getCanvas().frame.size.width * UIScreen.main.scale)
+        let height = Float(ctx.getCanvas().frame.size.height * UIScreen.main.scale)
         ctx.beginPath();
         ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromHex: "#ff6"))
         ctx.fillRect(x: 0, y: 0, width: width, height: height);
@@ -562,7 +562,7 @@ class ViewController: UIViewController {
     func drawImageExample(ctx: CanvasRenderingContext2D) {
         do {
             let data = try Data(contentsOf: URL(string: "https://mdn.mozillademos.org/files/5397/rhino.jpg")!)
-            var image = UIImage(data: data)
+            let image = UIImage(data: data)
             ctx.drawImage(image: image!, dx: 0,dy: 0);
         } catch  {
             
@@ -981,7 +981,7 @@ class ViewController: UIViewController {
      
         let count = (particleCount - 1)
     for j in i...count{
-    var p2 = particles[j];
+        let p2 = particles[j];
         distance(ctx: ctx,p1: p, p2: p2);
     }
     
@@ -991,8 +991,8 @@ class ViewController: UIViewController {
     
     func distance(ctx:CanvasRenderingContext2D,p1: Particle, p2: Particle) {
     var colorIndex = 0
-    var dx = p1.x - p2.x;
-    var dy = p1.y - p2.y;
+        let dx = p1.x - p2.x;
+        let dy = p1.y - p2.y;
     
         dist = Float.squareRoot(dx*dx + dy*dy)()
     
@@ -1029,8 +1029,8 @@ class ViewController: UIViewController {
     }
     
     func particelAnimation(ctx: CanvasRenderingContext2D){
-        W = Int(getCanvasWidth(canvas: ctx.canvas)  * Float(UIScreen.main.scale))
-        H = Int(getCanvasHeight(canvas: ctx.canvas) * Float(UIScreen.main.scale))
+        W = Int(getCanvasWidth(canvas: ctx.getCanvas())  * Float(UIScreen.main.scale))
+        H = Int(getCanvasHeight(canvas: ctx.getCanvas()) * Float(UIScreen.main.scale))
         let count = (particleCount - 1)
         for _ in 0...count {
             particles.append(Particle(width: W, height: H))
@@ -1047,8 +1047,8 @@ class ViewController: UIViewController {
 
     
         func draw(ctx: CanvasRenderingContext2D) {
-            let width = Float(ctx.canvas.frame.width * UIScreen.main.scale)
-            let height = Float(ctx.canvas.frame.height  * UIScreen.main.scale)
+            let width = Float(ctx.getCanvas().frame.width * UIScreen.main.scale)
+            let height = Float(ctx.getCanvas().frame.height  * UIScreen.main.scale)
             ctx.clearRect(x: 0, y: 0, width: width, height: height);
     var count = 0;
     
@@ -1110,8 +1110,8 @@ class ViewController: UIViewController {
    
     
         func draw(ctx: CanvasRenderingContext2D) {
-            let width = Float(ctx.canvas.frame.width * UIScreen.main.scale)
-            let height = Float(ctx.canvas.frame.height  * UIScreen.main.scale)
+            let width = Float(ctx.getCanvas().frame.width * UIScreen.main.scale)
+            let height = Float(ctx.getCanvas().frame.height  * UIScreen.main.scale)
             ctx.clearRect(x: 0, y: 0, width: width, height: height);
     
     for i in 0...23 {

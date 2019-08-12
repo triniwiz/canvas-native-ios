@@ -1,5 +1,7 @@
+use_frameworks!
+
 target 'CanvasDemo' do
-#pod 'CanvasNative', :path => '../'
-pod 'CanvasNative', :git => 'https://github.com/triniwiz/canvas-native-ios'
+pod 'CanvasNative', :path => '../'
+#pod 'CanvasNative', :git => 'https://github.com/triniwiz/canvas-native-ios'
 
 end

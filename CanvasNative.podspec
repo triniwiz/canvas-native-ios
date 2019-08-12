@@ -18,8 +18,8 @@ Pod::Spec.new do |s|
 
     s.source       = { :git => "https://github.com/triniwiz/canvas-native-ios.git", :tag => "#{s.version}" }
 
-    s.source_files  = 'CanvasNative/**/*.{swift,h}'
-    s.preserve_paths = 'CanvasNative/include/*.h', 'CanvasNative/include/**/*.h'
+    s.source_files  = 'CanvasNative/**/*.{swift,m,h,modulemap}'
+    s.preserve_paths = 'CanvasNative/include/*.h', 'CanvasNative/include/**/*.h', 'CanvasNative/libs/*.a'
     s.pod_target_xcconfig = {
 'USER_HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/CanvasNative/include"',
 'LIBRARY_SEARCH_PATHS' => '"${PODS_ROOT}/CanvasNative/libs"',

@@ -9,7 +9,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  CanvasNative: bd91ff0563b1d8d01d8ef151e6df75aab8190d83
+  CanvasNative: d7fdc75518c347515e561dc3fc3e9cdd83112ec6
 
 PODFILE CHECKSUM: 1794d4eb08897211af0f1bd2d7c8577951ac7a79
 

@@ -112,11 +112,11 @@ public class CanvasColorStyle: NSObject {
         }
 
         func getPostions() -> [Float] {
-            return gradientMap.allKeys as! [Float]
+            return Array(gradientMap.allKeys) as! [Float]
         }
 
         func getColors() -> [Int] {
-            return gradientMap.allValues as! [Int]
+            return Array(gradientMap.allValues) as! [Int]
         }
     }
 

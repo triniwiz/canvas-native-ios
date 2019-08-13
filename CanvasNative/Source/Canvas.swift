@@ -15,9 +15,9 @@ public class Canvas: GLKView, GLKViewDelegate {
     var canvasState: [Int64] = []
     private var renderingContext2d: CanvasRenderingContext?
     var done: Bool = false
+    private var displayLink: CADisplayLink?
     public override init(frame: CGRect) {
         super.init(frame: frame)
-        //contentScaleFactor = 1.0
         contentScaleFactor = UIScreen.main.nativeScale
         context = EAGLContext(api: .openGLES2)!
         (layer as! CAEAGLLayer).isOpaque = false
@@ -25,10 +25,24 @@ public class Canvas: GLKView, GLKViewDelegate {
         drawableDepthFormat = .format24
         drawableStencilFormat = .format8
         drawableColorFormat = .RGBA8888
+        displayLink = CADisplayLink(target: self, selector: #selector(doAnimation))
+        displayLink?.preferredFramesPerSecond = 60
+        displayLink?.add(to: .current, forMode: .common)
+        enableSetNeedsDisplay = false
         delegate = self
         let _ = ensureIsContextIsCurrent()
     }
+   
+    @objc func doAnimation(displayLink: CADisplayLink){
+        display()
+    }
 
+    deinit {
+        if(displayLink != nil){
+            displayLink?.invalidate()
+            displayLink = nil
+        }
+    }
 
     static func currentContext() -> EAGLContext? {
         return EAGLContext.current()
@@ -56,12 +70,13 @@ public class Canvas: GLKView, GLKViewDelegate {
     var colorBufferID = GLuint()
     var stencilBufferID = GLuint()
     var depthRenderbuffer = GLuint()
+    
     public func glkView(_ view: GLKView, drawIn rect: CGRect) {
         if !done {
             let defaultFBO = getFrameBufferId()
-            //glClearColor(0.0, 0.0, 0.0, 1.0)
-            //glClear(GLbitfield(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT))
-            let scale = UIScreen.main.scale
+            glClearColor(1.0, 1.0, 1.0, 0.0)
+            //glDisable(GLenum(GL_CULL_FACE))
+            let scale: CGFloat = UIScreen.main.scale
             let width = Int32(frame.width * scale)
             let height = Int32(frame.height * scale)
             let S = 4
@@ -70,27 +85,30 @@ public class Canvas: GLKView, GLKViewDelegate {
             glGenRenderbuffers(1, &colorBufferID)
             glBindRenderbuffer(GLenum(GL_RENDERBUFFER), colorBufferID)
             glRenderbufferStorageMultisample(GLenum(GL_RENDERBUFFER), GLsizei(S), GLenum(GL_RGBA8), W, H);
+            
             /*
             glGenRenderbuffers(1, &stencilBufferID)
             glBindRenderbuffer(GLenum(GL_RENDERBUFFER), stencilBufferID)
             glRenderbufferStorageMultisample(GLenum(GL_RENDERBUFFER), GLsizei(S), GLenum(GL_STENCIL_INDEX8), W, H);
             */
+            
             glGenRenderbuffersOES(1, &depthRenderbuffer);
             glBindRenderbufferOES(GLenum(GL_RENDERBUFFER_OES), depthRenderbuffer);
             glRenderbufferStorageOES(GLenum(GL_RENDERBUFFER_OES), GLenum(GL_DEPTH_COMPONENT24_OES), width, height);
             glFramebufferRenderbufferOES(GLenum(GL_FRAMEBUFFER_OES), GLenum(GL_DEPTH_ATTACHMENT_OES), GLenum(GL_RENDERBUFFER_OES), depthRenderbuffer);
 
 
+            // TODO use gl to rotate
              let degrees = 180.0
-             transform = CGAffineTransform(rotationAngle: CGFloat(Float(degrees * .pi/180)))
-             transform = CGAffineTransform(scaleX: 1, y: -1)
-
-            self.canvas = native_init(width,height, defaultFBO, Float(scale))
+            transform = CGAffineTransform(rotationAngle: CGFloat(Float(degrees * .pi/180)))
+            transform = CGAffineTransform(scaleX: 1, y: -1)
+            //GLKMatrix4MakeLookAt(0, 0, 0, 0, 0, 0, 0, 1, 0)
+            
+            
+            canvas = native_init(width,height, defaultFBO, Float(scale))
+            
             done = true
         }
-
-        glClear(GLbitfield(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT))
-
     }
 
     public func getContext(type: String) -> CanvasRenderingContext? {

@@ -5,6 +5,12 @@
 
 #define SK_SCALAR1 1
 
+
+typedef struct {
+  const void *array;
+  size_t length;
+} CanvasImageData;
+
 typedef struct {
   float width;
 } CanvasTextMetrics;
@@ -46,6 +52,8 @@ long long native_clip(long long canvas_native_ptr, const char *fill_rule);
 
 long long native_close_path(long long canvas_native_ptr);
 
+CanvasImageData native_create_image_data(size_t width, size_t height);
+
 long long native_draw_image(long long canvas_native_ptr,
                             uint8_t *image_array,
                             size_t image_size,
@@ -78,6 +86,10 @@ long long native_draw_image_sw(long long canvas_native_ptr,
                                float d_width,
                                float d_height);
 
+void native_drop_image_data(CanvasImageData data);
+
+void native_drop_text_metrics(CanvasTextMetrics data);
+
 long long native_ellipse(long long canvas_native_ptr,
                          float x,
                          float y,
@@ -102,6 +114,12 @@ long long native_fill_text(long long canvas_native_ptr,
                            float y,
                            float width);
 
+CanvasImageData native_get_image_data(long long canvas_native_ptr,
+                                      float sx,
+                                      float sy,
+                                      size_t sw,
+                                      size_t sh);
+
 long long native_image_smoothing_enabled(long long canvas_native_ptr, bool enabled);
 
 long long native_image_smoothing_quality(long long canvas_native_ptr, const char *quality);
@@ -119,6 +137,18 @@ CanvasTextMetrics native_measure_text(long long canvas_native_ptr, const char *t
 long long native_miter_limit(long long canvas_native_ptr, float limit);
 
 long long native_move_to(long long canvas_native_ptr, float x, float y);
+
+long long native_put_image_data(long long canvas_native_ptr,
+                                size_t width,
+                                size_t height,
+                                const uint8_t *array,
+                                size_t array_size,
+                                float x,
+                                float y,
+                                float dirty_x,
+                                float dirty_y,
+                                size_t dirty_width,
+                                size_t dirty_height);
 
 long long native_quadratic_curve_to(long long canvas_native_ptr,
                                     float cpx,

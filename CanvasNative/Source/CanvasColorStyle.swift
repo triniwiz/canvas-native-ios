@@ -80,7 +80,10 @@ import UIKit
 @objcMembers
 @objc(CanvasColorStyle)
 public class CanvasColorStyle: NSObject {
-    public class Color:ICanvasColorStyle {
+    
+    @objcMembers
+    @objc(Color)
+    public class Color:NSObject, ICanvasColorStyle {
         var color: UIColor
         public init(color: UIColor?) {
             if(color == nil){

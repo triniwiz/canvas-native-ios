@@ -667,4 +667,11 @@
             let data = native_measure_text(canvas.canvas, text)
             return TextMetrics(metrics: data)
         }
+        public func resetTransform(){
+           canvas.canvas = native_reset_transform(canvas.canvas)
+        }
+        
+        public func transform(a: Float, b: Float, c: Float, d: Float, e: Float, f: Float){
+            canvas.canvas = native_transform(canvas.canvas, a, b, c, d, e, f)
+        }
     }

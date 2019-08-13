@@ -39,7 +39,7 @@ import UIKit
 
 }
 
-public protocol ICanvasColorStyle {
+@objc public protocol ICanvasColorStyle {
     func getStyleType() ->  CanvasColorStyleType
 }
 
@@ -77,6 +77,8 @@ public protocol ICanvasColorStyle {
     }
 }
 
+@objcMembers
+@objc(CanvasColorStyle)
 public class CanvasColorStyle: NSObject {
     public class Color:ICanvasColorStyle {
         var color: UIColor
@@ -93,7 +95,9 @@ public class CanvasColorStyle: NSObject {
         }
     }
 
-    public class Gradient:ICanvasColorStyle {
+    @objcMembers
+    @objc(Gradient)
+    public class Gradient:NSObject, ICanvasColorStyle {
         var gradientMap: NSMutableDictionary = [:]
 
         public func getStyleType() -> CanvasColorStyleType {
@@ -121,6 +125,8 @@ public class CanvasColorStyle: NSObject {
     }
 
 
+    @objcMembers
+    @objc(LinearGradient)
     public class LinearGradient: Gradient {
         let x0: Float
         let y0: Float
@@ -135,6 +141,8 @@ public class CanvasColorStyle: NSObject {
         }
     }
 
+    @objcMembers
+    @objc(RadialGradient)
     public class RadialGradient: Gradient {
         let x0: Float
         let y0: Float
@@ -153,7 +161,9 @@ public class CanvasColorStyle: NSObject {
         }
     }
 
-    public class Pattern:ICanvasColorStyle {
+    @objcMembers
+    @objc(Pattern)
+    public class Pattern:NSObject, ICanvasColorStyle {
         let src: AnyObject
         let pattern: PatternRepetition
         public init(src: AnyObject, pattern: PatternRepetition){

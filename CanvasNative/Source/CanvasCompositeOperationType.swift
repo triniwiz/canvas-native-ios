@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum CanvasCompositeOperationType: Int, RawRepresentable {
+@objc public enum CanvasCompositeOperationType: Int, RawRepresentable {
     case SourceOver
     case SourceIn
     case SourceOut

@@ -6,6 +6,8 @@
 //
 
 import Foundation
+@objcMembers
+@objc(TextMetrics)
 public class TextMetrics: NSObject {
     private var _width: Float = 0
     init(metrics: CanvasTextMetrics) {

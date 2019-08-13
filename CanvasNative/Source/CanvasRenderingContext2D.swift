@@ -7,6 +7,8 @@
 
     import Foundation
     import UIKit
+    @objcMembers
+    @objc(CanvasRenderingContext2D)
     public class CanvasRenderingContext2D: CanvasRenderingContext {
         var canvas: Canvas
         private var _fillStyle: ICanvasColorStyle = CanvasColorStyle.Color(color: .black)

@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 import OpenGLES
 import GLKit
+@objcMembers
 @objc(Canvas)
 public class Canvas: GLKView, GLKViewDelegate {
     var canvas: Int64 = 0

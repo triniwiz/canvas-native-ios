@@ -4,11 +4,10 @@
     //  Created by Osei Fortune on 7/15/19.
     //  Copyright © 2019 Osei Fortune. All rights reserved.
     //
-
+    
     import Foundation
     import UIKit
-    @objcMembers
-    @objc(CanvasRenderingContext2D)
+    
     public class CanvasRenderingContext2D: CanvasRenderingContext {
         var canvas: Canvas
         private var _fillStyle: ICanvasColorStyle = CanvasColorStyle.Color(color: .black)
@@ -26,7 +25,7 @@
                 return _font
             }
             set {
-               canvas.canvas = native_set_font(canvas.canvas, newValue)
+                canvas.canvas = native_set_font(canvas.canvas, newValue)
                 _font = newValue
             }
         }
@@ -40,7 +39,7 @@
                 if(val > 1.0){
                     val = 1.0
                 }
-               canvas.canvas = native_set_global_alpha(canvas.canvas, UInt8(val * 255))
+                canvas.canvas = native_set_global_alpha(canvas.canvas, UInt8(val * 255))
                 _globalAlpha = val
             }
         }
@@ -104,7 +103,7 @@
                 return _lineWidth
             }
             set {
-              canvas.canvas =  native_set_line_width(canvas.canvas, newValue)
+                canvas.canvas =  native_set_line_width(canvas.canvas, newValue)
                 _lineWidth = newValue
             }
         }
@@ -202,39 +201,31 @@
                 case .Color:
                     let fill = newValue as! CanvasColorStyle.Color
                     let cgColor = fill.color.cgColor
-                    let components = cgColor.components ?? []
-                    let count = cgColor.numberOfComponents
+                    let components = cgColor.components
+                    let count = components?.count ?? 0
                     var r = UInt8(0)
-                    
-                    if (count > 2) {
-                        var red = components[0] * 255
-                        if red > 255 {
-                            red = 255
-                        }
-                        r = UInt8(red)
-                    }
                     var g = UInt8(0)
-                    if (count > 2){
-                        var green = components[1] * 255
-                        if green > 255 {
-                            green = 255
-                        }
-                        g = UInt8(green)
-                    }
                     var b = UInt8(0)
-                    if (count > 2){
-                        var blue = components[2] * 255
-                        if blue > 255 {
-                            blue = 255
+                    var a = UInt8(255)
+                    if(count > 0){
+                        r = UInt8((components?[0] ?? 0) * 255.0)
+                        if(count == 2){
+                            g = r
+                            b = r
                         }
-                        b = UInt8(blue)
                     }
-                    var alpha = cgColor.alpha * 255
-                    if alpha > 255 {
-                        alpha = 255
+                    if(count > 2){
+                        if(count > 1){
+                            g = UInt8((components?[1] ?? 0) * 255.0)
+                        }
+                        
+                        if(count > 2){
+                            b = UInt8((components?[2] ?? 0) * 255.0)
+                        }
+                        if(count > 3){
+                            a = UInt8((components?[3] ?? 0) * 255.0)
+                        }
                     }
-                    let a = UInt8(alpha)
-                    
                     canvas.canvas = native_set_fill_color_rgba(canvas.canvas, r, g, b, a)
                     _fillStyle = newValue
                 case .Gradient:
@@ -283,39 +274,31 @@
                 case .Color:
                     let fill = newValue as! CanvasColorStyle.Color
                     let cgColor = fill.color.cgColor
-                    let components = cgColor.components ?? []
-                    let count = cgColor.numberOfComponents
+                    let components = cgColor.components
+                    let count = components?.count ?? 0
                     var r = UInt8(0)
-                    
-                    if (count > 2) {
-                        var red = components[0] * 255
-                        if red > 255 {
-                            red = 255
-                        }
-                        r = UInt8(red)
-                    }
                     var g = UInt8(0)
-                    if (count > 2){
-                        var green = components[1] * 255
-                        if green > 255 {
-                            green = 255
-                        }
-                        g = UInt8(green)
-                    }
                     var b = UInt8(0)
-                    if (count > 2){
-                        var blue = components[2] * 255
-                        if blue > 255 {
-                            blue = 255
+                    var a = UInt8(255)
+                    if(count > 0){
+                        r = UInt8((components?[0] ?? 0) * 255.0)
+                        if(count == 2){
+                            g = r
+                            b = r
                         }
-                        b = UInt8(blue)
                     }
-                    var alpha = cgColor.alpha * 255
-                    if alpha > 255 {
-                        alpha = 255
+                    if(count > 2){
+                        if(count > 1){
+                            g = UInt8((components?[1] ?? 0) * 255.0)
+                        }
+                        
+                        if(count > 2){
+                            b = UInt8((components?[2] ?? 0) * 255.0)
+                        }
+                        if(count > 3){
+                            a = UInt8((components?[3] ?? 0) * 255.0)
+                        }
                     }
-                    let a = UInt8(alpha)
-                    
                     canvas.canvas = native_set_stroke_color_rgba(canvas.canvas, r, g, b, a)
                     _strokeStyle = newValue
                 case .Gradient:
@@ -353,21 +336,14 @@
         }
         
         public func fillRect(x: Float, y: Float, width: Float, height: Float) {
-            let currentContext = Canvas.currentContext()
-            if currentContext != nil && currentContext != canvas.context {
-                let _ = canvas.ensureIsContextIsCurrent()
-            }
-            canvas.canvas = native_fill_rect(canvas.canvas, x, y, width, height)
-            
+            self.canvas.canvas = native_fill_rect(self.canvas.canvas, x, y, width, height, self.canvas.getViewPtr())
+            self.canvas.doDraw()
         }
         
         public func strokeRect(x: Float, y: Float, width: Float, height: Float) {
-            let currentContext = Canvas.currentContext()
-            if currentContext != nil && currentContext != canvas.context {
-                let _ = canvas.ensureIsContextIsCurrent()
-            }
-            canvas.canvas = native_stroke_rect(canvas.canvas, x, y, width, height)
             
+            canvas.canvas = native_stroke_rect(canvas.canvas, x, y, width, height,self.canvas.getViewPtr())
+            canvas.doDraw()
         }
         
         public func fillText(text: String, x: Float, y:Float) {
@@ -375,26 +351,19 @@
         }
         
         public func fillText(text: String, x: Float, y:Float, width: Float) {
-            let currentContext = Canvas.currentContext()
-            if currentContext != nil && currentContext != canvas.context {
-                let _ = canvas.ensureIsContextIsCurrent()
-            }
-            canvas.canvas = native_fill_text(canvas.canvas, text, x, y, width)
             
+            canvas.canvas = native_fill_text(canvas.canvas, text, x, y, width,self.canvas.getViewPtr())
+            canvas.doDraw()
         }
         
         public func strokeText(text: String, x: Float, y:Float) {
             strokeText(text: text, x: x, y: y, width: 0)
-            
         }
         
         public func strokeText(text: String, x: Float, y:Float, width: Float) {
-            let currentContext = Canvas.currentContext()
-            if currentContext != nil && currentContext != canvas.context {
-                let _ = canvas.ensureIsContextIsCurrent()
-            }
-            canvas.canvas = native_stroke_text(canvas.canvas, text, x, y, width)
             
+            canvas.canvas = native_stroke_text(canvas.canvas, text, x, y, width,self.canvas.getViewPtr())
+            canvas.doDraw()
         }
         
         public func rect(x: Float, y: Float, width: Float, height: Float) {
@@ -402,21 +371,38 @@
         }
         
         public func fill() {
-            let currentContext = Canvas.currentContext()
-            if currentContext != nil && currentContext != canvas.context {
-                let _ = canvas.ensureIsContextIsCurrent()
-            }
-            canvas.canvas = native_fill(canvas.canvas)
+            canvas.canvas = native_fill(canvas.canvas,self.canvas.getViewPtr())
+            canvas.doDraw()
+        }
+        
+        public func fill(rule: String) {
             
+            canvas.canvas = native_fill_rule(canvas.canvas,rule,self.canvas.getViewPtr())
+            canvas.doDraw()
+        }
+        
+        public func fill(path: CanvasPath2D) {
+            
+            canvas.canvas = native_fill_path_rule(canvas.canvas,path.path,"",self.canvas.getViewPtr())
+            canvas.doDraw()
+        }
+        
+        public func fill(path: CanvasPath2D, rule: String) {
+            
+            canvas.canvas = native_fill_path_rule(canvas.canvas,path.path,rule,self.canvas.getViewPtr())
+            canvas.doDraw()
         }
         
         public func stroke() {
-            let currentContext = Canvas.currentContext()
-            if currentContext != nil && currentContext != canvas.context {
-                let _ = canvas.ensureIsContextIsCurrent()
-            }
-            canvas.canvas = native_stroke(canvas.canvas)
             
+            canvas.canvas = native_stroke(canvas.canvas,self.canvas.getViewPtr())
+            canvas.doDraw()
+        }
+        
+        public func stroke(path: CanvasPath2D) {
+            
+            canvas.canvas = native_stroke_path(canvas.canvas,path.path,self.canvas.getViewPtr())
+            canvas.doDraw()
         }
         
         public func beginPath() {
@@ -452,23 +438,31 @@
         }
         
         public func ellipse(x: Float, y: Float, radiusX: Float, radiusY: Float, rotation: Float, startAngle: Float, endAngle: Float) {
-            ellipse(x: x, y: y, radiusX: radiusX, radiusY: radiusY, rotation: rotation, startAngle: startAngle, endAngle: endAngle, anticlockwise: false);
+            ellipse(x: x, y: y, radiusX: radiusX, radiusY: radiusY, rotation: rotation, startAngle: startAngle, endAngle: endAngle, anticlockwise: false)
         }
         
         public func ellipse(x: Float, y: Float, radiusX: Float, radiusY: Float, rotation: Float, startAngle: Float, endAngle: Float, anticlockwise: Bool) {
             canvas.canvas = native_ellipse(canvas.canvas, x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise)
         }
         
-        public func clip(rule: String?) {
-            canvas.canvas = native_clip(canvas.canvas, rule ?? "nonzero")
+        public func clip(){
+            canvas.canvas = native_clip(canvas.canvas,self.canvas.getViewPtr())
+        }
+        public func clip(rule: String) {
+            canvas.canvas = native_clip_rule(canvas.canvas, rule,self.canvas.getViewPtr())
+        }
+        
+        public func clip(path:CanvasPath2D , rule: String ) {
+            canvas.canvas = native_clip_path_rule(canvas.canvas, path.path,rule,self.canvas.getViewPtr())
+        }
+        
+        public func clip(path:CanvasPath2D) {
+            clip(path: path, rule: "nonzero")
         }
         
         public func clearRect(x: Float, y: Float, width: Float, height: Float){
-            let currentContext = Canvas.currentContext()
-            if currentContext != nil && currentContext != canvas.context {
-                let _ = canvas.ensureIsContextIsCurrent()
-            }
-            canvas.canvas = native_clear_rect(canvas.canvas, x, y, width, height)
+            canvas.canvas = native_clear_rect(canvas.canvas, x, y, width, height,self.canvas.getViewPtr())
+            canvas.doDraw()
             
         }
         private var _lineDashSegments: [Float32] = []
@@ -497,39 +491,24 @@
         }
         
         public func setTransform(a: Float, b: Float, c: Float, d: Float, e: Float, f: Float){
-            let currentContext = Canvas.currentContext()
-            if currentContext != nil && currentContext != canvas.context {
-                let _ = canvas.ensureIsContextIsCurrent()
-            }
-            canvas.canvas = native_set_transform(canvas.canvas, a, b, c, d, e, f)
+            canvas.canvas = native_set_transform(canvas.canvas, a, b, c, d, e, f,self.canvas.getViewPtr())
+            canvas.doDraw()
             
         }
         
         public func scale(x: Float, y: Float){
-            let currentContext = Canvas.currentContext()
-            if currentContext != nil && currentContext != canvas.context {
-                let _ = canvas.ensureIsContextIsCurrent()
-            }
-            canvas.canvas = native_scale(canvas.canvas, x, y)
-            
+            canvas.canvas = native_scale(canvas.canvas, x, y,self.canvas.getViewPtr())
+            canvas.doDraw()
         }
         
         public func rotate(angle: Float){
-            let currentContext = Canvas.currentContext()
-            if currentContext != nil && currentContext != canvas.context {
-                let _ = canvas.ensureIsContextIsCurrent()
-            }
-            canvas.canvas = native_rotate(canvas.canvas, angle)
-            
+            canvas.canvas = native_rotate(canvas.canvas, angle,self.canvas.getViewPtr())
+            canvas.doDraw()
         }
         
         public func translate(x: Float, y: Float){
-            let currentContext = Canvas.currentContext()
-            if currentContext != nil && currentContext != canvas.context {
-                let _ = canvas.ensureIsContextIsCurrent()
-            }
-            canvas.canvas = native_translate(canvas.canvas, x, y)
-            
+            canvas.canvas = native_translate(canvas.canvas, x, y,self.canvas.getViewPtr())
+            canvas.doDraw()
         }
         
         public func quadraticCurveTo(cpx: Float, cpy: Float, x: Float, y: Float){
@@ -537,10 +516,7 @@
         }
         
         public func drawImage(image: UIImage, dx: Float, dy: Float){
-            let currentContext = Canvas.currentContext()
-            if currentContext != nil && currentContext != canvas.context {
-                let _ = canvas.ensureIsContextIsCurrent()
-            }
+            
             let cgRef = image.cgImage
             var data = image.pngData() ?? Data()
             let width = cgRef?.width ?? 0
@@ -558,16 +534,12 @@
                 // copy bytes into array
                 
                 data.copyBytes(to: &byteArray, count: count)
-                canvas.canvas = native_draw_image(canvas.canvas, &byteArray, count, Int32(width),Int32(height), dx, dy)
-                
+                canvas.canvas = native_draw_image(canvas.canvas, &byteArray, count, Int32(width),Int32(height), dx, dy,self.canvas.getViewPtr())
+                canvas.doDraw()
             }
         }
         
         public func drawImage(image: UIImage, dx: Float, dy: Float, dWidth: Float, dHeight: Float){
-            let currentContext = Canvas.currentContext()
-            if currentContext != nil && currentContext != canvas.context {
-                let _ = canvas.ensureIsContextIsCurrent()
-            }
             let cgRef = image.cgImage
             var data = image.pngData() ?? Data()
             let width = cgRef?.width ?? 0
@@ -585,16 +557,14 @@
                 // copy bytes into array
                 
                 data.copyBytes(to: &byteArray, count: count)
-                canvas.canvas = native_draw_image_dw(canvas.canvas, &byteArray, data.count,Int32(width),Int32(height), dx, dy,dWidth,dHeight)
+                canvas.canvas = native_draw_image_dw(canvas.canvas, &byteArray, data.count,Int32(width),Int32(height), dx, dy,dWidth,dHeight,self.canvas.getViewPtr())
+                canvas.doDraw()
             }
         }
         
         
         public func drawImage(image: UIImage, sx: Float, sy: Float, sWidth: Float, sHeight: Float, dx: Float, dy: Float, dWidth: Float, dHeight: Float){
-            let currentContext = Canvas.currentContext()
-            if currentContext != nil && currentContext != canvas.context {
-                let _ = canvas.ensureIsContextIsCurrent()
-            }
+            
             let cgRef = image.cgImage
             var data = image.pngData() ?? Data()
             let width = cgRef?.width ?? 0
@@ -612,7 +582,8 @@
                 // copy bytes into array
                 
                 data.copyBytes(to: &byteArray, count: count)
-                canvas.canvas = native_draw_image_sw(canvas.canvas, &byteArray, data.count, Int32(width), Int32(height), sx, sy,sWidth, sHeight, dx, dy, dWidth, dHeight)
+                canvas.canvas = native_draw_image_sw(canvas.canvas, &byteArray, data.count, Int32(width), Int32(height), sx, sy,sWidth, sHeight, dx, dy, dWidth, dHeight,self.canvas.getViewPtr())
+                canvas.doDraw()
             }
             
         }
@@ -631,10 +602,10 @@
             native_drop_image_data(nativeData)
             return ImageData(width:sw , height: sh, data: data)
         }
-
+        
         
         public func putImageData(imageData: ImageData, dx: Float, dy: Float){
-         putImageData(imageData: imageData, dx: dx, dy: dy, dirtyX: 0, dirtyY: 0, dirtyWidth: -1, dirtyHeight: -1)
+            putImageData(imageData: imageData, dx: dx, dy: dy, dirtyX: 0, dirtyY: 0, dirtyWidth: -1, dirtyHeight: -1)
         }
         
         public func putImageData(imageData: ImageData, dx: Float, dy: Float, dirtyX: Float, dirtyY: Float, dirtyWidth:Int, dirtyHeight: Int){
@@ -648,6 +619,7 @@
             imageData.data.copyBytes(to: &byteArray, count: count)
             
             canvas.canvas = native_put_image_data(canvas.canvas, imageData.width, imageData.height, &byteArray, count, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight)
+            canvas.doDraw()
             
         }
         
@@ -668,10 +640,12 @@
             return TextMetrics(metrics: data)
         }
         public func resetTransform(){
-           canvas.canvas = native_reset_transform(canvas.canvas)
+            canvas.canvas = native_reset_transform(canvas.canvas)
+            canvas.doDraw()
         }
         
         public func transform(a: Float, b: Float, c: Float, d: Float, e: Float, f: Float){
-            canvas.canvas = native_transform(canvas.canvas, a, b, c, d, e, f)
+            canvas.canvas = native_transform(canvas.canvas, a, b, c, d, e, f,self.canvas.getViewPtr())
+            canvas.doDraw()
         }
     }

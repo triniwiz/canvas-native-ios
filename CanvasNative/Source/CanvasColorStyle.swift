@@ -83,9 +83,9 @@ public class CanvasColorStyle: NSObject {
     
     @objcMembers
     @objc(Color)
-    public class Color:NSObject, ICanvasColorStyle {
+    public class Color: NSObject, ICanvasColorStyle {
         var color: UIColor
-        public init(color: UIColor?) {
+        @objc public init(color: UIColor?) {
             if(color == nil){
                 self.color = .black
             }else {

@@ -6,5 +6,4 @@
 //
 
 import Foundation
-@objc(CanvasRenderingContext)
-public class CanvasRenderingContext: NSObject {}
+public class CanvasRenderingContext {}

@@ -1,5 +1,6 @@
 import UIKit
 import CanvasNative
+@available(iOS 13.0, *)
 class ViewController: UIViewController {
     var canvas1: Canvas?
     var canvas2: Canvas?
@@ -9,25 +10,318 @@ class ViewController: UIViewController {
     @IBOutlet weak var first: UIView!
     @IBOutlet weak var second: UIView!
     @IBOutlet weak var third: UIView!
+    var tapped = 0
     override func viewDidLoad() {
         super.viewDidLoad()
         scale = Int(UIScreen.main.scale)
         // Do any additional setup after loading the view.
-        canvas1 = Canvas(frame: first.bounds)
+        canvas1 = Canvas(frame: first.bounds, useGL: true)
         first.addSubview(canvas1!)
+        //let matrix = Canvas.createSVGMatrix()
+        //matrix.a = 3.0
     }
     
     var drawn = false
+    var count = 0
     func drawAll() {
         let ctx = canvas1?.getContext(type: "2d") as! CanvasRenderingContext2D
-        _ = canvas1?.ensureIsContextIsCurrent()
-        arcToAnimationExample(ctx: ctx)
+     // drawImageBlock(ctx: ctx)
+      //  drawImageExample(ctx: ctx)
+      // doSolarAnimation(ctx: ctx)
+     //   drawFace(ctx: ctx)
+    // fontExample(ctx: ctx)
+      //  arcToAnimationExample(ctx: ctx)
+      //saveRestoreExample(ctx: ctx)
+
+      // ballExample(ctx: ctx)
+        
+        //ctx.fillRect(x: 200, y: 10, width: 200, height: 200);
+       // scaleTransformation(ctx: ctx)
+      particelAnimation(ctx: ctx)
+//        canvas1!.toDataURLAsync { (data) in
+//           print("data: ", data)
+//        }
+    }
+    
+    func scaleTransformation(ctx: CanvasRenderingContext2D){
+        // Scaled rectangle
+        ctx.scale(x: 9, y: 3);
+        ctx.fillStyle = CanvasColorStyle.Color(color: .red);
+        ctx.fillRect(x: 10, y: 10, width: 8, height: 20);
+
+        // Reset current transformation matrix to the identity matrix
+        ctx.setTransform(a: 1, b: 0, c: 0, d: 1, e: 0, f: 0);
+
+        // Non-scaled rectangle
+        ctx.fillStyle = CanvasColorStyle.Color(color: .gray);
+        ctx.fillRect(x: 10, y: 10, width: 8, height: 20);
+    }
+    
+    func drawNight(ctx: CanvasRenderingContext2D) {
+        ctx.fillRect(x: 0, y: 0, width: 150, height: 150);
+        ctx.translate(x: 75, y: 75);
+
+      // Create a circular clipping path
+      ctx.beginPath();
+        ctx.arc(x: 0, y: 0, radius: 60, startAngle: 0, endAngle: PI * 2, anticlockwise: true);
+        ctx.clip();
+
+      // draw background
+        var lingrad = ctx.createLinearGradient(x0: 0, y0: -75, x1: 0, y1: 75);
+        lingrad.addColorStop(offset: 0, color: UIColor(fromString: "#232256"));
+        lingrad.addColorStop(offset: 1, color: UIColor(fromString: "#143778"));
+      
+      ctx.fillStyle = lingrad;
+        ctx.fillRect(x: -75, y: -75, width: 150, height: 150);
+
+      // draw stars
+        for _ in 0 ... 49 {
+            ctx.save()
+            ctx.fillStyle = CanvasColorStyle.Color.init(color: .white)
+            ctx.translate(x: 75 - floor(Float.random(in: 0.0...1.0) * 150),
+                          y: 75 - floor(Float.random(in: 0.0...1.0) * 150));
+            drawStar(ctx: ctx, r: floor(Float.random(in: 0.0...1.0) * 4) + 2);
+            ctx.restore();
+        }
+      
+    }
+
+    func drawStar(ctx: CanvasRenderingContext2D, r: Float) {
+      ctx.save();
+      ctx.beginPath();
+    ctx.moveTo(x: r, y: 0)
+        for i in 0 ... 8 {
+            ctx.rotate(angle: PI / 5);
+            if (i % 2 == 0) {
+                ctx.lineTo(x: (r / 0.525731) * 0.200811, y: 0);
+            } else {
+                ctx.lineTo(x: r, y: 0);
+            }
+        }
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+    
+    func rotateSquare(ctx: CanvasRenderingContext2D) {
+        // left rectangles, rotate from canvas origin
+        ctx.save();
+        // blue rect
+        ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromString: "#0095DD"));
+        ctx.fillRect(x: 30, y: 30, width: 100, height: 100);
+        ctx.rotate(angle: (PI / 180) * 25);
+        // grey rect
+        ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromString: "#4D4E53"));
+        ctx.fillRect(x: 30, y: 30, width: 100, height: 100);
+        ctx.restore();
+
+        // right rectangles, rotate from rectangle center
+        // draw blue rect
+        ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromString: "#0095DD"));
+        ctx.fillRect(x: 150, y: 30, width: 100, height: 100);
+        
+        ctx.translate(x: 200, y: 80); // translate to rectangle center
+                                // x = x + 0.5 * width
+                                // y = y + 0.5 * height
+        ctx.rotate(angle: (PI / 180) * 25); // rotate
+        ctx.translate(x: -200, y: -80); // translate back
+        
+        // draw grey rect
+        ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromString: "#4D4E53"));
+        ctx.fillRect(x: 150, y: 30, width: 100, height: 100);
+    }
+    
+    func drawImageBlock(ctx: CanvasRenderingContext2D){
+        
+        do {
+            let home = URL(fileURLWithPath:NSTemporaryDirectory())
+            let rhino = home.appendingPathComponent("rhino.jpg")
+            let image: UIImage?
+            if(!FileManager.default.fileExists(atPath: rhino.path)){
+                let data = try Data(contentsOf: URL(string: "https://mdn.mozillademos.org/files/5397/rhino.jpg")!)
+                try data.write(to: rhino)
+                image = UIImage(data: data)
+            }else {
+                image = UIImage(contentsOfFile: rhino.path)
+            }
+            let s = Float(UIScreen.main.scale) * 2
+            
+            for i in 0...3{
+                for j in 0 ... 3 {
+                    ctx.drawImage(image: image!, dx: Float(j * 50) * s, dy: Float(i * 38) * s, dWidth: 50 * s, dHeight: 38 * s);
+                }
+            }
+        } catch  {
+            print(error)
+            
+        }
+    }
+    
+    func radialGradient(ctx: CanvasRenderingContext2D){
+        // Create gradients
+        var radgrad = ctx.createRadialGradient(x0: 45, y0: 45, r0: 10, x1: 52, y1: 50, r1: 30);
+        radgrad.addColorStop(offset: 0, color: UIColor(fromString: "#A7D30C"))
+        radgrad.addColorStop(offset: 0.9, color: UIColor(fromString: "#019F62"));
+        radgrad.addColorStop(offset: 1, color: UIColor(fromString: "rgba(1, 159, 98, 0)"));
+        
+        var radgrad2 = ctx.createRadialGradient(x0: 105, y0: 105, r0: 20, x1: 112, y1: 120, r1: 50);
+        radgrad2.addColorStop(offset: 0, color: UIColor(fromString: "#FF5F98"));
+        radgrad2.addColorStop(offset: 0.75, color: UIColor(fromString: "#FF0188"));
+        radgrad2.addColorStop(offset: 1, color: UIColor(fromString: "rgba(255, 1, 136, 0)"));
+
+        var radgrad3 = ctx.createRadialGradient(x0: 95, y0: 15, r0: 15, x1: 102, y1: 20, r1: 40);
+        radgrad3.addColorStop(offset: 0, color: UIColor(fromString: "#00C9FF"));
+        radgrad3.addColorStop(offset: 0.8, color: UIColor(fromString: "#00B5E2"));
+        radgrad3.addColorStop(offset: 1, color: UIColor(fromString: "rgba(0, 201, 255, 0)"));
+
+        var radgrad4 = ctx.createRadialGradient(x0: 0, y0: 150, r0: 50, x1: 0, y1: 140, r1: 90);
+        radgrad4.addColorStop(offset: 0, color: UIColor(fromString: "#F4F201"));
+        radgrad4.addColorStop(offset: 0.8, color: UIColor(fromString: "#E4C700"));
+        radgrad4.addColorStop(offset: 1, color: UIColor(fromString: "rgba(228, 199, 0, 0)"));
+        
+        // draw shapes
+        ctx.fillStyle = radgrad4;
+        ctx.fillRect(x: 0, y: 0, width: 150, height: 150);
+        ctx.fillStyle = radgrad3;
+        ctx.fillRect(x: 0, y: 0, width: 150, height: 150);
+        ctx.fillStyle = radgrad2;
+        ctx.fillRect(x: 0, y: 0, width: 150, height: 150);
+        ctx.fillStyle = radgrad;
+        ctx.fillRect(x: 0, y: 0, width: 150, height: 150);
+    }
+    
+    func drawLinearGradient(ctx: CanvasRenderingContext2D) {
+        // Create gradients
+        var lingrad = ctx.createLinearGradient(x0: 0, y0: 0, x1: 0, y1: 150);
+        lingrad.addColorStop(offset: 0, color: UIColor(fromHex: "#00ABEB"))
+        lingrad.addColorStop(offset: 0.5, color: UIColor(fromHex: "#fff"));
+        lingrad.addColorStop(offset: 0.5, color: UIColor(fromHex: "#26C000"));
+        lingrad.addColorStop(offset: 1, color: UIColor(fromHex: "#fff"));
+
+        var lingrad2 = ctx.createLinearGradient(x0: 0, y0: 50, x1: 0, y1: 95);
+        lingrad2.addColorStop(offset: 0.5, color: UIColor(fromHex: "#000"));
+        lingrad2.addColorStop(offset: 1, color: UIColor(red: 0, green: 0, blue: 0, alpha: 0));
+
+        // assign gradients to fill and stroke styles
+        ctx.fillStyle = lingrad;
+        ctx.strokeStyle = lingrad2;
+        
+        // draw shapes
+        ctx.fillRect(x: 10, y: 10, width: 130, height: 130);
+        ctx.strokeRect(x: 50, y: 50, width: 50, height: 50);
     }
     
     
+    
+    
+    func drawPM(ctx: CanvasRenderingContext2D) {
+        let s = Float(UIScreen.main.scale)
+        roundedRect(ctx: ctx, x: 12 * s, y: 12 * s, width: 150 * s, height: 150 * s, radius: 15 * s);
+        roundedRect(ctx: ctx, x: 19 * s, y: 19 * s, width: 150 * s, height: 150 * s, radius: 9 * s);
+        roundedRect(ctx: ctx, x: 53 * s, y: 53 * s, width: 49 * s, height: 33 * s, radius: 10 * s);
+        roundedRect(ctx: ctx, x: 53 * s, y: 119 * s, width: 49 * s, height: 16 * s, radius: 6 * s);
+        roundedRect(ctx: ctx, x: 135 * s, y: 53 * s, width: 49 * s, height: 33 * s, radius: 10 * s);
+        roundedRect(ctx: ctx, x: 135 * s, y: 119 * s, width: 25 * s, height: 49 * s, radius: 10 * s);
+
+        ctx.beginPath();
+        ctx.arc(x: 37 * s, y: 37 * s, radius: 13 * s, startAngle: PI / 7, endAngle: -PI / 7, anticlockwise: false);
+        ctx.lineTo(x: 31 * s, y: 37 * s);
+        ctx.fill();
+        
+        for i in 0...7{
+            ctx.fillRect(x: Float(51 + i * 16)  * s, y: 35 * s, width: 4 * s, height: 4 * s);
+        }
+        
+        for i in 0...5{
+            ctx.fillRect(x: 115 * s, y: Float(51 + i * 16) * s, width: 4 * s, height: 4 * s);
+        }
+        
+        for i in 0...7{
+            ctx.fillRect(x: Float(51 + i * 16) * s, y: 99 * s, width: 4 * s, height: 4 * s);
+        }
+
+
+        ctx.beginPath();
+        ctx.moveTo(x: 83 * s, y: 116 * s);
+        ctx.lineTo(x: 83 * s, y: 102 * s);
+        ctx.bezierCurveTo(cp1x: 83 * s, cp1y: 94 * s, cp2x: 89 * s, cp2y: 88 * s, x: 97 * s, y: 88 * s);
+        ctx.bezierCurveTo(cp1x: 105 * s, cp1y: 88 * s, cp2x: 111 * s, cp2y: 94 * s, x: 111 * s, y: 102 * s);
+        ctx.lineTo(x: 111 * s, y: 116 * s);
+        ctx.lineTo(x: 106.333 * s, y: 111.333 * s);
+        ctx.lineTo(x: 101.666 * s, y: 116 * s);
+        ctx.lineTo(x: 97 * s, y: 111.333 * s);
+        ctx.lineTo(x: 92.333 * s, y: 116 * s);
+        ctx.lineTo(x: 87.666 * s, y: 111.333 * s);
+        ctx.lineTo(x: 83 * s, y: 116 * s);
+        ctx.fill();
+
+        ctx.fillStyle = CanvasColorStyle.Color(color: .white);
+        ctx.beginPath();
+        ctx.moveTo(x: 91 * s, y: 96 * s);
+        ctx.bezierCurveTo(cp1x: 88 * s, cp1y: 96 * s, cp2x: 87 * s, cp2y: 99 * s, x: 87 * s, y: 101 * s);
+        ctx.bezierCurveTo(cp1x: 87 * s, cp1y: 103 * s, cp2x: 88 * s, cp2y: 106 * s, x: 91 * s, y: 106 * s);
+        ctx.bezierCurveTo(cp1x: 94 * s, cp1y: 106 * s, cp2x: 95 * s, cp2y: 103 * s, x: 95 * s, y: 101 * s);
+        ctx.bezierCurveTo(cp1x: 95 * s, cp1y: 99 * s, cp2x: 94 * s, cp2y: 96 * s, x: 91 * s, y: 96 * s);
+        ctx.moveTo(x: 103 * s, y: 96 * s);
+        ctx.bezierCurveTo(cp1x: 100 * s, cp1y: 96 * s, cp2x: 99 * s, cp2y: 99 * s, x: 99 * s, y: 101 * s);
+        ctx.bezierCurveTo(cp1x: 99 * s, cp1y: 103 * s, cp2x: 100 * s, cp2y: 106 * s, x: 103 * s, y: 106 * s);
+        ctx.bezierCurveTo(cp1x: 106 * s, cp1y: 106 * s, cp2x: 107 * s, cp2y: 103 * s, x: 107 * s, y: 101 * s);
+        ctx.bezierCurveTo(cp1x: 107 * s, cp1y: 99 * s, cp2x: 106 * s, cp2y: 96 * s, x: 103 * s, y: 96 * s);
+        ctx.fill();
+
+        ctx.fillStyle = CanvasColorStyle.Color(color: .black);
+        ctx.beginPath();
+        ctx.arc(x: 101 * s, y: 102 * s, radius: 2 * s, startAngle: 0 * s, endAngle: PI * 2, anticlockwise: true);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(x: 89 * s, y: 102 * s, radius: 2 * s, startAngle: 0 * s, endAngle: PI * 2, anticlockwise: true);
+        ctx.fill();
+      
+    }
+
+    // A utility function to draw a rectangle with rounded corners.
+
+    func roundedRect(ctx: CanvasRenderingContext2D, x: Float, y: Float, width: Float, height:Float, radius:Float) {
+      ctx.beginPath();
+        ctx.moveTo(x: x, y: y + radius);
+        ctx.lineTo(x: x, y: y + height - radius);
+        ctx.arcTo(x1: x, y1: y + height, x2: x + radius, y2: y + height, radius: radius);
+        ctx.lineTo(x: x + width - radius, y: y + height);
+        ctx.arcTo(x1: x + width, y1: y + height, x2: x + width, y2: y + height-radius, radius: radius);
+        ctx.lineTo(x: x + width, y: y + radius);
+        ctx.arcTo(x1: x + width, y1: y, x2: x + width - radius, y2: y, radius: radius);
+        ctx.lineTo(x: x + radius, y: y);
+        ctx.arcTo(x1: x, y1: y, x2: x, y2: y + radius, radius: radius);
+      ctx.stroke();
+    }
+    
+    func drawWindow(ctx: CanvasRenderingContext2D){
+        // draw background
+        ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromHex: "#FD0"));
+        ctx.fillRect(x: 0, y: 0, width: Float(75 * scale), height: Float(75 * scale));
+        ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromHex: "#6C0"));
+        ctx.fillRect(x: Float(75 * scale), y: 0, width: Float(75 * scale), height: Float(75 * scale));
+        ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromHex: "#09F"));
+        ctx.fillRect(x: 0, y: Float(75 * scale), width: Float(75 * scale), height: Float(75 * scale));
+        ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromHex: "#F30"));
+        ctx.fillRect(x: Float(75 * scale), y: Float(75 * scale), width: Float(75 * scale), height: Float(75 * scale));
+        ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromHex: "#FFF"));
+
+        // set transparency value
+        ctx.globalAlpha = 0.2;
+
+        // Draw semi transparent circles
+        
+        for i in 0...6 {
+            ctx.beginPath();
+            ctx.arc(x: Float(75 * scale), y: Float(75 * scale), radius: Float((10 + 10 * i) * scale), startAngle: 0, endAngle: PI * 2, anticlockwise: true);
+            ctx.fill();
+        }
+    }
+    
     func draw1() {
         let ctx = canvas1?.getContext(type: "2d") as! CanvasRenderingContext2D
-        _ = canvas1?.ensureIsContextIsCurrent()
         ctx.beginPath()
         ctx.arc(x: 240, y: 20, radius: 40, startAngle: 0, endAngle: PI)
         ctx.moveTo(x: 100, y: 20)
@@ -40,17 +334,24 @@ class ViewController: UIViewController {
     }
     
     
+    func scaleText(ctx: CanvasRenderingContext2D){
+        ctx.scale(x: -1, y: 1);
+        ctx.font = "48px serif";
+        ctx.fillText(text: "Hello world!", x: -280, y: 90);
+        ctx.setTransform(a: 1, b: 0, c: 0, d: 1, e: 0, f: 0);
+    }
     func saveRestoreExample(ctx: CanvasRenderingContext2D){
         // Save the default state
         ctx.save();
-        
+        let s = Float(UIScreen.main.scale)
         ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(red: 0, green: 128/255, blue: 0, alpha: 1.0));
-        ctx.fillRect(x: 10, y: 10, width: 100, height: 100);
+        ctx.fillRect(x: 10 * s, y: 10 * s, width: 100 * s, height: 100 * s);
         
         // Restore the default state
         ctx.restore();
         
-        ctx.fillRect(x: 150, y: 40, width: 100, height: 100);
+        ctx.fillRect(x: 150 * s, y: 40 * s, width: 100 * s, height: 100 * s);
+        
     }
     func closePathExample(ctx: CanvasRenderingContext2D){
         ctx.beginPath();
@@ -143,7 +444,7 @@ class ViewController: UIViewController {
         ctx.moveTo(x: 0, y: 200);
         ctx.lineTo(x: 200, y: 0);
         ctx.stroke();
-        ctx.clearRect(x: 0, y: 0, width: getCanvasWidth(canvas: ctx.getCanvas()), height: getCanvasHeight(canvas: ctx.getCanvas()))
+        ctx.clearRect(x: 0, y: 0, width: ctx.getCanvas().width, height: ctx.getCanvas().height)
         ctx.setLineDash(segments: []);
         ctx.beginPath();
         ctx.ellipse(x: 100, y: 100, radiusX: 50, radiusY: 75, rotation: (PI / 4), startAngle: 0, endAngle: TWO_PI);
@@ -223,13 +524,14 @@ class ViewController: UIViewController {
     }
     
     private func drawArc(ctx: CanvasRenderingContext2D, points: [KeyValue], r: Float){
-        ctx.beginPath();
-        let p0 = points[0]
-        let p1 = points[1]
-        let p2 = points[2]
-        ctx.moveTo(x: p0.x, y: p0.y);
-        ctx.arcTo(x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, radius: r);
-        ctx.lineTo(x: p2.x, y: p2.y);
+        ctx.beginPath()
+        p1 = points[0]
+        p2 = points[1]
+        p3 = points[2]
+        
+        ctx.moveTo(x: p1.x, y: p1.y);
+        ctx.arcTo(x1: p2.x, y1: p2.y, x2: p3.x, y2: p3.y, radius: r);
+        ctx.lineTo(x: p3.x, y: p3.y);
         ctx.stroke();
     }
     
@@ -244,7 +546,7 @@ class ViewController: UIViewController {
         ctx.arc(x: 60, y: 65, radius: 5, startAngle: 0, endAngle: TWO_PI, anticlockwise: true)  // Left eye
         ctx.moveTo(x: 95, y: 65);
         ctx.arc(x: 90, y: 65, radius: 5, startAngle: 0, endAngle: TWO_PI, anticlockwise: true)  // Right eye
-        
+        ctx.strokeStyle = CanvasColorStyle.Color(color: UIColor(fromString: "blue"))
         ctx.stroke();
         
     }
@@ -254,7 +556,7 @@ class ViewController: UIViewController {
         let t0 = t/1000;
         let a  = t0.truncatingRemainder(dividingBy: PI2);
         let rr = abs(cos(a) * r);
-        ctx.clearRect(x: 0, y: 0, width: getCanvasWidth(canvas: ctx.getCanvas()),height: getCanvasHeight(canvas: ctx.getCanvas()));
+        ctx.clearRect(x: 0, y: 0, width: ctx.getCanvas().width, height: ctx.getCanvas().height);
         drawArc(ctx: ctx,points: points, r: rr)
         drawPoints(ctx: ctx,points: points)
         AnimationFrame.requestAnimationFrame(toLoop: { (id) in
@@ -285,9 +587,9 @@ class ViewController: UIViewController {
     
     func draw(ctx: CanvasRenderingContext2D) {
         let canvas = ctx.getCanvas()
-        ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 0.3))
-        let width = canvas.frame.width
-        let height = canvas.frame.height
+        ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromString: "rgba(255, 255, 255, 0.3)"))
+        let width = canvas.width
+        let height = canvas.height
         ctx.fillRect(x: 0, y: 0, width: Float(width), height: Float(height));
         ball.draw(ctx: ctx)
         ball.x += ball.vx;
@@ -365,14 +667,16 @@ class ViewController: UIViewController {
     var r  = Float(100.0) * 3 ; // Radius
     let p0 = KeyValue( x: 0, y: 50 )
     
-    let p1 = KeyValue( x: 100 , y: 100 )
-    let p2 = KeyValue( x: 150 , y: 50 )
-    let p3 = KeyValue( x: 200 , y: 100 )
+    var p1 = KeyValue( x: 100 , y: 100 )
+    var p2 = KeyValue( x: 150 , y: 50 )
+    var p3 = KeyValue( x: 200 , y: 100 )
     var t = Float(0.0)
     
     
     func arcToAnimationExample(ctx: CanvasRenderingContext2D){
-        loop(ctx: ctx, t: 0.0)
+        AnimationFrame.requestAnimationFrame(toLoop:{ (timer) in
+            self.loop(ctx: ctx, t: timer)
+        })
     }
     
     func arcToExample(ctx: CanvasRenderingContext2D) {
@@ -408,8 +712,8 @@ class ViewController: UIViewController {
     
     func clearRectExample(ctx: CanvasRenderingContext2D){
         // Draw yellow background
-        let width = Float(ctx.getCanvas().frame.size.width )
-        let height = Float(ctx.getCanvas().frame.size.height )
+        let width = ctx.getCanvas().width
+        let height = ctx.getCanvas().height
         ctx.beginPath();
         ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromHex: "#ff6"))
         ctx.fillRect(x: 0, y: 0, width: width, height: height);
@@ -433,7 +737,6 @@ class ViewController: UIViewController {
         
         ctx.font = "50px serif"
         ctx.fillText(text: "Hello world", x:50, y:190);
-        
     }
     
     func setTransformExample(ctx: CanvasRenderingContext2D){
@@ -528,7 +831,6 @@ class ViewController: UIViewController {
             let home = URL(fileURLWithPath:NSHomeDirectory())
             let rhino = home.appendingPathComponent("rhino.jpg")
             let image: UIImage?
-            print(FileManager.default.fileExists(atPath: rhino.path))
             if(!FileManager.default.fileExists(atPath: rhino.path)){
                 let data = try Data(contentsOf: URL(string: "https://mdn.mozillademos.org/files/5397/rhino.jpg")!)
                 try data.write(to: rhino)
@@ -536,7 +838,6 @@ class ViewController: UIViewController {
             }else {
                 image = UIImage(contentsOfFile: rhino.path)
             }
-            
             
             ctx.drawImage(image: image!, dx: 0,dy: 0);
         } catch  {
@@ -552,9 +853,9 @@ class ViewController: UIViewController {
     
     func solarSystemExample(ctx: CanvasRenderingContext2D){
         do{
-            let sun_url = NSURL(fileURLWithPath: NSHomeDirectory() + "/Canvas_sun.png")
-            let moon_url = NSURL(fileURLWithPath: NSHomeDirectory() + "/Canvas_moon.png")
-            let earth_url = NSURL(fileURLWithPath: NSHomeDirectory() + "/Canvas_earth.png")
+            let sun_url = NSURL(fileURLWithPath: NSTemporaryDirectory() + "/Canvas_sun.png")
+            let moon_url = NSURL(fileURLWithPath: NSTemporaryDirectory() + "/Canvas_moon.png")
+            let earth_url = NSURL(fileURLWithPath: NSTemporaryDirectory() + "/Canvas_earth.png")
             var sun = UIImage(contentsOfFile: sun_url.absoluteString!)
             var moon = UIImage(contentsOfFile: sun_url.absoluteString!)
             var earth = UIImage(contentsOfFile: sun_url.absoluteString!)
@@ -625,7 +926,7 @@ class ViewController: UIViewController {
             })
             
         }catch {
-            
+            print(error)
         }
     }
     
@@ -859,12 +1160,8 @@ class ViewController: UIViewController {
     var H: Int = 0
     
     // Function to paint the canvas black
-    func  paintCanvas(ctx: CanvasRenderingContext2D) {
-        // Set the fill color to black
+    func paintCanvas(ctx: CanvasRenderingContext2D) {
         ctx.fillStyle = CanvasColorStyle.Color(color: .black)
-        
-        // This will create a rectangle of white color from the
-        // top left (0,0) to the bottom right corner (W,H)
         ctx.fillRect(x: 0,y: 0,width: Float(W),height: Float(H));
     }
     
@@ -877,7 +1174,8 @@ class ViewController: UIViewController {
         var radius: Float = 4
         var W: Int = 0
         var H: Int = 0
-        init(width: Int, height: Int) {
+        var color: CanvasColorStyle.Color
+        init(width: Int, height: Int, color: CanvasColorStyle.Color) {
             W = width
             H = height
             x = Float.random(in: 0...1) * Float(W)
@@ -885,17 +1183,16 @@ class ViewController: UIViewController {
             
             vx = -1 + Float.random(in: 0...1) * 2;
             vy = -1 + Float.random(in: 0...1) * 2;
+            self.color = color
         }
         
         
         
         func draw (ctx: CanvasRenderingContext2D) {
-            ctx.fillStyle = CanvasColorStyle.Color(color: .white);
-            ctx.beginPath();
+            ctx.fillStyle = color
+           ctx.beginPath()
             ctx.arc(x: x, y: y, radius: Float(radius), startAngle: 0, endAngle: .pi * 2, anticlockwise: false);
-            
-            // Fill the color to the arc that we just created
-            ctx.fill();
+            ctx.fill()
         }
     }
     
@@ -910,14 +1207,14 @@ class ViewController: UIViewController {
         let count = (particleCount - 1)
         for i in 0...count {
             p = particles[i]
-            p.draw(ctx: ctx);
+            p.draw(ctx: ctx)
         }
         
         //Finally call the update function
         update(ctx: ctx);
     }
     
-    var p: Particle = Particle(width: 0, height: 0)
+    var p: Particle = Particle(width: 0, height: 0, color: CanvasColorStyle.Color(color: .white))
     func update(ctx: CanvasRenderingContext2D) {
         
         // In this function, we are first going to update every
@@ -963,29 +1260,31 @@ class ViewController: UIViewController {
         }
     }
     
-    
+    let whiteColor = CanvasColorStyle.Color(color: .white)
+    let blackColor = CanvasColorStyle.Color(color: .black)
     func distance(ctx:CanvasRenderingContext2D,p1: Particle, p2: Particle) {
         var colorIndex = 0
         let dx = p1.x - p2.x;
         let dy = p1.y - p2.y;
         
-        dist = Float.squareRoot(dx*dx + dy*dy)()
+       //dist = Float.squareRoot(dx*dx + dy*dy)()
+        dist = sqrt(dx*dx + dy*dy)
         
         // Draw the line when distance is smaller
         // then the minimum distance
         if(dist <= minDist) {
             // Draw the line
-            ctx.beginPath();
+            ctx.beginPath()
             colorIndex = Int((100.0 * dist/minDist)) + 25
-            ctx.strokeStyle =  CanvasColorStyle.Color(color: .white)
-            //        ctx.strokeStyle =   CanvasColorStyle.Color(color: UIColor(hue: 2/360, saturation: CGFloat(colorIndex/100), brightness: 0.5, alpha: (CGFloat(1.2-dist/minDist))))
+           // ctx.strokeStyle = whiteColor
+                    ctx.strokeStyle =   CanvasColorStyle.Color(color: UIColor(hue: 2/360, saturation: CGFloat(colorIndex/100), brightness: 0.5, alpha: (CGFloat(1.2-dist/minDist))))
             ctx.moveTo(x: p.x, y: p.y)
-            ctx.lineTo(x: p2.x, y: p2.y);
-            ctx.stroke();
+            ctx.lineTo(x: p2.x, y: p2.y)
+            ctx.stroke()
             
             // Some acceleration for the partcles
             // depending upon their distance
-            var ax = dx/2000,
+            let ax = dx/2000,
             ay = dy/2000;
             
             // Apply the acceleration on the particles
@@ -1004,14 +1303,12 @@ class ViewController: UIViewController {
     }
     
     func particelAnimation(ctx: CanvasRenderingContext2D){
-        W = Int(getCanvasWidth(canvas: ctx.getCanvas())  )
-        H = Int(getCanvasHeight(canvas: ctx.getCanvas()) )
+        W = Int(ctx.getCanvas().width)
+        H = Int(ctx.getCanvas().height)
         let count = (particleCount - 1)
         for _ in 0...count {
-            particles.append(Particle(width: W, height: H))
+            particles.append(Particle(width: W, height: H, color: whiteColor))
         }
-        print("particles", particles.count)
-        
         animloop(ctx:ctx)
     }
     
@@ -1022,8 +1319,8 @@ class ViewController: UIViewController {
         
         
         func draw(ctx: CanvasRenderingContext2D) {
-            let width = Float(ctx.getCanvas().frame.width )
-            let height = Float(ctx.getCanvas().frame.height  )
+            let width = ctx.getCanvas().width
+            let height = ctx.getCanvas().height
             ctx.clearRect(x: 0, y: 0, width: width, height: height);
             var count = 0;
             
@@ -1085,8 +1382,8 @@ class ViewController: UIViewController {
         
         
         func draw(ctx: CanvasRenderingContext2D) {
-            let width = Float(ctx.getCanvas().frame.width )
-            let height = Float(ctx.getCanvas().frame.height  )
+            let width = ctx.getCanvas().width
+            let height = ctx.getCanvas().height
             ctx.clearRect(x: 0, y: 0, width: width, height: height);
             
             for i in 0...23 {

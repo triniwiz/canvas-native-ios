@@ -166,7 +166,7 @@ class Colors {
 
 
 extension UIColor {
-    public convenience init(fromString string: String){
+    @objc public convenience init(fromString string: String){
         if(string.starts(with: "#")){
             let r, g, b, a: CGFloat
             let start = string.index(string.startIndex, offsetBy: 1)
@@ -243,7 +243,7 @@ extension UIColor {
             self.init(red: red, green: green, blue: blue, alpha: alpha)
         }
     }
-    public convenience init(fromHex hex: String) {
+    @objc public convenience init(fromHex hex: String) {
         var cString:String = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
         if (cString.hasPrefix("#")) {
             cString.remove(at: cString.startIndex)

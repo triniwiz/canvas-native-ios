@@ -152,17 +152,19 @@ public class Canvas: UIView, RenderListener {
     }
 
     deinit {
-
+        native_destroy(canvas)
+        canvas = 0
     }
     
-    public func getContext(type: String) -> CanvasRenderingContext? {
+    private var emptyCanvas = CanvasRenderingContext()
+    public func getContext(type: String) -> CanvasRenderingContext {
         if type.elementsEqual("2d"){
             if(renderingContext2d == nil){
                 renderingContext2d = CanvasRenderingContext2D(canvas: self)
             }
-            return renderingContext2d
+            return renderingContext2d!
         }
-        return nil
+        return emptyCanvas
     }
 
 }

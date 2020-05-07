@@ -20,6 +20,11 @@ typedef struct {
   const void *drawable;
 } CanvasDevice;
 
+typedef struct {
+  uint8_t *array;
+  size_t length;
+} NativeByteArray;
+
 long long native_arc(long long canvas_native_ptr,
                      float x,
                      float y,
@@ -80,7 +85,7 @@ long long native_create_path_from_path(long long path);
 void native_destroy(long long canvas_ptr);
 
 long long native_draw_image(long long canvas_native_ptr,
-                            uint8_t *image_array,
+                            const uint8_t *image_array,
                             size_t image_size,
                             int original_width,
                             int original_height,
@@ -89,7 +94,7 @@ long long native_draw_image(long long canvas_native_ptr,
                             void *view);
 
 long long native_draw_image_dw(long long canvas_native_ptr,
-                               uint8_t *image_array,
+                               const uint8_t *image_array,
                                size_t image_size,
                                int original_width,
                                int original_height,
@@ -100,7 +105,7 @@ long long native_draw_image_dw(long long canvas_native_ptr,
                                void *view);
 
 long long native_draw_image_dw_raw(long long canvas_native_ptr,
-                                   uint8_t *image_array,
+                                   const uint8_t *image_array,
                                    size_t image_size,
                                    int original_width,
                                    int original_height,
@@ -111,7 +116,7 @@ long long native_draw_image_dw_raw(long long canvas_native_ptr,
                                    void *view);
 
 long long native_draw_image_raw(long long canvas_native_ptr,
-                                uint8_t *image_array,
+                                const uint8_t *image_array,
                                 size_t image_size,
                                 int original_width,
                                 int original_height,
@@ -120,7 +125,7 @@ long long native_draw_image_raw(long long canvas_native_ptr,
                                 void *view);
 
 long long native_draw_image_sw(long long canvas_native_ptr,
-                               uint8_t *image_array,
+                               const uint8_t *image_array,
                                size_t image_size,
                                int original_width,
                                int original_height,
@@ -135,7 +140,7 @@ long long native_draw_image_sw(long long canvas_native_ptr,
                                void *view);
 
 long long native_draw_image_sw_raw(long long canvas_native_ptr,
-                                   uint8_t *image_array,
+                                   const uint8_t *image_array,
                                    size_t image_size,
                                    int original_width,
                                    int original_height,
@@ -204,11 +209,21 @@ CanvasArray native_get_matrix(long long matrix);
 
 long long native_image_asset_flip_x(long long asset);
 
+void native_image_asset_flip_x_in_place_owned(uint32_t width,
+                                              uint32_t height,
+                                              uint8_t *buf,
+                                              uintptr_t length);
+
 long long native_image_asset_flip_y(long long asset);
 
-void native_image_asset_free_bytes(CanvasArray data);
+void native_image_asset_flip_y_in_place_owned(uint32_t width,
+                                              uint32_t height,
+                                              uint8_t *buf,
+                                              uintptr_t length);
 
-CanvasArray native_image_asset_get_bytes(long long asset);
+void native_image_asset_free_bytes(NativeByteArray data);
+
+NativeByteArray native_image_asset_get_bytes(long long asset);
 
 const char *native_image_asset_get_error(long long asset);
 

@@ -611,9 +611,9 @@ public class WebGL2RenderingContext: WebGLRenderingContext {
     
     
     public func texImage3D(target: Int32, level: Int32, internalformat: Int32, width: Int32, height: Int32, depth: Int32, border: Int32, format: Int32, type: Int32,asset: ImageAsset) {
-       if(flipYWebGL){
-        flipInPlace3D(asset.getRawBytes(), asset.width, asset.height,depth)
-       }
+        if(flipYWebGL){
+            native_image_asset_flip_x_in_place_owned(UInt32(asset.width), UInt32(asset.height), asset.getRawBytes(), UInt(asset.length))
+        }
         glTexImage3D(GLenum(target), level, internalformat, width, height, depth, border, GLenum(format), GLenum(type), asset.getRawBytes())
     }
     
@@ -654,7 +654,7 @@ public class WebGL2RenderingContext: WebGLRenderingContext {
             let imageCtx = CGContext(data: buffer, width: image_width, height: image_height, bitsPerComponent: 8, bytesPerRow: image_width * 4, space: image.colorSpace!, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
             imageCtx!.draw(image, in: CGRect(x: 0, y: 0, width: image_width, height: image_height))
             if(flipYWebGL){
-            flipInPlace(buffer?.assumingMemoryBound(to: UInt8.self), Int32(image_width), Int32(image_height))
+                native_image_asset_flip_x_in_place_owned(UInt32(image_width), UInt32(image_height), buffer?.assumingMemoryBound(to: UInt8.self), UInt(image_width * image_height) * 4)
             }
             glTexSubImage3D(GLenum(target), level, xoffset, yoffset, zoffset, width, height, depth, GLenum(format), GLenum(type), buffer)
             buffer?.deallocate()
@@ -663,9 +663,10 @@ public class WebGL2RenderingContext: WebGLRenderingContext {
     
     
     public func texSubImage3D(target: Int32, level: Int32, xoffset: Int32, yoffset: Int32, zoffset: Int32, width: Int32, height: Int32, depth: Int32, format: Int32, type: Int32, asset: ImageAsset){
-       if(flipYWebGL){
-        flipInPlace3D(asset.getRawBytes(), asset.width, asset.height, depth)
-       }
+      
+        if(flipYWebGL){
+            native_image_asset_flip_x_in_place_owned(UInt32(asset.width), UInt32(asset.height), asset.getRawBytes(), UInt(asset.length))
+        }
         glTexSubImage3D(GLenum(target), level, xoffset, yoffset, zoffset, width, height, depth, GLenum(format), GLenum(type), asset.getRawBytes())
     }
     
@@ -685,7 +686,7 @@ public class WebGL2RenderingContext: WebGLRenderingContext {
         offsetBy(&pixels, srcOffset)
         
         if(flipYWebGL){
-         //  flipInPlace3D(&pixels, width, height)
+            native_image_asset_flip_x_in_place_owned(UInt32(width), UInt32(height), &pixels, UInt(width * height) * 4)
         }
         glTexSubImage3D(GLenum(target), level, xoffset, yoffset, zoffset, width, height, depth, GLenum(format), GLenum(type), pixels)
     }

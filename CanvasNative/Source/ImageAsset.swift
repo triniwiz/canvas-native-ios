@@ -24,6 +24,10 @@ public class ImageAsset: NSObject {
     private var _error: String?
     public func loadImageFromPath(path: String) -> Bool{
         let ptr = (path as NSString).utf8String
+        if(self.raw_data != nil){
+            native_image_asset_free_bytes(self.raw_data!)
+            self.raw_data = nil
+        }
         return native_image_asset_load_from_path(nativeAsset, ptr) != 0
     }
     
@@ -44,6 +48,10 @@ public class ImageAsset: NSObject {
     
     public func loadImageFromBytes(array: [UInt8]) -> Bool{
         var ptr = array
+        if(self.raw_data != nil){
+            native_image_asset_free_bytes(self.raw_data!)
+            self.raw_data = nil
+        }
         return native_image_asset_load_from_raw(nativeAsset, &ptr, array.count) != 0
     }
     
@@ -71,6 +79,10 @@ public class ImageAsset: NSObject {
                 cgImage = ctx.createCGImage(image, from: image.extent)
                }
                if let pixels = cgImage {
+                if(self.raw_data != nil){
+                    native_image_asset_free_bytes(self.raw_data!)
+                    self.raw_data = nil
+                }
                 
                let width = Int(pixels.width)
                                   let height = Int(pixels.height)
@@ -101,15 +113,25 @@ public class ImageAsset: NSObject {
         }
     }
     
+    var raw_data: NativeByteArray?
+    
+    var length: Int {
+        return raw_data?.length ?? (Int(width * height) * 4)
+    }
     public func getRawBytes() -> UnsafeMutablePointer<UInt8>? {
         if(nativeAsset == 0){return nil}
-        let raw = native_image_asset_get_bytes(nativeAsset)
-        var bytes = [UInt8](Data(bytes: raw.array, count: raw.length))
-        native_image_asset_free_bytes(raw)
-        
-        return bytes.withUnsafeMutableBytes { (ptr) -> UnsafeMutablePointer<UInt8>? in
-            ptr.baseAddress?.assumingMemoryBound(to: UInt8.self)
+        if(raw_data == nil){
+            raw_data = native_image_asset_get_bytes(nativeAsset)
         }
+        
+        return raw_data?.array
+        // use raw pointer directly
+       // var bytes = Data(bytes: raw.array, count: raw.length) as NSData
+       // native_image_asset_free_bytes(raw)
+   
+//        return bytes.withUnsafeMutableBytes { (ptr) -> UnsafeMutablePointer<UInt8>? in
+//            ptr.baseAddress?.assumingMemoryBound(to: UInt8.self)
+//        }
     }
     
     public var width: Int32 {
@@ -131,6 +153,10 @@ public class ImageAsset: NSObject {
             return
         }
         native_image_asset_flip_x(nativeAsset)
+        if(self.raw_data != nil){
+            native_image_asset_free_bytes(self.raw_data!)
+            self.raw_data = nil
+        }
     }
     
     public func flipY(){
@@ -139,6 +165,10 @@ public class ImageAsset: NSObject {
         }
         
         native_image_asset_flip_y(nativeAsset)
+        if(self.raw_data != nil){
+            native_image_asset_free_bytes(self.raw_data!)
+            self.raw_data = nil
+        }
     }
     
     public func scale(x: UInt32, y: UInt32){
@@ -146,6 +176,11 @@ public class ImageAsset: NSObject {
             return
         }
         native_image_asset_scale(nativeAsset, x, y)
+        
+        if(self.raw_data != nil){
+            native_image_asset_free_bytes(self.raw_data!)
+            self.raw_data = nil
+        }
     }
     
     public func save(path: String,format: ImageAssetFormat)-> Bool{
@@ -172,12 +207,19 @@ public class ImageAsset: NSObject {
         if(nativeAsset == 0){
             return nil
         }
-        return String(cString: native_image_asset_get_error(nativeAsset))
+        let cStr = native_image_asset_get_error(nativeAsset)
+        if(cStr == nil){return nil}
+        return String(cString: cStr!)
     }
     
     deinit {
+       if(self.raw_data != nil){
+           native_image_asset_free_bytes(self.raw_data!)
+           self.raw_data = nil
+       }
         if(nativeAsset != 0){
             native_image_asset_release(nativeAsset)
+            nativeAsset = 0
         }
     }
 }

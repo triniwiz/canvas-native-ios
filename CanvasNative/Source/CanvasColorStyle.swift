@@ -87,12 +87,13 @@ public class CanvasColorStyle: NSObject {
         var color: UIColor
         @objc public init(color: UIColor?) {
             if(color == nil){
-                self.color = .black
+                self.color = UIColor.black
             }else {
                 self.color = color!
             }
         }
-
+        
+        
         public func getStyleType() -> CanvasColorStyleType {
             return .Color
         }
@@ -117,7 +118,8 @@ public class CanvasColorStyle: NSObject {
             }
             gradientMap[offset] = Int(color.colorCode)
         }
-
+        
+    
         func getPostions() -> [Float] {
             return Array(gradientMap.allKeys) as! [Float]
         }

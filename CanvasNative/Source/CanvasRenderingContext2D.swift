@@ -193,6 +193,7 @@
                 _textAlign = newValue
             }
         }
+        
         public var fillStyle: ICanvasColorStyle {
             get {
                 return _fillStyle
@@ -201,33 +202,15 @@
                 switch newValue.getStyleType() {
                 case .Color:
                     let fill = newValue as! CanvasColorStyle.Color
-                    let cgColor = fill.color.cgColor
-                    let components = cgColor.components
-                    let count = components?.count ?? 0
-                    var r = UInt8(0)
-                    var g = UInt8(0)
-                    var b = UInt8(0)
-                    var a = UInt8(255)
-                    if(count > 0){
-                        r = UInt8((components?[0] ?? 0) * 255.0)
-                        if(count == 2){
-                            g = r
-                            b = r
+                    if let current = _fillStyle as? CanvasColorStyle.Color{
+                        if(current.color.isSame(fill.color)){
+                            return
                         }
                     }
-                    if(count > 2){
-                        if(count > 1){
-                            g = UInt8((components?[1] ?? 0) * 255.0)
-                        }
-                        
-                        if(count > 2){
-                            b = UInt8((components?[2] ?? 0) * 255.0)
-                        }
-                        if(count > 3){
-                            a = UInt8((components?[3] ?? 0) * 255.0)
-                        }
+                    if(!fill.color.isCached){
+                        fill.color.cacheColor()
                     }
-                    canvas.canvas = native_set_fill_color_rgba(canvas.canvas, r, g, b, a)
+                    canvas.canvas = native_set_fill_color_rgba(canvas.canvas, fill.color.red, fill.color.green, fill.color.blue, fill.color.alpha)
                     _fillStyle = newValue
                 case .Gradient:
                     let isLinear = newValue as? CanvasColorStyle.LinearGradient
@@ -274,33 +257,15 @@
                 switch newValue.getStyleType() {
                 case .Color:
                     let fill = newValue as! CanvasColorStyle.Color
-                    let cgColor = fill.color.cgColor
-                    let components = cgColor.components
-                    let count = components?.count ?? 0
-                    var r = UInt8(0)
-                    var g = UInt8(0)
-                    var b = UInt8(0)
-                    var a = UInt8(255)
-                    if(count > 0){
-                        r = UInt8((components?[0] ?? 0) * 255.0)
-                        if(count == 2){
-                            g = r
-                            b = r
+                    if let current = _strokeStyle as? CanvasColorStyle.Color{
+                        if(current.color.isSame(fill.color)){
+                            return
                         }
                     }
-                    if(count > 2){
-                        if(count > 1){
-                            g = UInt8((components?[1] ?? 0) * 255.0)
-                        }
-                        
-                        if(count > 2){
-                            b = UInt8((components?[2] ?? 0) * 255.0)
-                        }
-                        if(count > 3){
-                            a = UInt8((components?[3] ?? 0) * 255.0)
-                        }
+                    if(!fill.color.isCached){
+                        fill.color.cacheColor()
                     }
-                    canvas.canvas = native_set_stroke_color_rgba(canvas.canvas, r, g, b, a)
+                    canvas.canvas = native_set_stroke_color_rgba(canvas.canvas, fill.color.red, fill.color.green, fill.color.blue, fill.color.alpha)
                     _strokeStyle = newValue
                 case .Gradient:
                     let isLinear = newValue as? CanvasColorStyle.LinearGradient
@@ -342,7 +307,6 @@
         }
         
         public func strokeRect(x: Float, y: Float, width: Float, height: Float) {
-            
             canvas.canvas = native_stroke_rect(canvas.canvas, x, y, width, height,self.canvas.getViewPtr())
             canvas.doDraw()
         }
@@ -516,8 +480,16 @@
             canvas.canvas = native_quadratic_curve_to(canvas.canvas, cpx, cpy, x, y)
         }
         
-        public func drawImage(image: UIImage, dx: Float, dy: Float){
+        public func drawImage(asset image: ImageAsset, dx: Float, dy: Float){
+            let size = image.width * image.height * 4
+            let width = image.width
+            let height = image.height
+            canvas.canvas = native_draw_image_raw(canvas.canvas, image.getRawBytes(), Int(size), Int32(width),Int32(height), dx, dy,self.canvas.getViewPtr())
             
+            canvas.doDraw()
+        }
+        
+        public func drawImage(image: UIImage, dx: Float, dy: Float){
             let cgRef = image.cgImage
             var data = image.pngData() ?? Data()
             let width = cgRef?.width ?? 0
@@ -529,16 +501,28 @@
             let context = CGContext(data: &data, width:width, height: height, bitsPerComponent: bitsPerComponent, bytesPerRow: bytesPerRow, space: colorSpace, bitmapInfo: bitmapInfo.rawValue)
             if context != nil {
                 
-                let count = data.count / MemoryLayout<UInt8>.size
+                /*let count = data.count / MemoryLayout<UInt8>.size
                 // create an array of Uint8
                 var byteArray = [UInt8](repeating: 0, count: count)
                 // copy bytes into array
                 
                 data.copyBytes(to: &byteArray, count: count)
-                canvas.canvas = native_draw_image(canvas.canvas, &byteArray, count, Int32(width),Int32(height), dx, dy,self.canvas.getViewPtr())
+                */
+                var byteArray = [UInt8](data)
+                canvas.canvas = native_draw_image(canvas.canvas, &byteArray, data.count, Int32(width),Int32(height), dx, dy,self.canvas.getViewPtr())
                 canvas.doDraw()
             }
         }
+        
+        
+        public func drawImage(asset image: ImageAsset, dx: Float, dy: Float, dWidth: Float, dHeight: Float){
+            let size = image.width * image.height * 4
+                     let width = image.width
+                     let height = image.height
+            
+            canvas.canvas = native_draw_image_dw_raw(canvas.canvas, image.getRawBytes(), Int(size),Int32(width),Int32(height), dx, dy,dWidth,dHeight,self.canvas.getViewPtr())
+            canvas.doDraw()
+               }
         
         public func drawImage(image: UIImage, dx: Float, dy: Float, dWidth: Float, dHeight: Float){
             let cgRef = image.cgImage
@@ -551,21 +535,33 @@
             let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.noneSkipFirst.rawValue)
             let context = CGContext(data: &data, width:width, height: height, bitsPerComponent: bitsPerComponent, bytesPerRow: bytesPerRow, space: colorSpace, bitmapInfo: bitmapInfo.rawValue)
             if context != nil {
-                let count = data.count / MemoryLayout<UInt8>.size
+                /*let count = data.count / MemoryLayout<UInt8>.size
                 
                 // create an array of Uint8
                 var byteArray = [UInt8](repeating: 0, count: count)
                 // copy bytes into array
                 
                 data.copyBytes(to: &byteArray, count: count)
+                */
+                var byteArray = [UInt8](data)
                 canvas.canvas = native_draw_image_dw(canvas.canvas, &byteArray, data.count,Int32(width),Int32(height), dx, dy,dWidth,dHeight,self.canvas.getViewPtr())
                 canvas.doDraw()
             }
         }
         
+        public func drawImage(asset image: ImageAsset, sx: Float, sy: Float, sWidth: Float, sHeight: Float, dx: Float, dy: Float, dWidth: Float, dHeight: Float){
+            
+            let size = image.width * image.height * 4
+                                let width = image.width
+                                let height = image.height
+            canvas.canvas = native_draw_image_sw_raw(canvas.canvas, image.getRawBytes(),Int(size), Int32(width), Int32(height), sx, sy,sWidth, sHeight, dx, dy, dWidth, dHeight,self.canvas.getViewPtr())
+            canvas.doDraw()
+            
+        }
+        
+        
         
         public func drawImage(image: UIImage, sx: Float, sy: Float, sWidth: Float, sHeight: Float, dx: Float, dy: Float, dWidth: Float, dHeight: Float){
-            
             let cgRef = image.cgImage
             var data = image.pngData() ?? Data()
             let width = cgRef?.width ?? 0
@@ -576,13 +572,16 @@
             let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.noneSkipFirst.rawValue)
             let context = CGContext(data: &data, width:width, height: height, bitsPerComponent: bitsPerComponent, bytesPerRow: bytesPerRow, space: colorSpace, bitmapInfo: bitmapInfo.rawValue)
             if context != nil {
-                let count = data.count / MemoryLayout<UInt8>.size
+              /* let count = data.count / MemoryLayout<UInt8>.size
                 
                 // create an array of Uint8
                 var byteArray = [UInt8](repeating: 0, count: count)
                 // copy bytes into array
                 
                 data.copyBytes(to: &byteArray, count: count)
+                
+                */
+                var byteArray = [UInt8](data)
                 canvas.canvas = native_draw_image_sw(canvas.canvas, &byteArray, data.count, Int32(width), Int32(height), sx, sy,sWidth, sHeight, dx, dy, dWidth, dHeight,self.canvas.getViewPtr())
                 canvas.doDraw()
             }
@@ -611,6 +610,7 @@
         
         public func putImageData(imageData: ImageData, dx: Float, dy: Float, dirtyX: Float, dirtyY: Float, dirtyWidth:Int, dirtyHeight: Int){
             
+            /*
             let count = imageData.data.count / MemoryLayout<UInt8>.size
             
             // create an array of Uint8
@@ -619,7 +619,11 @@
             
             imageData.data.copyBytes(to: &byteArray, count: count)
             
-            canvas.canvas = native_put_image_data(canvas.canvas, imageData.width, imageData.height, &byteArray, count, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight)
+            */
+            
+            var byteArray = [UInt8](imageData.data)
+            
+            canvas.canvas = native_put_image_data(canvas.canvas, imageData.width, imageData.height, &byteArray, byteArray.count, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight)
             canvas.doDraw()
             
         }

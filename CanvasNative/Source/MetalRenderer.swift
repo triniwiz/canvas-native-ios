@@ -46,6 +46,8 @@ public class MetalRenderer:NSObject, Renderer, MTKViewDelegate {
         }
     }
     
+    public var contextType: ContextType = .none
+    
     public func draw(in view: MTKView) {
         view.clearColor = MTLClearColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
         if(!pending) {return}
@@ -111,5 +113,14 @@ public class MetalRenderer:NSObject, Renderer, MTKViewDelegate {
     public func render() {
         pending = true
         self.mtlView.setNeedsDisplay()
+    }
+    
+    public func pause(){
+    
+    }
+    
+    public func resume(){}
+    public func flush(){
+        render()
     }
 }

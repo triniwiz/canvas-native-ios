@@ -13,7 +13,7 @@ import MetalKit
 @objcMembers
 @objc(Canvas)
 public class Canvas: UIView, RenderListener {
-    
+    var displayLink: CADisplayLink?
     var ptr: UnsafeMutableRawPointer?
     public func getViewPtr() -> UnsafeMutableRawPointer? {
         if(ptr == nil && !isGL && renderer != nil){
@@ -25,7 +25,23 @@ public class Canvas: UIView, RenderListener {
     public static func createSVGMatrix() -> CanvasDOMMatrix{
         CanvasDOMMatrix()
     }
-    
+    var _handleInvalidationManually: Bool = false
+    public var handleInvalidationManually: Bool {
+        get {
+            return _handleInvalidationManually
+        }
+        set {
+            _handleInvalidationManually = newValue
+            if(newValue){
+                displayLink?.invalidate()
+                displayLink = nil
+                _fps = 0
+            }else {
+                displayLink = CADisplayLink(target: self, selector: #selector(handleAnimation))
+                displayLink?.add(to: .main, forMode: .common)
+            }
+        }
+    }
     public func didDraw() {
         if(dataURLCallbacks.count == 0) {return}
         DispatchQueue.main.async {
@@ -43,12 +59,12 @@ public class Canvas: UIView, RenderListener {
     
     public func toDataURL(type: String) -> String {
         return toDataURL(type: type, format: 0.92)
-       }
+    }
     
     public func toDataURL(type: String, format: Float) -> String {
-           let result = native_to_data_url(canvas, type, format)
-           let data = String(cString: result!)
-           return data
+        let result = native_to_data_url(canvas, type, format)
+        let data = String(cString: result!)
+        return data
     }
     
     
@@ -59,7 +75,7 @@ public class Canvas: UIView, RenderListener {
     public func toDataURLAsync(type: String, callback: @escaping (String) -> Void) {
         toDataURLAsync(type: type, format: 0.92, callback: callback)
     }
-        
+    
     private var dataURLCallbacks: [DataURLRequest] = []
     
     public func toDataURLAsync(type: String, format: Float, callback: @escaping (String) -> Void) {
@@ -67,6 +83,7 @@ public class Canvas: UIView, RenderListener {
     }
     
     var _isGL: Bool = false
+    var isDirty: Bool = false
     public var isGL: Bool {
         get {
             return _isGL
@@ -89,6 +106,7 @@ public class Canvas: UIView, RenderListener {
         }
     }
     
+    
     var didWait: Bool = false
     var renderer: Renderer?
     public var canvas: Int64 {
@@ -107,11 +125,18 @@ public class Canvas: UIView, RenderListener {
             renderer?.canvasState = newValue
         }
     }
-    private var renderingContext2d: CanvasRenderingContext?
+    var renderingContext2d: CanvasRenderingContext?
+    var renderingContextWebGL: CanvasRenderingContext?
+    var renderingContextWebGL2: CanvasRenderingContext?
     public func doDraw() {
-        renderer?.render()
+        if(handleInvalidationManually){return}
+        isDirty = true
     }
-
+    
+    public func flush(){
+        renderer?.flush()
+    }
+    
     var useGL: Bool = false
     func setup(){
         if(useGL){
@@ -125,35 +150,76 @@ public class Canvas: UIView, RenderListener {
             addSubview(view)
         }
     }
-    public override init(frame frameRect: CGRect) {
-        super.init(frame: frameRect)
-        setup()
-        renderer?.view.frame = frameRect
-    }
     
     public init(frame: CGRect, useGL: Bool) {
         self.useGL = useGL
         super.init(frame: frame)
+        self.isOpaque = true
+        self.displayLink = CADisplayLink(target: self, selector: #selector(handleAnimation))
+        self.displayLink?.preferredFramesPerSecond = 60
+        self.displayLink?.add(to: .main, forMode: .common)
         setup()
         renderer?.view.frame = frame
-        self.isOpaque = false
+        renderer?.updateSize()
+        NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: nil) { _ in
+            self.displayLink?.invalidate()
+            self.displayLink = nil
+            self._fps = 0
+        }
+        
+        NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: nil) { _ in
+            if(self.displayLink == nil){
+                self.displayLink = CADisplayLink(target: self, selector: #selector(self.handleAnimation))
+                self.displayLink?.add(to: .main, forMode: .common)
+            }
+        }
     }
     
-    public override func layoutSubviews() {
-        renderer?.view.frame = frame
-        renderer?.updateSize()
+    var _fps: Float = 0
+    public var fps: Float {
+        get {
+            return _fps
+        }
+    }
+    
+    @objc func handleAnimation(displayLink: CADisplayLink){
+        self._fps = Float(1 / (displayLink.targetTimestamp - displayLink.timestamp))
+        if(isDirty){
+            renderer?.render()
+            isDirty = false
+        }
+    }
+    
+    public override var frame: CGRect {
+        willSet {
+            renderer?.view.frame = newValue
+            renderer?.updateSize()
+        }
     }
     
     required init(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    @objc func doAnimation(displayLink: CADisplayLink){
-    }
-
+    
     deinit {
-        native_destroy(canvas)
-        canvas = 0
+        if(canvas > 0){
+            renderer?.resume()
+            native_destroy(canvas)
+            canvas = 0
+        }
+    }
+    
+    public func resume(){
+        self.displayLink = CADisplayLink(target: self, selector: #selector(self.handleAnimation))
+        self.displayLink?.add(to: .main, forMode: .common)
+        renderer?.resume()
+    }
+    public func pause(){
+        displayLink?.invalidate()
+        displayLink = nil
+        _fps = 0
+        renderer?.pause()
     }
     
     private var emptyCanvas = CanvasRenderingContext()
@@ -162,11 +228,29 @@ public class Canvas: UIView, RenderListener {
             if(renderingContext2d == nil){
                 renderingContext2d = CanvasRenderingContext2D(canvas: self)
             }
+            renderer?.contextType = .twoD
             return renderingContext2d!
+        }else if(type.elementsEqual("webgl")){
+            if(renderingContextWebGL == nil){
+                renderingContextWebGL = WebGLRenderingContext(canvas: self)
+            }
+            renderer?.contextType = .webGL
+            return renderingContextWebGL!
+        }else if(type.elementsEqual("webgl2")){
+            if let render = renderer as? GLRenderer {
+                if(render.context.api != .openGLES3){
+                    return emptyCanvas
+                }
+            }
+            if(renderingContextWebGL2 == nil){
+                renderingContextWebGL2 = WebGL2RenderingContext(canvas: self)
+            }
+            renderer?.contextType = .webGL
+            return renderingContextWebGL2!
         }
         return emptyCanvas
     }
-
+    
 }
 
 extension String {

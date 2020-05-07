@@ -23,35 +23,703 @@ class ViewController: UIViewController {
     
     var drawn = false
     var count = 0
-    func drawAll() {
-        let ctx = canvas1?.getContext(type: "2d") as! CanvasRenderingContext2D
-     // drawImageBlock(ctx: ctx)
-      //  drawImageExample(ctx: ctx)
-      // doSolarAnimation(ctx: ctx)
-     //   drawFace(ctx: ctx)
-    // fontExample(ctx: ctx)
-      //  arcToAnimationExample(ctx: ctx)
-      //saveRestoreExample(ctx: ctx)
+    
+    var vertexShaderSource = """
+        void main() {
+            gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+            gl_PointSize = 256.0;
+        }
+    """
+    var fragmentShaderSource = """
+        precision mediump float;
+            void main() {
+                vec2 fragmentPosition = 2.0*gl_PointCoord - 1.0;
+                float distance = length(fragmentPosition);
+                float distanceSqrd = distance * distance;
+                gl_FragColor = vec4(
+                    0.2/distanceSqrd,
+                    0.1/distanceSqrd,
+                    0.0, 1.0 );
+                }
+    """
+    
+    
+    
+    var vertCode = """
+    attribute vec3 position;
+    uniform mat4 Pmatrix;
+    uniform mat4 Vmatrix;
+    uniform mat4 Mmatrix;
+    attribute vec3 color;
+    varying vec3 vColor;
+    void main() {
+    gl_Position = Pmatrix*Vmatrix*Mmatrix*vec4(position, 1.0);
+    vColor = color;
+    }
+    """
+    
+    var fragCode = """
+    precision mediump float;
+    varying vec3 vColor;
+    void main() {
+    gl_FragColor = vec4(vColor, 1.0);
+    }
+    """
+    var buffer: UInt32?
+    var gl: WebGLRenderingContext?
+    var program : UInt32?
+    func initializeAttributes(gl: WebGLRenderingContext?) {
+        gl!.enableVertexAttribArray(index: 0)
+        buffer = gl!.createBuffer()
+        gl!.bindBuffer(target: gl!.ARRAY_BUFFER, buffer: buffer!)
+        let data: [Float] = [0.0, 0.0]
+        gl!.bufferData(target: gl!.ARRAY_BUFFER, floatArray: data, usage: gl!.STATIC_DRAW)
+        gl!.vertexAttribPointer(index: 0, size: 2, type: gl!.FLOAT, normalized: false, stride: 0, offset: 0);
+    }
+    
+    func cleanup(gl: WebGLRenderingContext?){
+        gl!.useProgram(program: 0)
+        if (buffer != nil){
+            gl!.deleteBuffer(buffer: buffer!)
+        }
+        if (program != nil){
+            gl!.deleteProgram(program: program!)
+        }
+        
+    }
+    
+    
+    
+    
+    func drawGL(canvas: Canvas){
+        var gl = canvas.getContext(type: "webgl") as! WebGLRenderingContext
+        gl.viewport(x: 0, y: 0,
+        width: gl.drawingBufferWidth, height: gl.drawingBufferHeight)
+        
+        let vertexShader = gl.createShader(type: gl.VERTEX_SHADER)
+        gl.shaderSource(shader: vertexShader,source: vertexShaderSource)
+        gl.compileShader(shader: vertexShader)
+        let fragmentShader = gl.createShader(type: gl.FRAGMENT_SHADER)
+        gl.shaderSource(shader: fragmentShader,source: fragmentShaderSource)
+        gl.compileShader(shader: fragmentShader)
+        let program = gl.createProgram()
+        gl.attachShader(program: program, shader: vertexShader)
+        gl.attachShader(program: program, shader: fragmentShader)
+        gl.linkProgram(program: program)
+        gl.detachShader(program: program, shader: vertexShader)
+        gl.detachShader(program: program, shader: fragmentShader)
+        gl.deleteShader(shader: vertexShader)
+        gl.deleteShader(shader: fragmentShader)
+        
+        
+        if (!(gl.getProgramParameter(program: program, pname: gl.LINK_STATUS) as! Bool)) {
+        let linkErrLog = gl.getProgramInfoLog(program: program)
+        print("error", linkErrLog)
+            cleanup(gl: gl)
+        }
+        
+        initializeAttributes(gl: gl)
+        gl.useProgram(program: program)
+        gl.drawArrays(mode: gl.POINTS, first: 0, count: 1)
+        cleanup(gl: gl)
+        canvas1?.flush()
+    }
+    
+    func clearExample(ctx: CanvasRenderingContext2D) {
+        ctx.beginPath()
+        ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromString: "#ff6"))
+        ctx.fillRect(x: 0, y: 0, width: canvas1!.width, height: canvas1!.height)
 
-      // ballExample(ctx: ctx)
+        // Draw blue triangle
+        ctx.beginPath();
+        ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromString: "blue"))
+        ctx.moveTo(x: 20, y: 20)
+        ctx.lineTo(x: 180, y: 20)
+        ctx.lineTo(x: 130, y: 130)
+        ctx.closePath()
+        ctx.fill()
+
+        // Clear part of the canvas
+        ctx.clearRect(x: 10, y: 10, width: 120, height: 100)
+    }
+    
+    
+    func drawAll() {
+      gl = (canvas1?.getContext(type: "webgl")  as! WebGLRenderingContext)
+       // canvas1?.handleInvalidationManually = true
+        
+       // drawPoints(canvas: canvas1!)
+        
+        drawRotatingCube(gl: gl!)
+        
+       // drawRotatingCube(gl: gl!)
+       
+     // drawGL(canvas: canvas1!) // sun
+        
+       // drawTextures(canvas: canvas1!)
+        
+       // canvas1?.handleInvalidationManually = true
+        
+       // drawPoints(canvas: canvas1!)
+      // canvas1?.handleInvalidationManually = true
+       // let ctx = canvas1?.getContext(type: "2d") as! CanvasRenderingContext2D
+       // clearExample(ctx: ctx)
+        //drawImageExample(ctx: ctx)
+       // canvas1?.flush()
+      //  drawImageBlock(ctx: ctx)
+        //  doSolarAnimation(ctx: ctx)
+        //  drawFace(ctx: ctx)
+        // fontExample(ctx: ctx)
+       // arcToAnimationExample(ctx: ctx)
+        //  saveRestoreExample(ctx: ctx)
+        //ballExample(ctx: ctx)
         
         //ctx.fillRect(x: 200, y: 10, width: 200, height: 200);
-       // scaleTransformation(ctx: ctx)
-      particelAnimation(ctx: ctx)
-//        canvas1!.toDataURLAsync { (data) in
-//           print("data: ", data)
-//        }
+        // scaleTransformation(ctx: ctx)
+        //particleAnimation(ctx: ctx)
+        //        canvas1!.toDataURLAsync { (data) in
+        //           print("data: ", data)
+        //        }
     }
+    
+    var vertCode2 = """
+                   attribute vec3 coordinates;
+                       void main() {
+                       gl_Position = vec4(coordinates, 1.0);
+                       gl_PointSize = 10.0;
+       }
+"""
+    
+    var fragCode2 = """
+    void main() {
+       gl_FragColor = vec4(0.0, 0.0, 0.0, 0.1);
+    }
+"""
+    
+    func drawPoints(canvas: Canvas){
+        let gl = canvas.getContext(type: "webgl") as! WebGLRenderingContext
+
+                /*==========Defining and storing the geometry=======*/
+
+        let vertices: [Float] = [
+                   -0.5,0.5,0.0,
+                   0.0,0.5,0.0,
+                   -0.25,0.25,0.0,
+                ]
+
+                // Create an empty buffer object to store the vertex buffer
+        let vertex_buffer = gl.createBuffer();
+     
+
+                //Bind appropriate array buffer to it
+        gl.bindBuffer(target: gl.ARRAY_BUFFER, buffer: vertex_buffer);
+        
+
+                // Pass the vertex data to the buffer
+        gl.bufferData(target: gl.ARRAY_BUFFER, floatArray: vertices, usage: gl.STATIC_DRAW);
+
+                // Unbind the buffer
+       gl.bindBuffer(target: gl.ARRAY_BUFFER, buffer: 0)
+
+                /*=========================Shaders========================*/
+
+                // vertex shader source code
+           
+
+                // Create a vertex shader object
+        let vertShader = gl.createShader(type: gl.VERTEX_SHADER);
+                
+                // Attach vertex shader source code
+        gl.shaderSource(shader: vertShader, source: vertCode2);
+
+                // Compile the vertex shader
+        gl.compileShader(shader: vertShader);
+
+                // fragment shader source code
+                
+
+                // Create fragment shader object
+        let fragShader = gl.createShader(type: gl.FRAGMENT_SHADER);
+
+                // Attach fragment shader source code
+        gl.shaderSource(shader: fragShader, source: fragCode2);
+
+                // Compile the fragmentt shader
+        gl.compileShader(shader: fragShader);
+                
+                // Create a shader program object to store
+                // the combined shader program
+        let shaderProgram = gl.createProgram();
+
+                // Attach a vertex shader
+        gl.attachShader(program: shaderProgram, shader: vertShader);
+
+                // Attach a fragment shader
+        gl.attachShader(program: shaderProgram, shader: fragShader);
+
+                // Link both programs
+        gl.linkProgram(program: shaderProgram);
+        
+        
+        let linked = gl.getProgramParameter(program: shaderProgram, pname: gl.LINK_STATUS) as! Bool
+               if (!linked) {
+                 // something went wrong with the link
+                   let lastError = gl.getProgramInfoLog(program: shaderProgram);
+                 print("Error in program linking:" + lastError);
+
+                   gl.deleteProgram(program: shaderProgram);
+                 return
+               }
+
+                // Use the combined shader program object
+        gl.useProgram(program: shaderProgram);
+
+                /*======== Associating shaders to buffer objects ========*/
+
+                // Bind vertex buffer object
+        gl.bindBuffer(target: gl.ARRAY_BUFFER, buffer: vertex_buffer);
+
+                // Get the attribute location
+        let coord = gl.getAttribLocation(program: shaderProgram, name: "coordinates");
+                // Point an attribute to the currently bound VBO
+        gl.vertexAttribPointer(index: coord, size: 3, type: gl.FLOAT, normalized: false, stride: 0, offset: 0);
+
+                // Enable the attribute
+        gl.enableVertexAttribArray(index: coord);
+
+                /*============= Drawing the primitive ===============*/
+
+                // Clear the canvas
+        gl.clearColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 0.9);
+
+                // Enable the depth test
+        gl.enable(cap: gl.DEPTH_TEST);
+        
+                // Clear the color buffer bit
+        gl.clear(mask: UInt32(gl.COLOR_BUFFER_BIT));
+   
+                // Set the view port
+        gl.viewport(x: 0,y: 0,width: Int32(canvas.width),height: Int32(canvas.height));
+
+                // Draw the triangle
+        gl.drawArrays(mode: gl.POINTS, first: 0, count: 3);
+        canvas1?.flush()
+    }
+    
+    
+    
+    func drawTextures(canvas: Canvas) {
+        let gl = canvas.getContext(type: "webgl") as! WebGLRenderingContext
+    
+        let vertexShaderSrc = """
+      attribute vec2 a_position;
+      uniform vec2 u_resolution;
+      void main() {
+         vec2 zeroToOne = a_position / u_resolution;
+         vec2 zeroToTwo = zeroToOne * 2.0;
+         vec2 clipSpace = zeroToTwo - 1.0;
+         gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
+        }
+    """
+
+        let fragmentShaderSrc = """
+         precision mediump float;
+         uniform vec4 u_color;
+         void main() {
+            gl_FragColor = u_color;
+         }
+         """
+
+        // setup GLSL program
+
+        let vertexShader = gl.createShader(type: gl.VERTEX_SHADER);
+        gl.shaderSource(shader: vertexShader, source: vertexShaderSrc);
+        gl.compileShader(shader: vertexShader);
+
+        var compiled = gl.getShaderParameter(shader: vertexShader, pname: gl.COMPILE_STATUS) as! Bool
+        if (!compiled) {
+          // Something went wrong during compilation; get the error
+            let lastError = gl.getShaderInfoLog(shader: vertexShader);
+          print(
+            "*** Error compiling vertexShader ", vertexShader, ":" , lastError
+          )
+            gl.deleteShader(shader: vertexShader)
+          return
+        }
+
+        let fragmentShader = gl.createShader(type: gl.FRAGMENT_SHADER);
+        gl.shaderSource(shader: fragmentShader, source: fragmentShaderSrc);
+        gl.compileShader(shader: fragmentShader);
+
+        compiled = gl.getShaderParameter(shader: fragmentShader, pname: gl.COMPILE_STATUS) as! Bool
+        if (!compiled) {
+          // Something went wrong during compilation; get the error
+            let lastError = gl.getShaderInfoLog(shader: fragmentShader);
+          print(
+            "*** Error compiling fragmentShader ",
+              fragmentShader,
+              ":",
+              lastError
+          );
+            gl.deleteShader(shader: fragmentShader);
+          return;
+        }
+
+        let program = gl.createProgram();
+
+        gl.attachShader(program: program, shader: vertexShader);
+        gl.attachShader(program: program, shader: fragmentShader);
+        gl.linkProgram(program: program);
+
+        // Check the link status
+        let linked = gl.getProgramParameter(program: program, pname: gl.LINK_STATUS) as! Bool
+        if (!linked) {
+          // something went wrong with the link
+            let lastError = gl.getProgramInfoLog(program: program);
+          print("Error in program linking:" + lastError);
+
+            gl.deleteProgram(program: program);
+          return
+        }
+
+        // look up where the vertex data needs to go.
+        let positionAttributeLocation = gl.getAttribLocation(program: program, name: "a_position");
+
+        // look up uniform locations
+        let resolutionUniformLocation = gl.getUniformLocation(
+            program: program,
+            name: "u_resolution"
+        );
+   
+        let colorUniformLocation = gl.getUniformLocation(program: program, name: "u_color");
+
+        // Create a buffer to put three 2d clip space points in
+        let positionBuffer = gl.createBuffer();
+
+        // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = positionBuffer)
+        gl.bindBuffer(target: gl.ARRAY_BUFFER, buffer: positionBuffer);
+
+        print(gl.drawingBufferWidth, gl.drawingBufferHeight)
+        // Tell WebGL how to convert from clip space to pixels
+        gl.viewport(x: 0, y: 0, width: gl.drawingBufferWidth, height: gl.drawingBufferHeight);
+
+        // Clear the canvas
+        gl.clearColor(red: 1, green: 1, blue: 1, alpha: 1);
+        gl.clear(mask: UInt32(gl.COLOR_BUFFER_BIT));
+
+        // Tell it to use our program (pair of shaders)
+        gl.useProgram(program: program);
+
+        // Bind the position buffer.
+        gl.bindBuffer(target: gl.ARRAY_BUFFER, buffer: positionBuffer);
+
+        // create the buffer
+        let indexBuffer = gl.createBuffer();
+  
+
+        // make this buffer the current 'ELEMENT_ARRAY_BUFFER'
+        gl.bindBuffer(target: gl.ELEMENT_ARRAY_BUFFER, buffer: indexBuffer);
+
+        // Fill the current element array buffer with data
+        let indices: [UInt16] = [
+          0,
+          1,
+          2, // first triangle
+          2,
+          1,
+          3, // second triangle
+        ]
+        
+        gl.bufferData(
+            target: gl.ELEMENT_ARRAY_BUFFER,
+            shortArray: indices,
+            usage: gl.STATIC_DRAW
+        )
+
+        // code above this line is initialization code
+        // --------------------------------
+        // code below this line is rendering code
+
+        // Turn on the attribute
+        gl.enableVertexAttribArray(index: positionAttributeLocation);
+
+        // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
+        var size = 2; // 2 components per iteration
+        var type = gl.FLOAT; // the data is 32bit floats
+        var normalize = false; // don't normalize the data
+        var stride = 0; // 0 = move forward size * sizeof(type) each iteration to get the next position
+        var offset = 0; // start at the beginning of the buffer
+        
+        gl.vertexAttribPointer(
+            index: positionAttributeLocation,
+            size: Int32(size),
+            type: type,
+            normalized: normalize,
+            stride: Int32(stride),
+            offset: offset
+        );
+
+        // bind the buffer containing the indices
+        gl.bindBuffer(target: gl.ELEMENT_ARRAY_BUFFER, buffer: indexBuffer);
+
+        // set the resolution
+        gl.uniform2f(
+            location: resolutionUniformLocation,
+            v0: Float(gl.drawingBufferWidth),
+            v1: Float(gl.drawingBufferHeight)
+        );
+
+        // draw 50 random rectangles in random colors
+        for i in 0 ... 50 {
+            // Setup a random rectangle
+            // This will write to positionBuffer because
+            // its the last thing we bound on the ARRAY_BUFFER
+            // bind point
+            setRectangle(
+                gl: gl,
+                x: randomInt(range: 300),
+                y: randomInt(range: 300),
+                width: randomInt(range: 300),
+                height: randomInt(range: 300)
+            );
+
+            // Set a random color.
+            gl.uniform4f(
+                location: colorUniformLocation,
+                v0: Float.random(in: 0 ... 1),
+                v1: Float.random(in: 0 ... 1),
+                v2: Float.random(in: 0 ... 1),
+                v3: 1
+            );
+
+            // Draw the rectangle.
+            let primitiveType = gl.TRIANGLES
+            let offset = 0
+            let count = 6
+            let indexType = gl.UNSIGNED_SHORT
+            gl.drawElements(mode: primitiveType, count: Int32(count), type: indexType, offset: Int32(offset));
+        }
+     
+        canvas.flush()
+      }
+
+      // Returns a random integer from 0 to range - 1.
+    func randomInt(range: Float) -> Float{
+        return floor(Float.random(in: -1 ... 0) * range)
+      }
+
+      // Fill the buffer with the values that define a rectangle.
+    func setRectangle(gl: WebGLRenderingContext, x: Float, y: Float, width: Float, height: Float) {
+        let x1 = x;
+        let x2 = x + width;
+        let y1 = y;
+        let y2 = y + height;
+        gl.bufferData(
+            target: gl.ARRAY_BUFFER,
+            floatArray: [x1, y1, x2, y1, x1, y2, x2, y2],
+            usage: gl.STATIC_DRAW
+        );
+      }
+
+    
+    
+    
+    func drawRotatingCube(gl: WebGLRenderingContext){
+        let width = gl.getCanvas().width
+        let height = gl.getCanvas().height
+        let vertices: [Float] = [
+            -1,-1,-1, 1,-1,-1, 1, 1,-1, -1, 1,-1,
+            -1,-1, 1, 1,-1, 1, 1, 1, 1, -1, 1, 1,
+            -1,-1,-1, -1, 1,-1, -1, 1, 1, -1,-1, 1,
+            1,-1,-1, 1, 1,-1, 1, 1, 1, 1,-1, 1,
+            -1,-1,-1, -1,-1, 1, 1,-1, 1, 1,-1,-1,
+            -1, 1,-1, -1, 1, 1, 1, 1, 1, 1, 1,-1,
+        ]
+        let colors: [Float] = [
+            5,3,7, 5,3,7, 5,3,7, 5,3,7,
+            1,1,3, 1,1,3, 1,1,3, 1,1,3,
+            0,0,1, 0,0,1, 0,0,1, 0,0,1,
+            1,0,0, 1,0,0, 1,0,0, 1,0,0,
+            1,1,0, 1,1,0, 1,1,0, 1,1,0,
+            0,1,0, 0,1,0, 0,1,0, 0,1,0
+        ]
+        
+        indices = [
+            0,1,2, 0,2,3, 4,5,6, 4,6,7,
+            8,9,10, 8,10,11, 12,13,14, 12,14,15,
+            16,17,18, 16,18,19, 20,21,22, 20,22,23
+        ]
+        
+        
+        
+        // Create and store data into vertex buffer
+        let vertex_buffer = gl.createBuffer()
+        gl.bindBuffer(target: gl.ARRAY_BUFFER, buffer: vertex_buffer)
+        gl.bufferData(target: gl.ARRAY_BUFFER, floatArray: vertices, usage: gl.STATIC_DRAW)
+        
+        // Create and store data into color buffer
+        let color_buffer = gl.createBuffer ()
+        gl.bindBuffer(target: gl.ARRAY_BUFFER, buffer: color_buffer)
+        gl.bufferData(target: gl.ARRAY_BUFFER, floatArray: colors, usage: gl.STATIC_DRAW)
+        
+        // Create and store data into index buffer
+        index_buffer = gl.createBuffer()
+        gl.bindBuffer(target: gl.ELEMENT_ARRAY_BUFFER, buffer: index_buffer)
+        gl.bufferData(target: gl.ELEMENT_ARRAY_BUFFER, shortArray: indices, usage: gl.STATIC_DRAW)
+    
+        
+        let vertShader = gl.createShader(type: gl.VERTEX_SHADER)
+        gl.shaderSource(shader: vertShader, source: vertCode)
+        gl.compileShader(shader: vertShader)
+        
+        
+        let fragShader = gl.createShader(type: gl.FRAGMENT_SHADER)
+        gl.shaderSource(shader: fragShader, source: fragCode)
+        gl.compileShader(shader: fragShader)
+        
+        
+        let shaderProgram = gl.createProgram()
+        gl.attachShader(program: shaderProgram, shader: vertShader)
+        gl.attachShader(program: shaderProgram, shader: fragShader)
+        gl.linkProgram(program: shaderProgram)
+        
+        /* ====== Associating attributes to vertex shader =====*/
+        Pmatrix = gl.getUniformLocation(program: shaderProgram, name: "Pmatrix")
+        Vmatrix = gl.getUniformLocation(program: shaderProgram, name: "Vmatrix")
+        Mmatrix = gl.getUniformLocation(program: shaderProgram, name: "Mmatrix")
+
+        
+        gl.bindBuffer(target: gl.ARRAY_BUFFER, buffer: vertex_buffer)
+        let position = gl.getAttribLocation(program: shaderProgram, name: "position")
+        gl.vertexAttribPointer(index: position, size: 3, type: gl.FLOAT, normalized: false,stride: 0,offset: 0)
+        
+        // Position
+        gl.enableVertexAttribArray(index: position)
+        gl.bindBuffer(target: gl.ARRAY_BUFFER, buffer: color_buffer)
+        let color = gl.getAttribLocation(program: shaderProgram, name: "color")
+        gl.vertexAttribPointer(index: color, size: 3, type: gl.FLOAT, normalized: false,stride: 0,offset: 0)
+        
+        // Color
+        gl.enableVertexAttribArray(index: color)
+        gl.useProgram(program: shaderProgram)
+        
+        
+        proj_matrix = get_projection(angle: 40, a: Int32(width / height), zMin: 1, zMax: 100)
+        
+        mov_matrix = [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]
+        view_matrix = [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]
+        
+        // translating z
+        view_matrix[14] = view_matrix[14]-6;//zoom
+        
+          
+        cubeRotationAnimation(gl: gl, time: 0)
+        
+    }
+    
+    
+    
+    func cubeRotationAnimation(gl: WebGLRenderingContext,time: Float) {
+        let width = gl.drawingBufferWidth
+        let height = gl.drawingBufferHeight
+        let dt = time - time_old
+        rotateZ(m: &mov_matrix, angle: dt*0.005) //time
+        rotateY(m: &mov_matrix, angle: dt*0.002)
+        rotateX(m: &mov_matrix, angle: dt*0.003)
+        time_old = time
+        
+        gl.enable(cap: gl.DEPTH_TEST)
+        gl.depthFunc(fn: gl.LEQUAL)
+        gl.clearColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 0.9)
+        gl.clearDepth(depth: 1.0)
+        gl.viewport(x: 0, y: 0, width: Int32(width), height: Int32(height))
+        gl.clear(mask: UInt32(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT))
+        gl.uniformMatrix4fv(location: Pmatrix, transpose: false, value: proj_matrix)
+        gl.uniformMatrix4fv(location: Vmatrix, transpose: false, value: view_matrix)
+        gl.uniformMatrix4fv(location: Mmatrix, transpose: false, value: mov_matrix)
+        gl.bindBuffer(target: gl.ELEMENT_ARRAY_BUFFER, buffer: index_buffer)
+        gl.drawElements(mode: gl.TRIANGLES, count: Int32(indices.count), type: gl.UNSIGNED_SHORT, offset: 0)
+        gl.getCanvas().flush()
+        AnimationFrame.requestAnimationFrame { (t) in
+            self.cubeRotationAnimation(gl: gl, time: t)
+        }
+    }
+    
+    var index_buffer: UInt32 = 0
+    var indices: [UInt16] = []
+    var Pmatrix: Int32 = 0
+    var Vmatrix: Int32 = 0
+    var Mmatrix: Int32 = 0
+    var proj_matrix: [Float]  = []
+    var mov_matrix: [Float] = []
+    var view_matrix:[Float] = []
+    var time_old: Float = 0
+    
+    func get_projection(angle: Float, a: Int32, zMin: Int32, zMax: Int32) -> [Float] {
+        let ang = tan((angle * Float(0.5)) * PI/180) //angle*.5
+        return [
+            0.5 / ang, 0.0 , 0.0, 0.0,
+            0.0, Float(0.5) * (Float(a)/ang), 0.0, 0.0,
+            0.0, 0.0, -(Float(zMax) + Float(zMin)) / (Float(zMax) - Float(zMin)), -1.0,
+            0.0, 0.0, (-2 * Float(zMax) * Float(zMin))/(Float(zMax) - Float(zMin)), 0.0
+        ];
+    }
+    
+    
+    
+    func rotateZ(m: inout Array<Float>, angle: Float) {
+        let c = cos(angle)
+        let s = sin(angle)
+        let mv0 = m[0], mv4 = m[4], mv8 = m[8]
+        
+        m[0] = c*m[0]-s*m[1]
+        m[4] = c*m[4]-s*m[5]
+        m[8] = c*m[8]-s*m[9]
+        
+        m[1]=c*m[1]+s*mv0
+        m[5]=c*m[5]+s*mv4
+        m[9]=c*m[9]+s*mv8
+    }
+    
+    func rotateX(m: inout Array<Float>, angle: Float) {
+        let c = cos(angle)
+        let s = sin(angle)
+        let mv1 = m[1], mv5 = m[5], mv9 = m[9]
+        
+        m[1] = m[1]*c-m[2]*s
+        m[5] = m[5]*c-m[6]*s
+        m[9] = m[9]*c-m[10]*s
+        
+        m[2] = m[2]*c+mv1*s
+        m[6] = m[6]*c+mv5*s
+        m[10] = m[10]*c+mv9*s
+    }
+    
+    func rotateY(m: inout Array<Float>, angle: Float) {
+        let c = cos(angle)
+        let s = sin(angle)
+        let mv0 = m[0], mv4 = m[4], mv8 = m[8]
+        
+        m[0] = c*m[0]+s*m[2]
+        m[4] = c*m[4]+s*m[6]
+        m[8] = c*m[8]+s*m[10]
+        
+        m[2] = c*m[2]-s*mv0
+        m[6] = c*m[6]-s*mv4
+        m[10] = c*m[10]-s*mv8
+    }
+    
+    
     
     func scaleTransformation(ctx: CanvasRenderingContext2D){
         // Scaled rectangle
         ctx.scale(x: 9, y: 3);
         ctx.fillStyle = CanvasColorStyle.Color(color: .red);
         ctx.fillRect(x: 10, y: 10, width: 8, height: 20);
-
+        
         // Reset current transformation matrix to the identity matrix
         ctx.setTransform(a: 1, b: 0, c: 0, d: 1, e: 0, f: 0);
-
+        
         // Non-scaled rectangle
         ctx.fillStyle = CanvasColorStyle.Color(color: .gray);
         ctx.fillRect(x: 10, y: 10, width: 8, height: 20);
@@ -60,21 +728,21 @@ class ViewController: UIViewController {
     func drawNight(ctx: CanvasRenderingContext2D) {
         ctx.fillRect(x: 0, y: 0, width: 150, height: 150);
         ctx.translate(x: 75, y: 75);
-
-      // Create a circular clipping path
-      ctx.beginPath();
+        
+        // Create a circular clipping path
+        ctx.beginPath();
         ctx.arc(x: 0, y: 0, radius: 60, startAngle: 0, endAngle: PI * 2, anticlockwise: true);
         ctx.clip();
-
-      // draw background
-        var lingrad = ctx.createLinearGradient(x0: 0, y0: -75, x1: 0, y1: 75);
+        
+        // draw background
+        let lingrad = ctx.createLinearGradient(x0: 0, y0: -75, x1: 0, y1: 75);
         lingrad.addColorStop(offset: 0, color: UIColor(fromString: "#232256"));
         lingrad.addColorStop(offset: 1, color: UIColor(fromString: "#143778"));
-      
-      ctx.fillStyle = lingrad;
+        
+        ctx.fillStyle = lingrad;
         ctx.fillRect(x: -75, y: -75, width: 150, height: 150);
-
-      // draw stars
+        
+        // draw stars
         for _ in 0 ... 49 {
             ctx.save()
             ctx.fillStyle = CanvasColorStyle.Color.init(color: .white)
@@ -83,13 +751,13 @@ class ViewController: UIViewController {
             drawStar(ctx: ctx, r: floor(Float.random(in: 0.0...1.0) * 4) + 2);
             ctx.restore();
         }
-      
+        
     }
-
+    
     func drawStar(ctx: CanvasRenderingContext2D, r: Float) {
-      ctx.save();
-      ctx.beginPath();
-    ctx.moveTo(x: r, y: 0)
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(x: r, y: 0)
         for i in 0 ... 8 {
             ctx.rotate(angle: PI / 5);
             if (i % 2 == 0) {
@@ -98,9 +766,9 @@ class ViewController: UIViewController {
                 ctx.lineTo(x: r, y: 0);
             }
         }
-      ctx.closePath();
-      ctx.fill();
-      ctx.restore();
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
     }
     
     func rotateSquare(ctx: CanvasRenderingContext2D) {
@@ -114,15 +782,15 @@ class ViewController: UIViewController {
         ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromString: "#4D4E53"));
         ctx.fillRect(x: 30, y: 30, width: 100, height: 100);
         ctx.restore();
-
+        
         // right rectangles, rotate from rectangle center
         // draw blue rect
         ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromString: "#0095DD"));
         ctx.fillRect(x: 150, y: 30, width: 100, height: 100);
         
         ctx.translate(x: 200, y: 80); // translate to rectangle center
-                                // x = x + 0.5 * width
-                                // y = y + 0.5 * height
+        // x = x + 0.5 * width
+        // y = y + 0.5 * height
         ctx.rotate(angle: (PI / 180) * 25); // rotate
         ctx.translate(x: -200, y: -80); // translate back
         
@@ -151,6 +819,7 @@ class ViewController: UIViewController {
                     ctx.drawImage(image: image!, dx: Float(j * 50) * s, dy: Float(i * 38) * s, dWidth: 50 * s, dHeight: 38 * s);
                 }
             }
+            ctx.getCanvas().flush()
         } catch  {
             print(error)
             
@@ -168,12 +837,12 @@ class ViewController: UIViewController {
         radgrad2.addColorStop(offset: 0, color: UIColor(fromString: "#FF5F98"));
         radgrad2.addColorStop(offset: 0.75, color: UIColor(fromString: "#FF0188"));
         radgrad2.addColorStop(offset: 1, color: UIColor(fromString: "rgba(255, 1, 136, 0)"));
-
+        
         var radgrad3 = ctx.createRadialGradient(x0: 95, y0: 15, r0: 15, x1: 102, y1: 20, r1: 40);
         radgrad3.addColorStop(offset: 0, color: UIColor(fromString: "#00C9FF"));
         radgrad3.addColorStop(offset: 0.8, color: UIColor(fromString: "#00B5E2"));
         radgrad3.addColorStop(offset: 1, color: UIColor(fromString: "rgba(0, 201, 255, 0)"));
-
+        
         var radgrad4 = ctx.createRadialGradient(x0: 0, y0: 150, r0: 50, x1: 0, y1: 140, r1: 90);
         radgrad4.addColorStop(offset: 0, color: UIColor(fromString: "#F4F201"));
         radgrad4.addColorStop(offset: 0.8, color: UIColor(fromString: "#E4C700"));
@@ -197,11 +866,11 @@ class ViewController: UIViewController {
         lingrad.addColorStop(offset: 0.5, color: UIColor(fromHex: "#fff"));
         lingrad.addColorStop(offset: 0.5, color: UIColor(fromHex: "#26C000"));
         lingrad.addColorStop(offset: 1, color: UIColor(fromHex: "#fff"));
-
+        
         var lingrad2 = ctx.createLinearGradient(x0: 0, y0: 50, x1: 0, y1: 95);
         lingrad2.addColorStop(offset: 0.5, color: UIColor(fromHex: "#000"));
         lingrad2.addColorStop(offset: 1, color: UIColor(red: 0, green: 0, blue: 0, alpha: 0));
-
+        
         // assign gradients to fill and stroke styles
         ctx.fillStyle = lingrad;
         ctx.strokeStyle = lingrad2;
@@ -222,7 +891,7 @@ class ViewController: UIViewController {
         roundedRect(ctx: ctx, x: 53 * s, y: 119 * s, width: 49 * s, height: 16 * s, radius: 6 * s);
         roundedRect(ctx: ctx, x: 135 * s, y: 53 * s, width: 49 * s, height: 33 * s, radius: 10 * s);
         roundedRect(ctx: ctx, x: 135 * s, y: 119 * s, width: 25 * s, height: 49 * s, radius: 10 * s);
-
+        
         ctx.beginPath();
         ctx.arc(x: 37 * s, y: 37 * s, radius: 13 * s, startAngle: PI / 7, endAngle: -PI / 7, anticlockwise: false);
         ctx.lineTo(x: 31 * s, y: 37 * s);
@@ -239,8 +908,8 @@ class ViewController: UIViewController {
         for i in 0...7{
             ctx.fillRect(x: Float(51 + i * 16) * s, y: 99 * s, width: 4 * s, height: 4 * s);
         }
-
-
+        
+        
         ctx.beginPath();
         ctx.moveTo(x: 83 * s, y: 116 * s);
         ctx.lineTo(x: 83 * s, y: 102 * s);
@@ -254,7 +923,7 @@ class ViewController: UIViewController {
         ctx.lineTo(x: 87.666 * s, y: 111.333 * s);
         ctx.lineTo(x: 83 * s, y: 116 * s);
         ctx.fill();
-
+        
         ctx.fillStyle = CanvasColorStyle.Color(color: .white);
         ctx.beginPath();
         ctx.moveTo(x: 91 * s, y: 96 * s);
@@ -268,22 +937,22 @@ class ViewController: UIViewController {
         ctx.bezierCurveTo(cp1x: 106 * s, cp1y: 106 * s, cp2x: 107 * s, cp2y: 103 * s, x: 107 * s, y: 101 * s);
         ctx.bezierCurveTo(cp1x: 107 * s, cp1y: 99 * s, cp2x: 106 * s, cp2y: 96 * s, x: 103 * s, y: 96 * s);
         ctx.fill();
-
+        
         ctx.fillStyle = CanvasColorStyle.Color(color: .black);
         ctx.beginPath();
         ctx.arc(x: 101 * s, y: 102 * s, radius: 2 * s, startAngle: 0 * s, endAngle: PI * 2, anticlockwise: true);
         ctx.fill();
-
+        
         ctx.beginPath();
         ctx.arc(x: 89 * s, y: 102 * s, radius: 2 * s, startAngle: 0 * s, endAngle: PI * 2, anticlockwise: true);
         ctx.fill();
-      
+        
     }
-
+    
     // A utility function to draw a rectangle with rounded corners.
-
+    
     func roundedRect(ctx: CanvasRenderingContext2D, x: Float, y: Float, width: Float, height:Float, radius:Float) {
-      ctx.beginPath();
+        ctx.beginPath();
         ctx.moveTo(x: x, y: y + radius);
         ctx.lineTo(x: x, y: y + height - radius);
         ctx.arcTo(x1: x, y1: y + height, x2: x + radius, y2: y + height, radius: radius);
@@ -293,7 +962,7 @@ class ViewController: UIViewController {
         ctx.arcTo(x1: x + width, y1: y, x2: x + width - radius, y2: y, radius: radius);
         ctx.lineTo(x: x + radius, y: y);
         ctx.arcTo(x1: x, y1: y, x2: x, y2: y + radius, radius: radius);
-      ctx.stroke();
+        ctx.stroke();
     }
     
     func drawWindow(ctx: CanvasRenderingContext2D){
@@ -307,10 +976,10 @@ class ViewController: UIViewController {
         ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromHex: "#F30"));
         ctx.fillRect(x: Float(75 * scale), y: Float(75 * scale), width: Float(75 * scale), height: Float(75 * scale));
         ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromHex: "#FFF"));
-
+        
         // set transparency value
         ctx.globalAlpha = 0.2;
-
+        
         // Draw semi transparent circles
         
         for i in 0...6 {
@@ -508,9 +1177,9 @@ class ViewController: UIViewController {
     private func textPoint(ctx: CanvasRenderingContext2D,p: KeyValue, offset: KeyValue,i: Int){
         let x = offset.x
         let y = offset.y
-        ctx.beginPath();
-        ctx.arc(x: p.x, y: p.y, radius: 2, startAngle: 0, endAngle: TWO_PI);
-        ctx.fill();
+        ctx.beginPath()
+        ctx.arc(x: p.x, y: p.y, radius: 2, startAngle: 0, endAngle: TWO_PI)
+        ctx.fill()
         var text = String(i) + ":"
         text = text + String(Int(p.x)) + ","
         text = text + String(Int(p.y))
@@ -519,7 +1188,9 @@ class ViewController: UIViewController {
     
     private func drawPoints(ctx: CanvasRenderingContext2D, points: [KeyValue]){
         for i in 0...points.count - 1 {
-            textPoint(ctx: ctx,p: points[i], offset: KeyValue( x: 0, y: -20 ) , i: i)
+            autoreleasepool {
+                textPoint(ctx: ctx,p: points[i], offset: KeyValue( x: 0, y: -20 ) , i: i)
+            }
         }
     }
     
@@ -529,10 +1200,10 @@ class ViewController: UIViewController {
         p2 = points[1]
         p3 = points[2]
         
-        ctx.moveTo(x: p1.x, y: p1.y);
-        ctx.arcTo(x1: p2.x, y1: p2.y, x2: p3.x, y2: p3.y, radius: r);
-        ctx.lineTo(x: p3.x, y: p3.y);
-        ctx.stroke();
+        ctx.moveTo(x: p1.x, y: p1.y)
+        ctx.arcTo(x1: p2.x, y1: p2.y, x2: p3.x, y2: p3.y, radius: r)
+        ctx.lineTo(x: p3.x, y: p3.y)
+        ctx.stroke()
     }
     
     
@@ -550,12 +1221,13 @@ class ViewController: UIViewController {
         ctx.stroke();
         
     }
+    var last = 0
     private func loop(ctx: CanvasRenderingContext2D, t: Float){
         let PI2 = TWO_PI
         let points = [p1,p2,p3]
-        let t0 = t/1000;
+        let t0 = t / 1000
         let a  = t0.truncatingRemainder(dividingBy: PI2);
-        let rr = abs(cos(a) * r);
+        let rr = abs(cos(a) * r)
         ctx.clearRect(x: 0, y: 0, width: ctx.getCanvas().width, height: ctx.getCanvas().height);
         drawArc(ctx: ctx,points: points, r: rr)
         drawPoints(ctx: ctx,points: points)
@@ -1150,8 +1822,9 @@ class ViewController: UIViewController {
         })
     }
     
-    var particleCount = 100
-    var particles : [Particle] =  []
+    var particleCount = 400
+    var particleLoopCount = 399
+    var particles : [Particle] = []
     var minDist: Float = 70
     var dist: Float = 0
     
@@ -1161,12 +1834,12 @@ class ViewController: UIViewController {
     
     // Function to paint the canvas black
     func paintCanvas(ctx: CanvasRenderingContext2D) {
-        ctx.fillStyle = CanvasColorStyle.Color(color: .black)
+        ctx.fillStyle = blackColor
         ctx.fillRect(x: 0,y: 0,width: Float(W),height: Float(H));
     }
     
     
-    class Particle{
+    class Particle: NSObject{
         var x: Float
         var y: Float
         var vx: Float
@@ -1175,12 +1848,12 @@ class ViewController: UIViewController {
         var W: Int = 0
         var H: Int = 0
         var color: CanvasColorStyle.Color
+        static var PI_TWO = Float.pi * 2
         init(width: Int, height: Int, color: CanvasColorStyle.Color) {
             W = width
             H = height
             x = Float.random(in: 0...1) * Float(W)
             y = Float.random(in: 0...1) * Float(H)
-            
             vx = -1 + Float.random(in: 0...1) * 2;
             vy = -1 + Float.random(in: 0...1) * 2;
             self.color = color
@@ -1190,36 +1863,52 @@ class ViewController: UIViewController {
         
         func draw (ctx: CanvasRenderingContext2D) {
             ctx.fillStyle = color
-           ctx.beginPath()
-            ctx.arc(x: x, y: y, radius: Float(radius), startAngle: 0, endAngle: .pi * 2, anticlockwise: false);
+            ctx.beginPath()
+            ctx.arc(x: x, y: y, radius: Float(radius), startAngle: 0, endAngle: Particle.PI_TWO, anticlockwise: false);
+            ctx.closePath()
             ctx.fill()
         }
     }
     
+    func increaseParticles() {
+        if(particleCount == 300){
+            return
+        }
+        particleCount += 20
+        let count = (20 - 1)
+        for _ in 0...count {
+            particles.append(Particle(width: W, height: H, color: whiteColor))
+        }
+        
+    }
     
     func particle_draw(ctx: CanvasRenderingContext2D) {
-        
+        // increaseParticles()
         // Call the paintCanvas function here so that our canvas
         // will get re-painted in each next frame
         paintCanvas(ctx: ctx)
         
-        // Call the function that will draw the balls using a loop
-        let count = (particleCount - 1)
+       // Call the function that will draw the balls using a loop
+        let count = particleLoopCount
         for i in 0...count {
             p = particles[i]
             p.draw(ctx: ctx)
         }
         
+        
+        
         //Finally call the update function
-        update(ctx: ctx);
+        update(ctx: ctx)
+        
+        
     }
     
-    var p: Particle = Particle(width: 0, height: 0, color: CanvasColorStyle.Color(color: .white))
+    var p: Particle = Particle(width: 0, height: 0, color: CanvasColorStyle.Color(color: UIColor(fromString: "white")))
     func update(ctx: CanvasRenderingContext2D) {
         
         // In this function, we are first going to update every
         // particle's position according to their velocities
-        let count = (particleCount - 1)
+        let count = particleLoopCount
         for i in 0...count {
             p = particles[i]
             
@@ -1251,23 +1940,22 @@ class ViewController: UIViewController {
             // particle can be compared to every other particle
             // except itself
             
-            let count = (particleCount - 1)
             for j in i...count{
-                let p2 = particles[j];
-                distance(ctx: ctx,p1: p, p2: p2);
+                let p2 = self.particles[j]
+                distance(ctx: ctx,p1: self.p, p2: p2)
             }
             
         }
     }
     
-    let whiteColor = CanvasColorStyle.Color(color: .white)
-    let blackColor = CanvasColorStyle.Color(color: .black)
+    let whiteColor = CanvasColorStyle.Color(color: UIColor(fromString: "white"))
+    let blackColor = CanvasColorStyle.Color(color: UIColor(fromString: "black"))
     func distance(ctx:CanvasRenderingContext2D,p1: Particle, p2: Particle) {
         var colorIndex = 0
         let dx = p1.x - p2.x;
         let dy = p1.y - p2.y;
         
-       //dist = Float.squareRoot(dx*dx + dy*dy)()
+        //dist = Float.squareRoot(dx*dx + dy*dy)()
         dist = sqrt(dx*dx + dy*dy)
         
         // Draw the line when distance is smaller
@@ -1276,10 +1964,11 @@ class ViewController: UIViewController {
             // Draw the line
             ctx.beginPath()
             colorIndex = Int((100.0 * dist/minDist)) + 25
-           // ctx.strokeStyle = whiteColor
-                    ctx.strokeStyle =   CanvasColorStyle.Color(color: UIColor(hue: 2/360, saturation: CGFloat(colorIndex/100), brightness: 0.5, alpha: (CGFloat(1.2-dist/minDist))))
-            ctx.moveTo(x: p.x, y: p.y)
+             ctx.strokeStyle = whiteColor
+//            ctx.strokeStyle = CanvasColorStyle.Color(color: UIColor(hue: 2/360, saturation: CGFloat(colorIndex/100), brightness: 0.5, alpha: (CGFloat(1.2-dist/minDist))))
+            ctx.moveTo(x: p1.x, y: p1.y)
             ctx.lineTo(x: p2.x, y: p2.y)
+            ctx.closePath()
             ctx.stroke()
             
             // Some acceleration for the partcles
@@ -1294,17 +1983,21 @@ class ViewController: UIViewController {
             p2.vx += ax;
             p2.vy += ay;
         }
+        
     }
     
     
     func animloop(ctx: CanvasRenderingContext2D) {
         particle_draw(ctx: ctx);
         AnimationFrame.requestAnimationFrame(toLoop: {(_) in self.animloop(ctx: ctx)})
+        ctx.getCanvas().flush()
     }
     
-    func particelAnimation(ctx: CanvasRenderingContext2D){
+    func particleAnimation(ctx: CanvasRenderingContext2D){
+        ctx.getCanvas().handleInvalidationManually =  true
         W = Int(ctx.getCanvas().width)
         H = Int(ctx.getCanvas().height)
+        //  particles =  Array(repeating: Particle(width: W, height: H, color: whiteColor), count: particleCount)
         let count = (particleCount - 1)
         for _ in 0...count {
             particles.append(Particle(width: W, height: H, color: whiteColor))

@@ -13,12 +13,18 @@ public class AnimationFrame: NSObject {
     static var callbacks: [String: (Float) -> Void] = [:]
     static var exitObserver: Any?
     static var enterObserver: Any?
+    static var lastTime = 0.0
     @objc static func handleAnimation(displayLink: CADisplayLink){
-        let time =  (displayLink.timestamp - displayLink.duration) * 1000
-        for (id,callback) in callbacks {
-            callback(Float(time))
-            callbacks.removeValue(forKey: id)
+        var ts: Float = 0
+        let currentTime = displayLink.timestamp * 1000
+        if(lastTime != 0.0){
+            ts = Float(currentTime)
         }
+        for (_,callback) in callbacks.enumerated() {
+            callback.value(ts)
+            callbacks.removeValue(forKey: callback.key)
+        }
+        lastTime = currentTime
         if(callbacks.count == 0){
             self.displayLink?.invalidate()
             self.displayLink = nil
@@ -29,17 +35,18 @@ public class AnimationFrame: NSObject {
         callbacks[UUID().uuidString] = toLoop
         if(displayLink == nil){
             displayLink = CADisplayLink(target: self, selector: #selector(handleAnimation))
-            displayLink?.preferredFramesPerSecond = 60
-            displayLink?.add(to: .current, forMode: .common)
+            //displayLink?.preferredFramesPerSecond = 60
+            displayLink?.add(to: .main, forMode: .common)
             
             exitObserver = NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: nil) { _ in
                 self.displayLink?.invalidate()
                 self.displayLink = nil
+                self.lastTime = 0.0
             }
             
             enterObserver = NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: nil) { _ in
                 displayLink = CADisplayLink(target: self, selector: #selector(handleAnimation))
-                displayLink?.preferredFramesPerSecond = 60
+                //displayLink?.preferredFramesPerSecond = 60
                 displayLink?.add(to: .current, forMode: .common)
             }
             
@@ -51,6 +58,7 @@ public class AnimationFrame: NSObject {
         if(callbacks.count == 0){
             displayLink?.invalidate()
             displayLink = nil
+            lastTime = 0.0
             if(exitObserver != nil){
                 NotificationCenter.default.removeObserver(exitObserver!)
             }

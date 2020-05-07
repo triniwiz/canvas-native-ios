@@ -187,8 +187,6 @@ extension UIColor {
             }
             
             
-            
-            
             var cString:String = string.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
             if (cString.hasPrefix("#")) {
                 cString.remove(at: cString.startIndex)
@@ -242,7 +240,10 @@ extension UIColor {
             color.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
             self.init(red: red, green: green, blue: blue, alpha: alpha)
         }
+        setIsCached(false)
+        cacheColor()
     }
+    
     @objc public convenience init(fromHex hex: String) {
         var cString:String = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
         if (cString.hasPrefix("#")) {
@@ -264,6 +265,122 @@ extension UIColor {
         )
     }
     
+    private struct UIColorProperties{
+        static var red: UInt8 = 0
+        static var green: UInt8 = 0
+        static var blue: UInt8 = 0
+        static var alpha: UInt8 = 0
+        static var isCached: Bool = false
+    }
+    
+    func isSame(_ color: UIColor) -> Bool {
+        if(!isCached){
+            cacheColor()
+        }
+        if(!color.isCached){
+            color.cacheColor()
+        }
+        if(self.red == color.red
+            && self.green == color.green
+            && self.blue == color.blue
+            && self.alpha == color.alpha){
+            return true
+        }
+        return false
+    }
+    
+    func setIsCached(_ cached: Bool) {
+        objc_setAssociatedObject(self, &UIColorProperties.isCached, cached, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    }
+    
+    var isCached : Bool {
+        get {
+            if let value = objc_getAssociatedObject(self, &UIColorProperties.isCached) as? Bool{
+                return value
+            }else {
+                setIsCached(false)
+            }
+            return objc_getAssociatedObject(self, &UIColorProperties.isCached) as! Bool
+            
+        }
+    }
+    
+    
+    func setRed(_ red: UInt8) {
+        objc_setAssociatedObject(self, &UIColorProperties.red, red, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    }
+    
+    var red : UInt8 {
+        get {
+            return objc_getAssociatedObject(self, &UIColorProperties.red) as! UInt8
+        }
+    }
+    
+    func setGreen(_ green: UInt8) {
+        objc_setAssociatedObject(self, &UIColorProperties.green, green, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    }
+    
+    var green : UInt8 {
+        get {
+            return objc_getAssociatedObject(self, &UIColorProperties.green) as! UInt8
+        }
+    }
+    
+    func setBlue(_ blue: UInt8) {
+        objc_setAssociatedObject(self, &UIColorProperties.blue, blue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    }
+    
+    var blue : UInt8 {
+        get {
+            return objc_getAssociatedObject(self, &UIColorProperties.blue) as! UInt8
+        }
+    }
+    func setAlpha(_ alpha: UInt8) {
+        objc_setAssociatedObject(self, &UIColorProperties.alpha, alpha, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    }
+    
+    var alpha : UInt8 {
+        get {
+            return objc_getAssociatedObject(self, &UIColorProperties.alpha) as! UInt8
+        }
+    }
+    
+    
+    func cacheColor(){
+        if(isCached){return}
+        let cgColor = self.cgColor
+        let components = cgColor.components
+        let count = components?.count ?? 0
+        var r = UInt8(0)
+        var g = UInt8(0)
+        var b = UInt8(0)
+        var a = UInt8(255)
+        if(count > 0){
+            r = UInt8((components?[0] ?? 0) * 255.0)
+            if(count == 2){
+                g = r
+                b = r
+            }
+        }
+        if(count > 2){
+            if(count > 1){
+                g = UInt8((components?[1] ?? 0) * 255.0)
+            }
+            
+            if(count > 2){
+                b = UInt8((components?[2] ?? 0) * 255.0)
+            }
+            if(count > 3){
+                a = UInt8((components?[3] ?? 0) * 255.0)
+            }
+        }
+        
+        setRed(r)
+        setGreen(g)
+        setBlue(b)
+        setAlpha(a)
+        setIsCached(true)
+    }
     
     var colorCode: Int {
         get {

@@ -65,6 +65,8 @@ long long native_clip_rule(long long canvas_native_ptr, const char *fill_rule, v
 
 long long native_close_path(long long canvas_native_ptr);
 
+long long native_create_image_asset(void);
+
 CanvasArray native_create_image_data(size_t width, size_t height);
 
 long long native_create_matrix(void);
@@ -97,6 +99,26 @@ long long native_draw_image_dw(long long canvas_native_ptr,
                                float d_height,
                                void *view);
 
+long long native_draw_image_dw_raw(long long canvas_native_ptr,
+                                   uint8_t *image_array,
+                                   size_t image_size,
+                                   int original_width,
+                                   int original_height,
+                                   float dx,
+                                   float dy,
+                                   float d_width,
+                                   float d_height,
+                                   void *view);
+
+long long native_draw_image_raw(long long canvas_native_ptr,
+                                uint8_t *image_array,
+                                size_t image_size,
+                                int original_width,
+                                int original_height,
+                                float dx,
+                                float dy,
+                                void *view);
+
 long long native_draw_image_sw(long long canvas_native_ptr,
                                uint8_t *image_array,
                                size_t image_size,
@@ -111,6 +133,21 @@ long long native_draw_image_sw(long long canvas_native_ptr,
                                float d_width,
                                float d_height,
                                void *view);
+
+long long native_draw_image_sw_raw(long long canvas_native_ptr,
+                                   uint8_t *image_array,
+                                   size_t image_size,
+                                   int original_width,
+                                   int original_height,
+                                   float sx,
+                                   float sy,
+                                   float s_width,
+                                   float s_height,
+                                   float dx,
+                                   float dy,
+                                   float d_width,
+                                   float d_height,
+                                   void *view);
 
 void native_drop_image_data(CanvasArray data);
 
@@ -165,6 +202,28 @@ CanvasDevice native_get_ios_device(long long canvas_native_ptr);
 
 CanvasArray native_get_matrix(long long matrix);
 
+long long native_image_asset_flip_x(long long asset);
+
+long long native_image_asset_flip_y(long long asset);
+
+void native_image_asset_free_bytes(CanvasArray data);
+
+CanvasArray native_image_asset_get_bytes(long long asset);
+
+const char *native_image_asset_get_error(long long asset);
+
+unsigned int native_image_asset_get_height(long long asset);
+
+unsigned int native_image_asset_get_width(long long asset);
+
+unsigned int native_image_asset_load_from_path(long long asset, const char *path);
+
+unsigned int native_image_asset_load_from_raw(long long asset, const uint8_t *array, size_t size);
+
+void native_image_asset_release(long long asset);
+
+long long native_image_asset_scale(long long asset, unsigned int x, unsigned int y);
+
 long long native_image_smoothing_enabled(long long canvas_native_ptr, bool enabled);
 
 long long native_image_smoothing_quality(long long canvas_native_ptr, const char *quality);
@@ -184,6 +243,10 @@ CanvasTextMetrics native_measure_text(long long canvas_native_ptr, const char *t
 long long native_miter_limit(long long canvas_native_ptr, float limit);
 
 long long native_move_to(long long canvas_native_ptr, float x, float y);
+
+unsigned int native_native_image_asset_save_path(long long asset,
+                                                 const char *path,
+                                                 unsigned int format);
 
 long long native_path_2d_add_path(long long path, long long path_to_add, long long matrix);
 
@@ -260,6 +323,8 @@ long long native_save(long long canvas_native_ptr);
 
 long long native_scale(long long canvas_native_ptr, float x, float y, void *view);
 
+long long native_set_fill_color(long long canvas_native_ptr, int32_t color);
+
 long long native_set_fill_color_rgba(long long canvas_native_ptr,
                                      uint8_t red,
                                      uint8_t green,
@@ -301,6 +366,8 @@ long long native_set_line_dash(long long canvas_native_ptr, size_t size, const f
 long long native_set_line_width(long long canvas_native_ptr, float line_width);
 
 long long native_set_matrix(long long matrix, const void *array, size_t length);
+
+long long native_set_stroke_color(long long canvas_native_ptr, int32_t color);
 
 long long native_set_stroke_color_rgba(long long canvas_native_ptr,
                                        uint8_t red,
@@ -389,6 +456,6 @@ long long native_transform(long long canvas_native_ptr,
                            float d,
                            float e,
                            float f,
-                           void *view);
+                           void *_view);
 
 long long native_translate(long long canvas_native_ptr, float x, float y, void *view);

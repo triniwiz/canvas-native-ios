@@ -21,6 +21,10 @@ void flipInPlace(unsigned char *data, int width, int height){
     free(line_buffer);
 }
 
+void flipInPlaceRaw(void *data, int width, int height){
+    flipInPlace(data, width, height);
+}
+
 void flipInPlace3D(unsigned char *data, int width, int height, int depth){
     int row_size = width * 4;
     unsigned char *texelLayer = data;
@@ -28,6 +32,10 @@ void flipInPlace3D(unsigned char *data, int width, int height, int depth){
       flipInPlace(texelLayer, row_size, height);
       texelLayer += 4 * width * height;
     }
+}
+
+void flipInPlace3DRaw(void *data, int width, int height, int depth){
+    flipInPlace3D(data, width, height, depth);
 }
 
 unsigned char* loadImagePath(const char *path, int *width, int *height, int *channels){

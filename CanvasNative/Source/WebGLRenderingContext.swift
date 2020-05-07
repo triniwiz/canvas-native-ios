@@ -1190,7 +1190,7 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     public func texImage2D(target: Int32, level: Int32, internalformat: Int32, width: Int32, height: Int32, border: Int32, format: Int32, type: Int32,byteArray pixels: [UInt8]) {
         var data = pixels
         if(flipYWebGL){
-            flipInPlace(&data, width, height)
+            native_image_asset_flip_x_in_place_owned(UInt32(width), UInt32(height), &data, UInt(pixels.count))
         }
         glTexImage2D(GLenum(target), level, internalformat, width, height, border, GLenum(format), GLenum(type), &data)
     }
@@ -1230,12 +1230,14 @@ public class WebGLRenderingContext: CanvasRenderingContext {
                    let buffer = calloc(width * height, 4)
                    let colorSpace = CGColorSpaceCreateDeviceRGB()
                 let imageCtx = CGContext(data: buffer, width: width, height: height, bitsPerComponent: 8, bytesPerRow: width * 4, space: colorSpace, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue)
-                    imageCtx!.clear(CGRect(x: 0, y: 0, width: width, height: height))
-                    imageCtx!.translateBy(x: 0, y: CGFloat(height - height))
+                    //imageCtx!.clear(CGRect(x: 0, y: 0, width: width, height: height))
+                    //imageCtx!.translateBy(x: 0, y: CGFloat(height - height))
                    imageCtx!.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
-                   if(flipYWebGL){
-                    flipInPlace(buffer?.assumingMemoryBound(to: UInt8.self), Int32(width), Int32(height))
-                   }
+                   
+                
+                if(flipYWebGL){
+                    native_image_asset_flip_x_in_place_owned(UInt32(width), UInt32(height), buffer?.assumingMemoryBound(to: UInt8.self), UInt(width * height * 4))
+                }
                 
                    glTexImage2D(GLenum(target), level, internalformat, GLsizei(width), GLsizei(height), 0, GLenum(format), GLenum(type), buffer)
                    
@@ -1247,9 +1249,8 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     
     public func texImage2D(target: Int32, level: Int32, internalformat: Int32, format: Int32, type: Int32, asset: ImageAsset) {
         if(flipYWebGL){
-            flipInPlace(asset.getRawBytes(), asset.width, asset.height)
+            native_image_asset_flip_x_in_place_owned(UInt32(asset.width), UInt32(asset.height), asset.getRawBytes(), UInt(asset.length))
         }
-        
         glTexImage2D(GLenum(target), level, internalformat, GLsizei(asset.width), GLsizei(asset.height), 0, GLenum(format), GLenum(type), asset.getRawBytes())
     }
     
@@ -1274,7 +1275,7 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     public func texSubImage2D(target: Int32, level: Int32, xoffset: Int32, yoffset: Int32, width: Int32, height: Int32, format: Int32, type:Int32,byteArray pixels: [UInt8]) {
         var data = pixels
         if(flipYWebGL){
-            flipInPlace(&data, width, height)
+            native_image_asset_flip_y_in_place_owned(UInt32(width), UInt32(height), &data, UInt(data.count))
         }
         glTexSubImage2D(GLenum(target), level, xoffset, yoffset, width, height, GLenum(format), GLenum(type), &data)
     }
@@ -1310,8 +1311,9 @@ public class WebGLRenderingContext: CanvasRenderingContext {
             let imageCtx = CGContext(data: buffer, width: width, height: height, bitsPerComponent: 8, bytesPerRow: width * 4, space: image.colorSpace!, bitmapInfo: image.alphaInfo.rawValue)
             imageCtx!.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
             
+            
             if(flipYWebGL){
-                flipInPlace(buffer?.assumingMemoryBound(to: UInt8.self), Int32(width), Int32(height))
+                native_image_asset_flip_y_in_place_owned(UInt32(width), UInt32(height), buffer?.assumingMemoryBound(to: UInt8.self), UInt(width * height * 4))
             }
             
             glTexSubImage2D(GLenum(target), level, xoffset, yoffset, GLsizei(pixels.size.width), GLsizei(pixels.size.height), GLenum(format), GLenum(type), buffer)
@@ -1321,8 +1323,10 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     
     
     public func texSubImage2D(target: Int32, level: Int32, xoffset: Int32, yoffset: Int32, format: Int32, type:Int32, asset: ImageAsset) {
+        let width = asset.width
+        let height = asset.height
        if(flipYWebGL){
-           flipInPlace(asset.getRawBytes(), asset.width, asset.height)
+        native_image_asset_flip_y_in_place_owned(UInt32(width), UInt32(height), asset.getRawBytes(), UInt((width * height * 4)))
        }
        
         glTexSubImage2D(GLenum(target), level, xoffset, yoffset, GLsizei(asset.width), GLsizei(asset.height), GLenum(format), GLenum(type), asset.getRawBytes())

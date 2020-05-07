@@ -9,6 +9,8 @@
 #define Utils_h
 
 void flipInPlace(unsigned char* data, int width, int height);
+void flipInPlaceRaw(void *data, int width, int height);
+void flipInPlace3D(unsigned char *data, int width, int height, int depth);
 void flipInPlace3D(unsigned char *data, int width, int height, int depth);
 void offsetBy(uint8_t *data, int offset);
 unsigned char* loadImagePath(const char *path, int *width, int *height, int *channels);

@@ -27,12 +27,12 @@ public class WebGLRenderingContext: CanvasRenderingContext {
          for (key, val)  in attrs {
          switch key {
          case "alpha":
-            if(val) as! Bool{
-                self.enable(cap: self.BLEND)
-                       self.blendFunc(sfactor: self.SRC_ALPHA, dfactor: self.ONE_MINUS_SRC_ALPHA)
+         if(val) as! Bool{
+         self.enable(cap: self.BLEND)
+         self.blendFunc(sfactor: self.SRC_ALPHA, dfactor: self.ONE_MINUS_SRC_ALPHA)
          }else {
          self.disable(cap: self.BLEND)
-        self.blendFunc(sfactor: self.SRC_ALPHA, dfactor: self.ONE_MINUS_SRC_ALPHA)
+         self.blendFunc(sfactor: self.SRC_ALPHA, dfactor: self.ONE_MINUS_SRC_ALPHA)
          }
          case "antialias":
          case "depth":
@@ -47,7 +47,7 @@ public class WebGLRenderingContext: CanvasRenderingContext {
          
          }
          }
-        */
+         */
     }
     
     public func getCanvas() -> Canvas {
@@ -420,47 +420,47 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     
     public func framebufferRenderbuffer(target: Int32, attachment: Int32, renderbuffertarget: Int32, renderbuffer: UInt32) {
         /*if(attachment == GL_DEPTH_ATTACHMENT){
-            if let renderer = canvas.renderer as? GLRenderer {
-                glFramebufferRenderbuffer(GLenum(target), GLenum(GL_DEPTH_ATTACHMENT), GLenum(renderbuffertarget),renderer.displayRenderbuffer)
-                
-                glFramebufferRenderbuffer(GLenum(target), GLenum(GL_DEPTH_ATTACHMENT), GLenum(renderbuffertarget), renderbuffer)
-                
-                glFramebufferRenderbuffer(GLenum(target), GLenum(GL_STENCIL_ATTACHMENT), GLenum(renderbuffertarget), renderer.displayRenderbuffer)
-            }
-        }else if(attachment == GL_STENCIL_ATTACHMENT){
-            if let renderer = canvas.renderer as? GLRenderer {
-                glFramebufferRenderbuffer(GLenum(target), GLenum(GL_DEPTH_STENCIL_ATTACHMENT), GLenum(GL_RENDERBUFFER),renderer.displayRenderbuffer)
-                
-                glFramebufferRenderbuffer(GLenum(target), GLenum(GL_DEPTH_ATTACHMENT), GLenum(GL_RENDERBUFFER), renderer.displayRenderbuffer)
-                
-                
-                glFramebufferRenderbuffer(GLenum(target), GLenum(GL_STENCIL_ATTACHMENT), GLenum(GL_RENDERBUFFER), renderbuffer)
-                
-            }
-        }else if(attachment == GL_DEPTH_STENCIL_ATTACHMENT){
-            if let renderer = canvas.renderer as? GLRenderer {
-                glFramebufferRenderbuffer(GLenum(target), GLenum(GL_DEPTH_ATTACHMENT), GLenum(GL_RENDERBUFFER),renderer.displayRenderbuffer)
-                
-                
-                glFramebufferRenderbuffer(GLenum(target), GLenum(GL_STENCIL_ATTACHMENT), GLenum(GL_RENDERBUFFER), renderer.displayRenderbuffer)
-                
-                glFramebufferRenderbuffer(GLenum(target), GLenum(GL_DEPTH_STENCIL_ATTACHMENT), GLenum(GL_RENDERBUFFER), renderbuffer)
-                
-                
-            }
-        }else {
-            /*
-             glFramebufferRenderbuffer(GLenum(target), GLenum(attachment), GLenum(renderbuffertarget), renderbuffer)
-             */
-            if let renderer = canvas.renderer as? GLRenderer {
-                glFramebufferRenderbuffer(GLenum(target), GLenum(GL_DEPTH_STENCIL_ATTACHMENT), GLenum(GL_RENDERBUFFER), renderer.displayRenderbuffer)
-                
-                glFramebufferRenderbuffer(GLenum(target), GLenum(GL_DEPTH_ATTACHMENT), GLenum(GL_RENDERBUFFER), renderer.displayRenderbuffer)
-                
-                glFramebufferRenderbuffer(GLenum(target), GLenum(GL_STENCIL_ATTACHMENT), GLenum(GL_RENDERBUFFER), renderer.displayRenderbuffer)
-            }
-        }
-        */
+         if let renderer = canvas.renderer as? GLRenderer {
+         glFramebufferRenderbuffer(GLenum(target), GLenum(GL_DEPTH_ATTACHMENT), GLenum(renderbuffertarget),renderer.displayRenderbuffer)
+         
+         glFramebufferRenderbuffer(GLenum(target), GLenum(GL_DEPTH_ATTACHMENT), GLenum(renderbuffertarget), renderbuffer)
+         
+         glFramebufferRenderbuffer(GLenum(target), GLenum(GL_STENCIL_ATTACHMENT), GLenum(renderbuffertarget), renderer.displayRenderbuffer)
+         }
+         }else if(attachment == GL_STENCIL_ATTACHMENT){
+         if let renderer = canvas.renderer as? GLRenderer {
+         glFramebufferRenderbuffer(GLenum(target), GLenum(GL_DEPTH_STENCIL_ATTACHMENT), GLenum(GL_RENDERBUFFER),renderer.displayRenderbuffer)
+         
+         glFramebufferRenderbuffer(GLenum(target), GLenum(GL_DEPTH_ATTACHMENT), GLenum(GL_RENDERBUFFER), renderer.displayRenderbuffer)
+         
+         
+         glFramebufferRenderbuffer(GLenum(target), GLenum(GL_STENCIL_ATTACHMENT), GLenum(GL_RENDERBUFFER), renderbuffer)
+         
+         }
+         }else if(attachment == GL_DEPTH_STENCIL_ATTACHMENT){
+         if let renderer = canvas.renderer as? GLRenderer {
+         glFramebufferRenderbuffer(GLenum(target), GLenum(GL_DEPTH_ATTACHMENT), GLenum(GL_RENDERBUFFER),renderer.displayRenderbuffer)
+         
+         
+         glFramebufferRenderbuffer(GLenum(target), GLenum(GL_STENCIL_ATTACHMENT), GLenum(GL_RENDERBUFFER), renderer.displayRenderbuffer)
+         
+         glFramebufferRenderbuffer(GLenum(target), GLenum(GL_DEPTH_STENCIL_ATTACHMENT), GLenum(GL_RENDERBUFFER), renderbuffer)
+         
+         
+         }
+         }else {
+         /*
+         glFramebufferRenderbuffer(GLenum(target), GLenum(attachment), GLenum(renderbuffertarget), renderbuffer)
+         */
+         if let renderer = canvas.renderer as? GLRenderer {
+         glFramebufferRenderbuffer(GLenum(target), GLenum(GL_DEPTH_STENCIL_ATTACHMENT), GLenum(GL_RENDERBUFFER), renderer.displayRenderbuffer)
+         
+         glFramebufferRenderbuffer(GLenum(target), GLenum(GL_DEPTH_ATTACHMENT), GLenum(GL_RENDERBUFFER), renderer.displayRenderbuffer)
+         
+         glFramebufferRenderbuffer(GLenum(target), GLenum(GL_STENCIL_ATTACHMENT), GLenum(GL_RENDERBUFFER), renderer.displayRenderbuffer)
+         }
+         }
+         */
         
         glFramebufferRenderbuffer(GLenum(target), GLenum(attachment), GLenum(renderbuffertarget),renderbuffer)
     }
@@ -570,9 +570,7 @@ public class WebGLRenderingContext: CanvasRenderingContext {
             if(extensions.isEmpty){
                 return NSNull()
             }
-            
-            
-            if(extensions.contains("GL_IMG_texture_compression_pvrtc")){
+            if(name.elementsEqual("WEBGL_compressed_texture_etc1") && extensions.contains("GL_IMG_texture_compression_pvrtc")){
                 return Canvas_WEBGL_compressed_texture_pvrtc()
             }else if(name.elementsEqual("WEBGL_compressed_texture_etc1")){
                 return Canvas_WEBGL_compressed_texture_etc1()
@@ -580,6 +578,8 @@ public class WebGLRenderingContext: CanvasRenderingContext {
             if let renderer = canvas.renderer as? GLRenderer {
                 if(renderer.context.api == .openGLES3){
                     switch name {
+                    case "EXT_blend_minmax":
+                        return Canvas_EXT_blend_minmax()
                     case "WEBGL_compressed_texture_etc":
                         return Canvas_WEBGL_compressed_texture_etc()
                     case "WEBGL_depth_texture":
@@ -588,10 +588,31 @@ public class WebGLRenderingContext: CanvasRenderingContext {
                         return Canvas_WEBGL_color_buffer_float()
                     case "WEBGL_lose_context":
                         return Canvas_WEBGL_lose_context(canvas: self.canvas)
+                    case "OES_texture_half_float":
+                        return Canvas_OES_texture_half_float()
+                    case "OES_texture_half_float_linear":
+                        return Canvas_OES_texture_half_float_linear()
+                    case "OES_texture_float":
+                        //EXT_color_buffer_half_float
+                        return Canvas_OES_texture_float()
+                    case "OES_element_index_uint":
+                        return Canvas_OES_element_index_uint()
+                    case "OES_fbo_render_mipmap":
+                        return Canvas_OES_fbo_render_mipmap()
+                    case "OES_standard_derivatives":
+                        return Canvas_OES_standard_derivatives()
+                    case "OES_texture_float_linear":
+                        return Canvas_OES_texture_float_linear()
+                    case "OES_depth_texture":
+                        return Canvas_WEBGL_depth_texture()
+                    case "WEBGL_draw_buffers":
+                        return Canvas_WEBGL_draw_buffers()
                     default: break
-                        
                     }
                 }
+            }
+            if(name.elementsEqual("ANGLE_instanced_arrays")){
+                return Canvas_ANGLE_instanced_arrays(context: self)
             }
             if(extensions.contains(realName)){
                 switch (realName){
@@ -615,8 +636,6 @@ public class WebGLRenderingContext: CanvasRenderingContext {
                     return Canvas_OES_fbo_render_mipmap()
                 case getRealExtName(name: "OES_standard_derivatives"):
                     return Canvas_OES_standard_derivatives()
-                case getRealExtName(name: "OES_texture_float"):
-                    return Canvas_OES_texture_float()
                 case getRealExtName(name: "OES_texture_float_linear"):
                     return Canvas_OES_texture_float_linear()
                 case getRealExtName(name: "OES_texture_half_float"):
@@ -1212,39 +1231,39 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     
     public func texImage2D(target: Int32, level: Int32, internalformat: Int32, format: Int32, type: Int32, pixels: UIImage) {
         var cgImage: CGImage?
-               
-               if let image = pixels.cgImage {
-                   cgImage = image
-               } else if let image = pixels.ciImage {
-                   var ctx: CIContext?
-                   if let renderer = canvas.renderer as? GLRenderer {
-                       ctx = CIContext(eaglContext: renderer.context)
-                   }
-                   if let context = ctx {
-                       cgImage = context.createCGImage(image, from: image.extent)
-                   }
-               }
-               if let image = cgImage {
-                   let width = Int(pixels.size.width)
-                   let height = Int(pixels.size.height)
-                   let buffer = calloc(width * height, 4)
-                   let colorSpace = CGColorSpaceCreateDeviceRGB()
-                let imageCtx = CGContext(data: buffer, width: width, height: height, bitsPerComponent: 8, bytesPerRow: width * 4, space: colorSpace, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue)
-                    //imageCtx!.clear(CGRect(x: 0, y: 0, width: width, height: height))
-                    //imageCtx!.translateBy(x: 0, y: CGFloat(height - height))
-                   imageCtx!.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
-                   
-                
-                if(flipYWebGL){
-                    native_image_asset_flip_x_in_place_owned(UInt32(width), UInt32(height), buffer?.assumingMemoryBound(to: UInt8.self), UInt(width * height * 4))
-                }
-                
-                   glTexImage2D(GLenum(target), level, internalformat, GLsizei(width), GLsizei(height), 0, GLenum(format), GLenum(type), buffer)
-                   
-                   buffer?.deallocate()
+        
+        if let image = pixels.cgImage {
+            cgImage = image
+        } else if let image = pixels.ciImage {
+            var ctx: CIContext?
+            if let renderer = canvas.renderer as? GLRenderer {
+                ctx = CIContext(eaglContext: renderer.context)
+            }
+            if let context = ctx {
+                cgImage = context.createCGImage(image, from: image.extent)
+            }
+        }
+        if let image = cgImage {
+            let width = Int(pixels.size.width)
+            let height = Int(pixels.size.height)
+            let buffer = calloc(width * height, 4)
+            let colorSpace = CGColorSpaceCreateDeviceRGB()
+            let imageCtx = CGContext(data: buffer, width: width, height: height, bitsPerComponent: 8, bytesPerRow: width * 4, space: colorSpace, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue)
+            //imageCtx!.clear(CGRect(x: 0, y: 0, width: width, height: height))
+            //imageCtx!.translateBy(x: 0, y: CGFloat(height - height))
+            imageCtx!.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
+            
+            
+            if(flipYWebGL){
+                native_image_asset_flip_x_in_place_owned(UInt32(width), UInt32(height), buffer?.assumingMemoryBound(to: UInt8.self), UInt(width * height * 4))
+            }
+            
+            glTexImage2D(GLenum(target), level, internalformat, GLsizei(width), GLsizei(height), 0, GLenum(format), GLenum(type), buffer)
+            
+            buffer?.deallocate()
             
         }
-       
+        
     }
     
     public func texImage2D(target: Int32, level: Int32, internalformat: Int32, format: Int32, type: Int32, asset: ImageAsset) {
@@ -1325,10 +1344,10 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     public func texSubImage2D(target: Int32, level: Int32, xoffset: Int32, yoffset: Int32, format: Int32, type:Int32, asset: ImageAsset) {
         let width = asset.width
         let height = asset.height
-       if(flipYWebGL){
-        native_image_asset_flip_y_in_place_owned(UInt32(width), UInt32(height), asset.getRawBytes(), UInt((width * height * 4)))
-       }
-       
+        if(flipYWebGL){
+            native_image_asset_flip_y_in_place_owned(UInt32(width), UInt32(height), asset.getRawBytes(), UInt((width * height * 4)))
+        }
+        
         glTexSubImage2D(GLenum(target), level, xoffset, yoffset, GLsizei(asset.width), GLsizei(asset.height), GLenum(format), GLenum(type), asset.getRawBytes())
     }
     
@@ -1484,2189 +1503,697 @@ public class WebGLRenderingContext: CanvasRenderingContext {
         glViewport(x, y, width, height)
     }
     
-    public var ONE_MINUS_CONSTANT_ALPHA: Int32 {
-        return GL_ONE_MINUS_CONSTANT_ALPHA
-    }
-    public var CONSTANT_ALPHA: Int32 {
-        return GL_CONSTANT_ALPHA
-    }
-    public var ONE_MINUS_CONSTANT_COLOR: Int32 {
-        return GL_ONE_MINUS_CONSTANT_COLOR
-    }
-    public var CONSTANT_COLOR: Int32 {
-        return GL_CONSTANT_COLOR
-    }
     
-    public var SRC_ALPHA_SATURATE: Int32 {
-        return GL_SRC_ALPHA_SATURATE
-    }
-    
-    public var ONE_MINUS_DST_COLOR: Int32 {
-        return GL_ONE_MINUS_DST_COLOR
-    }
-    
-    public var DST_COLOR: Int32 {
-        return GL_DST_COLOR
-    }
-    
-    public var ONE_MINUS_DST_ALPHA: Int32 {
-        return GL_ONE_MINUS_DST_ALPHA
-    }
-    public var DST_ALPHA: Int32 {
-        return GL_DST_ALPHA
-    }
-    
-    public var ONE_MINUS_SRC_COLOR: Int32 {
-        return GL_ONE_MINUS_SRC_COLOR
-    }
-    
-    public var SRC_COLOR: Int32 {
-        return GL_SRC_COLOR
-    }
-    public var ONE_MINUS_SRC_ALPHA: Int32 {
-        return GL_ONE_MINUS_SRC_ALPHA
-    }
-    
-    public var SRC_ALPHA: Int32 {
-        return GL_SRC_ALPHA
-    }
-    
-    
-    public var TEXTURE0: Int32 {
-        get {
-            return GL_TEXTURE0
-        }
-    }
-    
-    
-    public var TEXTURE1: Int32 {
-        get {
-            return GL_TEXTURE1
-        }
-    }
-    
-    public var TEXTURE2: Int32 {
-        get {
-            return GL_TEXTURE2
-        }
-    }
-    
-    public var TEXTURE3: Int32 {
-        get {
-            return GL_TEXTURE3
-        }
-    }
-    
-    public var TEXTURE4: Int32 {
-        get {
-            return GL_TEXTURE4
-        }
-    }
-    
-    public var TEXTURE5: Int32 {
-        get {
-            return GL_TEXTURE5
-        }
-    }
-    
-    
-    public var TEXTURE6: Int32 {
-        get {
-            return GL_TEXTURE6
-        }
-    }
-    
-    public var TEXTURE7: Int32 {
-        get {
-            return GL_TEXTURE7
-        }
-    }
-    
-    public var TEXTURE8: Int32 {
-        get {
-            return GL_TEXTURE8
-        }
-    }
-    
-    public var TEXTURE9: Int32 {
-        get {
-            return GL_TEXTURE9
-        }
-    }
-    
-    public var TEXTURE10: Int32 {
-        get {
-            return GL_TEXTURE10
-        }
-    }
-    
-    
-    public var TEXTURE11: Int32 {
-        get {
-            return GL_TEXTURE11
-        }
-    }
-    
-    public var TEXTURE12: Int32 {
-        get {
-            return GL_TEXTURE12
-        }
-    }
-    
-    public var TEXTURE13: Int32 {
-        get {
-            return GL_TEXTURE13
-        }
-    }
-    
-    public var TEXTURE14: Int32 {
-        get {
-            return GL_TEXTURE14
-        }
-    }
-    
-    public var TEXTURE15: Int32 {
-        get {
-            return GL_TEXTURE15
-        }
-    }
-    
-    
-    public var TEXTURE16: Int32 {
-        get {
-            return GL_TEXTURE16
-        }
-    }
-    
-    public var TEXTURE17: Int32 {
-        get {
-            return GL_TEXTURE17
-        }
-    }
-    
-    public var TEXTURE18: Int32 {
-        get {
-            return GL_TEXTURE18
-        }
-    }
-    
-    public var TEXTURE19: Int32 {
-        get {
-            return GL_TEXTURE19
-        }
-    }
-    
-    public var TEXTURE20: Int32 {
-        get {
-            return GL_TEXTURE20
-        }
-    }
-    
-    public var TEXTURE21: Int32 {
-        get {
-            return GL_TEXTURE21
-        }
-    }
-    
-    public var TEXTURE22: Int32 {
-        get {
-            return GL_TEXTURE22
-        }
-    }
-    
-    public var TEXTURE23: Int32 {
-        get {
-            return GL_TEXTURE23
-        }
-    }
-    
-    public var TEXTURE24: Int32 {
-        get {
-            return GL_TEXTURE24
-        }
-    }
-    
-    public var TEXTURE25: Int32 {
-        get {
-            return GL_TEXTURE25
-        }
-    }
-    
-    public var TEXTURE26: Int32 {
-        get {
-            return GL_TEXTURE26
-        }
-    }
-    
-    public var TEXTURE27: Int32 {
-        get {
-            return GL_TEXTURE27
-        }
-    }
-    
-    public var TEXTURE28: Int32 {
-        get {
-            return GL_TEXTURE28
-        }
-    }
-    
-    public var TEXTURE29: Int32 {
-        get {
-            return GL_TEXTURE29
-        }
-    }
-    
-    public var TEXTURE30: Int32 {
-        get {
-            return GL_TEXTURE30
-        }
-    }
-    
-    public var TEXTURE31: Int32 {
-        get {
-            return GL_TEXTURE31
-        }
-    }
-    
-    public var DEPTH_BUFFER_BIT: Int32 {
-        get {
-            return GL_DEPTH_BUFFER_BIT
-        }
-    }
-    
-    public var COLOR_BUFFER_BIT: Int32 {
-        get {
-            return GL_COLOR_BUFFER_BIT
-        }
-    }
-    
-    public var STENCIL_BUFFER_BIT: Int32 {
-        get {
-            return GL_STENCIL_BUFFER_BIT
-        }
-    }
-    
-    public var VERTEX_SHADER: Int32 {
-        get {
-            return GL_VERTEX_SHADER
-        }
-    }
-    
-    public var FRAGMENT_SHADER: Int32 {
-        get {
-            return GL_FRAGMENT_SHADER
-        }
-    }
-    
-    public var ARRAY_BUFFER: Int32  {
-        get {
-            return GL_ARRAY_BUFFER
-        }
-    }
-    
-    public var ELEMENT_ARRAY_BUFFER: Int32 {
-        get {
-            return GL_ELEMENT_ARRAY_BUFFER
-        }
-    }
-    
-    public var FRAMEBUFFER: Int32 {
-        get {
-            return GL_FRAMEBUFFER
-        }
-    }
-    
-    public var RENDERBUFFER: Int32 {
-        get {
-            return GL_RENDERBUFFER
-        }
-    }
-    
-    public var TEXTURE_2D: Int32 {
-        get {
-            return GL_TEXTURE_2D
-        }
-    }
-    
-    public var TEXTURE_CUBE_MAP: Int32 {
-        get {
-            return GL_TEXTURE_CUBE_MAP
-        }
-    }
-    
-    public var FUNC_ADD: Int32 {
-        get {
-            return GL_FUNC_ADD
-        }
-    }
-    
-    public var FUNC_SUBTRACT: Int32 {
-        get {
-            return GL_FUNC_SUBTRACT
-        }
-    }
-    
-    public var FUNC_REVERSE_SUBTRACT: Int32 {
-        get {
-            return GL_FUNC_REVERSE_SUBTRACT
-        }
-    }
-    
-    public var ONE: Int32{
-        get {
-            return GL_ONE
-        }
-    }
-    
-    public var ZERO: Int32 {
-        get {
-            return GL_ZERO
-        }
-    }
-    public var FRAMEBUFFER_COMPLETE: Int32 {
-        get {
-            return GL_FRAMEBUFFER_COMPLETE
-        }
-    }
-    
-    public var FRAMEBUFFER_INCOMPLETE_ATTACHMENT: Int32 {
-        get {
-            return GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT
-        }
-    }
-    
-    public var FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT: Int32 {
-        get {
-            return GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT
-        }
-    }
-    
-    public var FRAMEBUFFER_INCOMPLETE_DIMENSIONS: Int32 {
-        get {
-            return GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS
-        }
-    }
-    
-    public var FRAMEBUFFER_UNSUPPORTED: Int32 {
-        get {
-            return GL_FRAMEBUFFER_UNSUPPORTED
-        }
-    }
-    
-    public var INVALID_ENUM: Int32 {
-        get {
-            return GL_INVALID_ENUM
-        }
-    }
-    
-    public var TEXTURE_CUBE_MAP_POSITIVE_X: Int32 {
-        get {
-            return GL_TEXTURE_CUBE_MAP_POSITIVE_X
-        }
-    }
-    
-    public var TEXTURE_CUBE_MAP_NEGATIVE_X: Int32 {
-        get {
-            return GL_TEXTURE_CUBE_MAP_NEGATIVE_X
-        }
-    }
-    
-    public var TEXTURE_CUBE_MAP_POSITIVE_Y: Int32 {
-        get {
-            return GL_TEXTURE_CUBE_MAP_POSITIVE_Y
-        }
-    }
-    
-    public var TEXTURE_CUBE_MAP_NEGATIVE_Y: Int32 {
-        get {
-            return GL_TEXTURE_CUBE_MAP_NEGATIVE_Y
-        }
-    }
-    
-    public var TEXTURE_CUBE_MAP_POSITIVE_Z: Int32{
-        get {
-            return GL_TEXTURE_CUBE_MAP_POSITIVE_Z
-        }
-    }
-    
-    public var TEXTURE_CUBE_MAP_NEGATIVE_Z: Int32 {
-        get {
-            return GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
-        }
-    }
-    
-    /* New Tokens */
-    public var COMPRESSED_RGB_S3TC_DXT1_EXT: Int32 {
-        get {
-            return 0x83F0
-        }
-    }
-    
-    public var COMPRESSED_RGBA_S3TC_DXT1_EXT: Int32 {
-        get {
-            return 0x83F1
-        }
-    }
-    
-    public var COMPRESSED_RGBA_S3TC_DXT3_EXT: Int32 {
-        get {
-            return 0x83F2
-        }
-    }
-    
-    public var COMPRESSED_RGBA_S3TC_DXT5_EXT: Int32 {
-        get {
-            return 0x83F3
-        }
-    }
-    
-    public var COMPRESSED_SRGB_S3TC_DXT1_EXT: Int32 {
-        get {
-            return 0x8C4C
-        }
-    }
-    
-    public var COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT: Int32 {
-        get {
-            return 0x8C4D
-        }
-    }
-    public var COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT: Int32 {
-        get {
-            return 0x8C4E
-        }
-    }
-    public var COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT: Int32 {
-        get {
-            return 0x8C4F
-        }
-    }
-    
-    
-    /* New Tokens */
-    
-    public var COMPRESSED_R11_EAC: Int32 {
-        get {
-            return GL_COMPRESSED_R11_EAC
-        }
-    }
-    
-    public var COMPRESSED_SIGNED_R11_EAC: Int32 {
-        get {
-            return GL_COMPRESSED_SIGNED_R11_EAC
-        }
-    }
-    
-    public var COMPRESSED_RG11_EAC: Int32 {
-        get {
-            return GL_COMPRESSED_RG11_EAC
-        }
-    }
-    
-    public var COMPRESSED_SIGNED_RG11_EAC: Int32 {
-        get {
-            return GL_COMPRESSED_SIGNED_RG11_EAC
-        }
-    }
-    
-    public var COMPRESSED_RGB8_ETC2: Int32 {
-        get {
-            return GL_COMPRESSED_RGB8_ETC2
-        }
-    }
-    
-    
-    public var COMPRESSED_RGBA8_ETC2_EAC: Int32 {
-        get {
-            return GL_COMPRESSED_RGBA8_ETC2_EAC
-        }
-    }
-    
-    public var COMPRESSED_SRGB8_ETC2: Int32 {
-        get {
-            return GL_COMPRESSED_SRGB8_ETC2
-        }
-    }
-    
-    public var COMPRESSED_SRGB8_ALPHA8_ETC2_EAC: Int32 {
-        get {
-            return GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC
-        }
-    }
-    
-    public var COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2: Int32 {
-        get {
-            return GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2
-        }
-    }
-    
-    public var COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2: Int32 {
-        get {
-            return GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2
-        }
-    }
-    
-    public var COMPRESSED_RGB_PVRTC_4BPPV1_IMG: Int32 {
-        get {
-            return GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG
-        }
-    }
-    
-    public var COMPRESSED_RGBA_PVRTC_4BPPV1_IMG: Int32 {
-        get {
-            return GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG
-        }
-    }
-    
-    public var COMPRESSED_RGB_PVRTC_2BPPV1_IMG: Int32 {
-        get {
-            return GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG
-        }
-    }
-    
-    public var COMPRESSED_RGBA_PVRTC_2BPPV1_IMG: Int32 {
-        get {
-            return GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG
-        }
-    }
-    
-    public var COMPRESSED_RGB_ETC1_WEBGL: Int32 {
-        get {
-            return 0x8d64
-        }
-    }
-    
-    public var COMPRESSED_RGB_ATC_WEBGL: Int32 {
-        get {
-            return 0x8c92
-        }
-    }
-    
-    public var COMPRESSED_RGBA_ATC_EXPLICIT_ALPHA_WEBGL: Int32 {
-        get {
-            return 0x8c92
-        }
-    }
-    
-    public var COMPRESSED_RGBA_ATC_INTERPOLATED_ALPHA_WEBGL: Int32 {
-        get {
-            return 0x87ee
-        }
-    }
-    
-    public var COMPRESSED_RGBA_ASTC_4x4_KHR: Int32 {
-        get {
-            return GL_COMPRESSED_RGBA_ASTC_4x4_KHR
-        }
-    }
-    public var COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR: Int32 {
-        get {
-            return GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR
-        }
-    }
-    
-    public var COMPRESSED_RGBA_ASTC_5x4_KHR: Int32 {
-        get {
-            return GL_COMPRESSED_RGBA_ASTC_5x4_KHR
-        }
-    }
-    
-    public var COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR: Int32 {
-        get {
-            return GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR
-        }
-    }
-    
-    
-    public var COMPRESSED_RGBA_ASTC_5x5_KHR: Int32 {
-        get {
-            return GL_COMPRESSED_RGBA_ASTC_5x5_KHR
-        }
-    }
-    
-    public var COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR: Int32 {
-        get {
-            return GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR
-        }
-    }
-    
-    public var COMPRESSED_RGBA_ASTC_6x5_KHR: Int32 {
-        get {
-            return GL_COMPRESSED_RGBA_ASTC_6x5_KHR
-        }
-    }
-    
-    public var COMPRESSED_SRGB8_ALPHA8_ASTC_6x5_KHR: Int32 {
-        get {
-            return GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x5_KHR
-        }
-    }
-    
-    public var COMPRESSED_RGBA_ASTC_6x6_KHR: Int32 {
-        get {
-            return GL_COMPRESSED_RGBA_ASTC_6x6_KHR
-        }
-    }
-    
-    public var COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR: Int32 {
-        get {
-            return GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR
-        }
-    }
-    
-    public var COMPRESSED_RGBA_ASTC_8x5_KHR: Int32 {
-        get {
-            return GL_COMPRESSED_RGBA_ASTC_8x5_KHR
-        }
-    }
-    
-    public var COMPRESSED_SRGB8_ALPHA8_ASTC_8x5_KHR: Int32 {
-        get {
-            return GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x5_KHR
-        }
-    }
-    
-    public var COMPRESSED_RGBA_ASTC_8x6_KHR: Int32 {
-        get {
-            return GL_COMPRESSED_RGBA_ASTC_8x6_KHR
-        }
-    }
-    
-    public var COMPRESSED_SRGB8_ALPHA8_ASTC_8x6_KHR: Int32 {
-        get {
-            return GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x6_KHR
-        }
-    }
-    
-    
-    public var COMPRESSED_RGBA_ASTC_8x8_KHR: Int32 {
-        get {
-            return GL_COMPRESSED_RGBA_ASTC_8x8_KHR
-        }
-    }
-    
-    public var COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR: Int32 {
-        get {
-            return GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR
-        }
-    }
-    
-    public var COMPRESSED_RGBA_ASTC_10x5_KHR: Int32 {
-        get {
-            return GL_COMPRESSED_RGBA_ASTC_10x5_KHR
-        }
-    }
-    
-    public var COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR: Int32 {
-        get {
-            return GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR
-        }
-    }
-    
-    
-    public var COMPRESSED_RGBA_ASTC_10x6_KHR: Int32 {
-        get {
-            return GL_COMPRESSED_RGBA_ASTC_10x6_KHR
-        }
-    }
-    
-    public var COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR: Int32 {
-        get {
-            return GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR
-        }
-    }
-    
-    public var COMPRESSED_RGBA_ASTC_10x10_KHR: Int32 {
-        get {
-            return GL_COMPRESSED_RGBA_ASTC_10x10_KHR
-        }
-    }
-    
-    public var COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR: Int32 {
-        get {
-            return GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR
-        }
-    }
-    
-    
-    
-    public var COMPRESSED_RGBA_ASTC_12x10_KHR: Int32 {
-        get {
-            return GL_COMPRESSED_RGBA_ASTC_12x10_KHR
-        }
-    }
-    
-    public var COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR: Int32 {
-        get {
-            return GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR
-        }
-    }
-    
-    public var COMPRESSED_RGBA_ASTC_12x12_KHR: Int32 {
-        get {
-            return GL_COMPRESSED_RGBA_ASTC_12x12_KHR
-        }
-    }
-    
-    public var COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR: Int32 {
-        get {
-            return GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR
-        }
-    }
-    
-    
-    public var COMPRESSED_RGBA_BPTC_UNORM_EXT: Int32 {
-        get {
-            return 0x8E8C
-        }
-    }
-    
-    public var COMPRESSED_SRGB_ALPHA_BPTC_UNORM_EXT: Int32 {
-        get {
-            return 0x8E8D
-        }
-    }
-    
-    public var COMPRESSED_RGB_BPTC_SIGNED_FLOAT_EXT: Int32 {
-        get {
-            return 0x8E8E
-        }
-    }
-    
-    public var COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_EXT: Int32 {
-        get {
-            return 0x8E8F
-        }
-    }
-    
-    public var COMPRESSED_RED_RGTC1_EXT: Int32 {
-        get {
-            return 0x8DBB
-        }
-    }
-    
-    public var COMPRESSED_SIGNED_RED_RGTC1_EXT: Int32 {
-        get {
-            return 0x8DBC
-        }
-    }
-    
-    public var COMPRESSED_RED_GREEN_RGTC2_EXT: Int32 {
-        get {
-            return 0x8DBD
-        }
-    }
-    
-    public var COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT: Int32 {
-        get {
-            return 0x8DBE
-        }
-    }
-    
-    public var ALPHA: Int32 {
-        get {
-            return GL_ALPHA
-        }
-    }
-    
-    public var RGB: Int32 {
-        get {
-            return GL_RGB
-        }
-    }
-    
-    public var RGBA: Int32 {
-        get {
-            return GL_RGBA
-        }
-    }
-    
-    public var LUMINANCE: Int32 {
-        get {
-            return GL_LUMINANCE
-        }
-    }
-    
-    public var LUMINANCE_ALPHA: Int32 {
-        get {
-            return GL_LUMINANCE_ALPHA
-        }
-    }
-    
-    public var FRONT: Int32 {
-        get {
-            return GL_FRONT
-        }
-    }
-    
-    public var BACK: Int32 {
-        get {
-            return GL_BACK
-        }
-    }
-    
-    public var FRONT_AND_BACK: Int32 {
-        get {
-            return GL_FRONT_AND_BACK
-        }
-    }
-    
-    public var NEVER: Int32 {
-        get {
-            return GL_NEVER
-        }
-    }
-    
-    public var LESS: Int32 {
-        get {
-            return GL_LESS
-        }
-    }
-    
-    public var EQUAL: Int32 {
-        get {
-            return GL_EQUAL
-        }
-    }
-    
-    public var LEQUAL: Int32 {
-        get {
-            return GL_LEQUAL
-        }
-    }
-    
-    public var GREATER: Int32 {
-        get {
-            return GL_GREATER
-        }
-    }
-    
-    public var NOTEQUAL: Int32 {
-        get {
-            return GL_NOTEQUAL
-        }
-    }
-    
-    public var GEQUAL: Int32 {
-        get {
-            return GL_GEQUAL
-        }
-    }
-    
-    public var  ALWAYS: Int32 {
-        get {
-            return GL_ALWAYS
-        }
-    }
-    
-    public var BLEND: Int32 {
-        get {
-            return GL_BLEND
-        }
-    }
-    
-    public var CULL_FACE: Int32 {
-        get {
-            return GL_CULL_FACE
-        }
-    }
-    
-    public var DEPTH_TEST: Int32 {
-        get {
-            return GL_DEPTH_TEST
-        }
-    }
-    
-    public var DITHER: Int32 {
-        get {
-            return GL_DITHER
-        }
-    }
-    
-    public var POLYGON_OFFSET_FILL: Int32 {
-        get {
-            return GL_POLYGON_OFFSET_FILL
-        }
-    }
-    
-    
-    public var SAMPLE_ALPHA_TO_COVERAGE: Int32 {
-        get {
-            return GL_SAMPLE_ALPHA_TO_COVERAGE
-        }
-    }
-    
-    public var SAMPLE_COVERAGE: Int32 {
-        get {
-            return GL_SAMPLE_COVERAGE
-        }
-    }
-    
-    public var SCISSOR_TEST: Int32 {
-        get {
-            return GL_SCISSOR_TEST
-        }
-    }
-    
-    public var STENCIL_TEST: Int32 {
-        get {
-            return GL_STENCIL_TEST
-        }
-    }
-    
-    public var POINTS: Int32 {
-        get {
-            return GL_POINTS
-        }
-    }
-    
-    public var LINE_STRIP: Int32 {
-        get {
-            return GL_LINE_STRIP
-        }
-    }
-    
-    public var LINE_LOOP: Int32 {
-        get {
-            return GL_LINE_LOOP
-        }
-    }
-    
-    public var LINES: Int32 {
-        get {
-            return GL_LINES
-        }
-    }
-    
-    public var TRIANGLE_STRIP: Int32 {
-        get {
-            return GL_TRIANGLE_STRIP
-        }
-    }
-    
-    public var TRIANGLE_FAN: Int32 {
-        get {
-            return GL_TRIANGLE_FAN
-        }
-    }
-    
-    public var TRIANGLES: Int32 {
-        get{
-            return GL_TRIANGLES
-        }
-    }
-    
-    public var UNSIGNED_BYTE: Int32 {
-        get {
-            return GL_UNSIGNED_BYTE
-        }
-    }
-    
-    public var UNSIGNED_SHORT: Int32 {
-        get {
-            return GL_UNSIGNED_SHORT
-        }
-    }
-    
-    public var UNSIGNED_INT:Int32 {
-        get {
-            return GL_UNSIGNED_INT
-        }
-    }
-    
-    public var COLOR_ATTACHMENT0: Int32 {
-        get {
-            return GL_COLOR_ATTACHMENT0
-        }
-    }
-    
-    public var DEPTH_ATTACHMENT: Int32 {
-        get {
-            return GL_DEPTH_ATTACHMENT
-        }
-    }
-    
-    public var DEPTH_STENCIL_ATTACHMENT: Int32 {
-        get {
-            return GL_DEPTH_STENCIL_ATTACHMENT
-        }
-    }
-    
-    public var STENCIL_ATTACHMENT: Int32 {
-        get {
-            return GL_STENCIL_ATTACHMENT
-        }
-    }
-    
-    public var COLOR_ATTACHMENT0_WEBGL: Int32 {
-        get {
-            return COLOR_ATTACHMENT0
-        }
-    }
-    
-    public var COLOR_ATTACHMENT1_WEBGL: Int32 {
-        get {
-            return 0x8ce1
-        }
-    }
-    public var COLOR_ATTACHMENT2_WEBGL: Int32 {
-        get {
-            return 0x8ce2
-        }
-    }
-    public var COLOR_ATTACHMENT3_WEBGL: Int32 {
-        get {
-            return 0x8ce3
-        }
-    }
-    public var COLOR_ATTACHMENT4_WEBGL: Int32 {
-        get {
-            return 0x8ce4
-        }
-    }
-    public var COLOR_ATTACHMENT5_WEBGL: Int32 {
-        get {
-            return 0x8ce5
-        }
-    }
-    public var COLOR_ATTACHMENT6_WEBGL: Int32 {
-        get {
-            return 0x8ce6
-        }
-    }
-    public var COLOR_ATTACHMENT7_WEBGL: Int32 {
-        get {
-            return 0x8ce7
-        }
-    }
-    public var COLOR_ATTACHMENT8_WEBGL: Int32 {
-        get {
-            return 0x8ce8
-        }
-    }
-    public var COLOR_ATTACHMENT9_WEBGL: Int32 {
-        get {
-            return 0x8ce9
-        }
-    }
-    public var COLOR_ATTACHMENT10_WEBGL: Int32 {
-        get {
-            return 0x8cea
-        }
-    }
-    public var COLOR_ATTACHMENT11_WEBGL: Int32 {
-        get {
-            return 0x8ceb
-        }
-    }
-    public var COLOR_ATTACHMENT12_WEBGL: Int32 {
-        get {
-            return 0x8cec
-        }
-    }
-    public var COLOR_ATTACHMENT13_WEBGL: Int32 {
-        get {
-            return 0x8ced
-        }
-    }
-    public var COLOR_ATTACHMENT14_WEBGL: Int32 {
-        get {
-            return 0x8cee
-        }
-    }
-    public var COLOR_ATTACHMENT15_WEBGL: Int32 {
-        get {
-            return 0x8cef
-        }
-    }
-    
-    public var CW: Int32 {
-        get {
-            return GL_CW
-        }
-    }
-    
-    public var CCW: Int32 {
-        get {
-            return GL_CCW
-        }
-    }
-    
-    public var FLOAT: Int32 {
-        get {
-            return GL_FLOAT
-        }
-    }
-    
-    
-    public var FLOAT_VEC2: Int32 {
-        get {
-            return GL_FLOAT_VEC2
-        }
-    }
-    
-    public var FLOAT_VEC3: Int32 {
-        get {
-            return GL_FLOAT_VEC3
-        }
-    }
-    
-    public var FLOAT_VEC4: Int32 {
-        get {
-            return GL_FLOAT_VEC4
-        }
-    }
-    
-    public var INT: Int32 {
-        get {
-            return GL_INT
-        }
-    }
-    
-    
-    public var INT_VEC2: Int32 {
-        get {
-            return GL_INT_VEC2
-        }
-    }
-    
-    public var INT_VEC3: Int32 {
-        get {
-            return GL_INT_VEC3
-        }
-    }
-    
-    public var INT_VEC4: Int32 {
-        get {
-            return GL_INT_VEC4
-        }
-    }
-    
-    
-    public var BOOL: Int32 {
-        get {
-            return GL_BOOL
-        }
-    }
-    
-    
-    public var BOOL_VEC2: Int32 {
-        get {
-            return GL_BOOL_VEC2
-        }
-    }
-    
-    public var BOOL_VEC3: Int32 {
-        get {
-            return GL_BOOL_VEC3
-        }
-    }
-    
-    public var BOOL_VEC4: Int32 {
-        get {
-            return GL_BOOL_VEC4
-        }
-    }
-    
-    
-    public var FLOAT_MAT2: Int32 {
-        get {
-            return GL_FLOAT_MAT2
-        }
-    }
-    
-    
-    public var FLOAT_MAT3: Int32 {
-        get {
-            return GL_FLOAT_MAT3
-        }
-    }
-    
-    
-    public var FLOAT_MAT4: Int32 {
-        get {
-            return GL_FLOAT_MAT4
-        }
-    }
-    
-    public var SAMPLER_2D: Int32 {
-        get {
-            return GL_SAMPLER_2D
-        }
-    }
-    
-    public var SAMPLER_CUBE: Int32 {
-        get {
-            return GL_SAMPLER_CUBE
-        }
-    }
-    
-    public var STATIC_DRAW: Int32 {
-        get {
-            return GL_STATIC_DRAW
-        }
-    }
-    
-    public var DYNAMIC_DRAW: Int32 {
-        get {
-            return GL_DYNAMIC_DRAW
-        }
-    }
-    
-    public var STREAM_DRAW: Int32 {
-        get {
-            return GL_STREAM_DRAW
-        }
-    }
-    
-    public var NO_ERROR: Int32 {
-        get {
-            return GL_NO_ERROR
-        }
-    }
-    
-    public var INVALID_VALUE: Int32 {
-        get {
-            return GL_INVALID_VALUE
-        }
-    }
-    
-    public var INVALID_OPERATION: Int32 {
-        get {
-            return GL_INVALID_OPERATION
-        }
-    }
-    
-    public var INVALID_FRAMEBUFFER_OPERATION: Int32 {
-        get {
-            return GL_INVALID_FRAMEBUFFER_OPERATION
-        }
-    }
-    
-    public var OUT_OF_MEMORY: Int32{
-        get {
-            return GL_OUT_OF_MEMORY
-        }
-    }
-    
-    public var CONTEXT_LOST_WEBGL: Int32 {
-        get {
-            return 0x9242
-        }
-    }
-    
-    public var FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE: Int32 {
-        get {
-            return GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE
-        }
-    }
-    
-    public var FRAMEBUFFER_ATTACHMENT_OBJECT_NAME: Int32 {
-        get {
-            return GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME
-        }
-    }
-    
-    public var FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL: Int32 {
-        get {
-            return GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL
-        }
-    }
-    
-    public var FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE: Int32 {
-        get {
-            return GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE
-        }
-    }
-    
-    public var FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT: Int32 {
-        get {
-            return GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT
-        }
-    }
-    
-    public var ACTIVE_TEXTURE: Int32 {
-        get {
-            return GL_ACTIVE_TEXTURE
-        }
-    }
-    
-    public var ALIASED_LINE_WIDTH_RANGE: Int32 {
-        get {
-            return GL_ALIASED_LINE_WIDTH_RANGE
-        }
-    }
-    
-    public var ALIASED_POINT_SIZE_RANGE: Int32 {
-        get {
-            return GL_ALIASED_POINT_SIZE_RANGE
-        }
-    }
-    
-    public var ALPHA_BITS: Int32 {
-        get {
-            return GL_ALPHA_BITS
-        }
-    }
-    
-    public var ARRAY_BUFFER_BINDING: Int32 {
-        get {
-            return GL_ARRAY_BUFFER_BINDING
-        }
-    }
-    
-    public var BLEND_COLOR: Int32 {
-        get {
-            return GL_BLEND_COLOR
-        }
-    }
-    
-    public var BLEND_DST_ALPHA: Int32 {
-        get {
-            return GL_BLEND_DST_ALPHA
-        }
-    }
-    
-    public var BLEND_DST_RGB: Int32 {
-        get {
-            return GL_BLEND_DST_RGB
-        }
-    }
-    
-    public var BLEND_EQUATION: Int32 {
-        get {
-            return GL_BLEND_EQUATION
-        }
-    }
-    
-    public var BLEND_EQUATION_ALPHA: Int32 {
-        get {
-            return GL_BLEND_EQUATION_ALPHA
-        }
-    }
-    
-    public var BLEND_EQUATION_RGB: Int32 {
-        get {
-            return GL_BLEND_EQUATION_RGB
-        }
-    }
-    
-    public var BLEND_SRC_ALPHA: Int32 {
-        get {
-            return GL_BLEND_SRC_ALPHA
-        }
-    }
-    
-    public var BLEND_SRC_RGB: Int32 {
-        get {
-            return GL_BLEND_SRC_RGB
-        }
-    }
-    
-    public var BLUE_BITS: Int32 {
-        get {
-            return GL_BLUE_BITS
-        }
-    }
-    
-    public var COLOR_CLEAR_VALUE: Int32 {
-        get {
-            return GL_COLOR_CLEAR_VALUE
-        }
-    }
-    
-    public var COLOR_WRITEMASK: Int32 {
-        get {
-            return GL_COLOR_WRITEMASK
-        }
-    }
-    
-    public var COMPRESSED_TEXTURE_FORMATS: Int32 {
-        get {
-            return GL_COMPRESSED_TEXTURE_FORMATS
-        }
-    }
-    
-    public var CULL_FACE_MODE: Int32 {
-        get {
-            return GL_CULL_FACE_MODE
-        }
-    }
-    
-    public var CURRENT_PROGRAM: Int32 {
-        get {
-            return GL_CURRENT_PROGRAM
-        }
-    }
-    
-    public var DEPTH_BITS: Int32 {
-        get {
-            return GL_DEPTH_BITS
-        }
-    }
-    
-    public var DEPTH_CLEAR_VALUE: Int32 {
-        get {
-            return GL_DEPTH_CLEAR_VALUE
-        }
-    }
-    
-    public var DEPTH_FUNC: Int32 {
-        get {
-            return GL_DEPTH_FUNC
-        }
-    }
-    
-    public var DEPTH_RANGE: Int32 {
-        get {
-            return GL_DEPTH_RANGE
-        }
-    }
-    
-    public var DEPTH_WRITEMASK: Int32 {
-        get {
-            return GL_DEPTH_WRITEMASK
-        }
-    }
-    
-    public var ELEMENT_ARRAY_BUFFER_BINDING: Int32 {
-        get {
-            return GL_ELEMENT_ARRAY_BUFFER_BINDING
-        }
-    }
-    
-    public var FRAMEBUFFER_BINDING: Int32 {
-        get {
-            return GL_FRAMEBUFFER_BINDING
-        }
-    }
-    
-    public var FRONT_FACE: Int32 {
-        get{
-            return GL_FRONT_FACE
-        }
-    }
-    
-    public var GENERATE_MIPMAP_HINT: Int32 {
-        get {
-            return GL_GENERATE_MIPMAP_HINT
-        }
-    }
-    
-    public var GREEN_BITS: Int32 {
-        get {
-            return GL_GREEN_BITS
-        }
-    }
-    
-    public var IMPLEMENTATION_COLOR_READ_FORMAT: Int32 {
-        get {
-            return GL_IMPLEMENTATION_COLOR_READ_FORMAT
-        }
-    }
-    
-    public var IMPLEMENTATION_COLOR_READ_TYPE: Int32 {
-        get {
-            return GL_IMPLEMENTATION_COLOR_READ_TYPE
-        }
-    }
-    
-    public var LINE_WIDTH: Int32 {
-        get {
-            return GL_LINE_WIDTH
-        }
-    }
-    
-    public var MAX_COMBINED_TEXTURE_IMAGE_UNITS: Int32 {
-        get {
-            return GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS
-        }
-    }
-    
-    
-    public var MAX_CUBE_MAP_TEXTURE_SIZE: Int32 {
-        get {
-            return GL_MAX_CUBE_MAP_TEXTURE_SIZE
-        }
-    }
-    
-    public var MAX_FRAGMENT_UNIFORM_VECTORS: Int32 {
-        get {
-            return GL_MAX_FRAGMENT_UNIFORM_VECTORS
-        }
-    }
-    
-    public var MAX_RENDERBUFFER_SIZE: Int32 {
-        get {
-            return GL_MAX_RENDERBUFFER_SIZE
-        }
-    }
-    
-    public var MAX_TEXTURE_IMAGE_UNITS: Int32 {
-        get {
-            return GL_MAX_TEXTURE_IMAGE_UNITS
-        }
-    }
-    
-    public var MAX_TEXTURE_SIZE: Int32 {
-        get {
-            return GL_MAX_TEXTURE_SIZE
-        }
-    }
-    
-    public var MAX_VARYING_VECTORS: Int32 {
-        get {
-            return GL_MAX_VARYING_VECTORS
-        }
-    }
-    
-    public var MAX_VERTEX_ATTRIBS: Int32 {
-        get {
-            return GL_MAX_VERTEX_ATTRIBS
-        }
-    }
-    
-    public var MAX_VERTEX_TEXTURE_IMAGE_UNITS: Int32 {
-        get {
-            return GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS
-        }
-    }
-    
-    public var MAX_VERTEX_UNIFORM_VECTORS: Int32 {
-        get {
-            return GL_MAX_VERTEX_UNIFORM_VECTORS
-        }
-    }
-    
-    public var MAX_VIEWPORT_DIMS: Int32 {
-        get {
-            return GL_MAX_VIEWPORT_DIMS
-        }
-    }
-    
-    public var PACK_ALIGNMENT: Int32 {
-        get {
-            return GL_PACK_ALIGNMENT
-        }
-    }
-    
-    public var POLYGON_OFFSET_FACTOR: Int32 {
-        get {
-            return GL_POLYGON_OFFSET_FACTOR
-        }
-    }
-    public var POLYGON_OFFSET_UNITS: Int32 {
-        get {
-            return GL_POLYGON_OFFSET_UNITS
-        }
-    }
-    
-    public var RED_BITS: Int32 {
-        get {
-            return GL_RED_BITS
-        }
-    }
-    public var RENDERBUFFER_BINDING: Int32 {
-        get {
-            return GL_RENDERBUFFER_BINDING
-        }
-    }
-    public var RENDERER: Int32 {
-        get {
-            return GL_RENDERER
-        }
-    }
-    
-    public var SAMPLE_BUFFERS: Int32 {
-        get {
-            return GL_SAMPLE_BUFFERS
-        }
-    }
-    
-    public var SAMPLES: Int32 {
-        get {
-            return GL_SAMPLES
-        }
-    }
-    
-    
-    public var STENCIL_BACK_FAIL: Int32 {
-        get {
-            return GL_STENCIL_BACK_FAIL
-        }
-    }
-    
-    
-    public var STENCIL_BACK_FUNC: Int32 {
-        get {
-            return GL_STENCIL_BACK_FUNC
-        }
-    }
-    
-    public var STENCIL_BACK_PASS_DEPTH_FAIL: Int32 {
-        get {
-            return GL_STENCIL_BACK_PASS_DEPTH_FAIL
-        }
-    }
-    
-    public var STENCIL_BACK_PASS_DEPTH_PASS: Int32 {
-        get {
-            return GL_STENCIL_BACK_PASS_DEPTH_PASS
-        }
-    }
-    
-    
-    public var STENCIL_BACK_REF: Int32 {
-        get {
-            return GL_STENCIL_BACK_REF
-        }
-    }
-    
-    
-    public var STENCIL_BACK_VALUE_MASK: Int32 {
-        get {
-            return GL_STENCIL_BACK_VALUE_MASK
-        }
-    }
-    
-    public var STENCIL_BACK_WRITEMASK: Int32 {
-        get {
-            return GL_STENCIL_BACK_WRITEMASK
-        }
-    }
-    
-    public var STENCIL_BITS: Int32 {
-        get {
-            return GL_STENCIL_BITS
-        }
-    }
-    
-    
-    public var STENCIL_CLEAR_VALUE: Int32 {
-        get {
-            return GL_STENCIL_CLEAR_VALUE
-        }
-    }
-    
-    
-    public var STENCIL_FAIL: Int32 {
-        get {
-            return GL_STENCIL_FAIL
-        }
-    }
-    
-    public var STENCIL_FUNC: Int32 {
-        get {
-            return GL_STENCIL_FUNC
-        }
-    }
-    
-    public var STENCIL_PASS_DEPTH_FAIL: Int32 {
-        get {
-            return GL_STENCIL_PASS_DEPTH_FAIL
-        }
-    }
-    
-    
-    public var STENCIL_PASS_DEPTH_PASS: Int32 {
-        get {
-            return GL_STENCIL_PASS_DEPTH_PASS
-        }
-    }
-    
-    
-    public var STENCIL_REF: Int32 {
-        get {
-            return GL_STENCIL_REF
-        }
-    }
-    
-    public var STENCIL_VALUE_MASK: Int32 {
-        get {
-            return GL_STENCIL_VALUE_MASK
-        }
-    }
-    
-    public var STENCIL_WRITEMASK: Int32 {
-        get {
-            return GL_STENCIL_WRITEMASK
-        }
-    }
-    
-    
-    public var SUBPIXEL_BITS: Int32 {
-        get {
-            return GL_SUBPIXEL_BITS
-        }
-    }
-    
-    
-    public var TEXTURE_BINDING_2D: Int32 {
-        get {
-            return GL_TEXTURE_BINDING_2D
-        }
-    }
-    
-    
-    public var TEXTURE_BINDING_CUBE_MAP: Int32 {
-        get {
-            return GL_TEXTURE_BINDING_CUBE_MAP
-        }
-    }
-    
-    public var SAMPLE_COVERAGE_INVERT: Int32 {
-        get {
-            return GL_SAMPLE_COVERAGE_INVERT
-        }
-    }
-    
-    
-    public var SAMPLE_COVERAGE_VALUE: Int32 {
-        get {
-            return GL_SAMPLE_COVERAGE_VALUE
-        }
-    }
-    
-    
-    public var SCISSOR_BOX: Int32 {
-        get {
-            return GL_SCISSOR_BOX
-        }
-    }
-    
-    public var SHADING_LANGUAGE_VERSION: Int32 {
-        get {
-            return GL_SHADING_LANGUAGE_VERSION
-        }
-    }
-    
-    public var UNPACK_ALIGNMENT: Int32 {
-        get {
-            return GL_UNPACK_ALIGNMENT
-        }
-    }
-    
-    public var UNPACK_COLORSPACE_CONVERSION_WEBGL: Int32 {
-        get {
-            return 0x9243
-        }
-    }
-    
-    public var UNPACK_FLIP_Y_WEBGL: Int32 {
-        get {
-            return 0x9240
-        }
-    }
-    
-    public var UNPACK_PREMULTIPLY_ALPHA_WEBGL: Int32 {
-        get {
-            return 0x9241
-        }
-    }
-    
-    public var VIEWPORT: Int32 {
-        get {
-            return GL_VIEWPORT
-        }
-    }
-    
-    public var VENDOR: Int32 {
-        get {
-            return GL_VENDOR
-        }
-    }
-    
-    public var VERSION: Int32 {
-        get {
-            return GL_VERSION
-        }
-    }
-    
-    
-    public var DELETE_STATUS: Int32 {
-        get {
-            return GL_DELETE_STATUS
-        }
-    }
-    
-    public var LINK_STATUS: Int32{
-        get {
-            return GL_LINK_STATUS
-        }
-    }
-    
-    public var VALIDATE_STATUS: Int32 {
-        get {
-            return GL_VALIDATE_STATUS
-        }
-    }
-    
-    public var ATTACHED_SHADERS: Int32 {
-        get {
-            return GL_ATTACHED_SHADERS
-        }
-    }
-    
-    public var ACTIVE_ATTRIBUTES: Int32 {
-        get {
-            return GL_ACTIVE_ATTRIBUTES
-        }
-    }
-    
-    public var ACTIVE_UNIFORMS: Int32 {
-        get {
-            return GL_ACTIVE_UNIFORMS
-        }
-    }
-    
-    public var RENDERBUFFER_WIDTH: Int32 {
-        get {
-            return GL_RENDERBUFFER_WIDTH
-        }
-    }
-    
-    
-    public var RENDERBUFFER_HEIGHT: Int32 {
-        get {
-            return GL_RENDERBUFFER_HEIGHT
-        }
-    }
-    
-    public var RENDERBUFFER_INTERNAL_FORMAT: Int32 {
-        get {
-            return GL_RENDERBUFFER_INTERNAL_FORMAT
-        }
-    }
-    
-    public var RENDERBUFFER_GREEN_SIZE: Int32 {
-        get {
-            return GL_RENDERBUFFER_GREEN_SIZE
-        }
-    }
-    
-    public var RENDERBUFFER_BLUE_SIZE: Int32 {
-        get {
-            return GL_RENDERBUFFER_BLUE_SIZE
-        }
-    }
-    
-    public var RENDERBUFFER_RED_SIZE: Int32 {
-        get {
-            return GL_RENDERBUFFER_RED_SIZE
-        }
-    }
-    public var RENDERBUFFER_ALPHA_SIZE: Int32 {
-        get {
-            return GL_RENDERBUFFER_ALPHA_SIZE
-        }
-    }
-    
-    public var RENDERBUFFER_DEPTH_SIZE: Int32 {
-        get {
-            return GL_RENDERBUFFER_DEPTH_SIZE
-        }
-    }
-    public var RENDERBUFFER_STENCIL_SIZE: Int32 {
-        get {
-            return GL_RENDERBUFFER_STENCIL_SIZE
-        }
-    }
-    
-    public var COMPILE_STATUS: Int32 {
-        get {
-            return GL_COMPILE_STATUS
-        }
-    }
-    public var SHADER_TYPE: Int32 {
-        get {
-            return GL_SHADER_TYPE
-        }
-    }
-    
-    public var TEXTURE_MAG_FILTER: Int32 {
-        get {
-            return GL_TEXTURE_MAG_FILTER
-        }
-    }
-    
-    public var TEXTURE_MIN_FILTER: Int32 {
-        get {
-            return GL_TEXTURE_MIN_FILTER
-        }
-    }
-    
-    public var TEXTURE_WRAP_S: Int32 {
-        get {
-            return GL_TEXTURE_WRAP_S
-        }
-    }
-    
-    public var TEXTURE_WRAP_T: Int32 {
-        get {
-            return GL_TEXTURE_WRAP_T
-        }
-    }
-    
-    public var TEXTURE_MAX_ANISOTROPY_EXT: Int32 {
-        get {
-            return GL_TEXTURE_MAX_ANISOTROPY_EXT
-        }
-    }
-    
-    public var VERTEX_ATTRIB_ARRAY_BUFFER_BINDING: Int32 {
-        get {
-            return GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING
-        }
-    }
-    public var VERTEX_ATTRIB_ARRAY_ENABLED: Int32 {
-        get {
-            return GL_VERTEX_ATTRIB_ARRAY_ENABLED
-        }
-    }
-    
-    public var VERTEX_ATTRIB_ARRAY_SIZE: Int32 {
-        get {
-            return GL_VERTEX_ATTRIB_ARRAY_SIZE
-        }
-    }
-    public var VERTEX_ATTRIB_ARRAY_STRIDE: Int32 {
-        get {
-            return GL_VERTEX_ATTRIB_ARRAY_STRIDE
-        }
-    }
-    
-    public var VERTEX_ATTRIB_ARRAY_TYPE: Int32 {
-        get {
-            return GL_VERTEX_ATTRIB_ARRAY_TYPE
-        }
-    }
-    public var VERTEX_ATTRIB_ARRAY_NORMALIZED: Int32 {
-        get {
-            return GL_VERTEX_ATTRIB_ARRAY_NORMALIZED
-        }
-    }
-    
-    public var CURRENT_VERTEX_ATTRIB: Int32 {
-        get {
-            return GL_CURRENT_VERTEX_ATTRIB
-        }
-    }
-    public var VERTEX_ATTRIB_ARRAY_POINTER: Int32 {
-        get {
-            return GL_VERTEX_ATTRIB_ARRAY_POINTER
-        }
-    }
-    
-    
-    public var FRAGMENT_SHADER_DERIVATIVE_HINT_OES: Int32 {
-        get {
-            return GL_FRAGMENT_SHADER_DERIVATIVE_HINT_OES
-        }
-    }
-    
-    public var DONT_CARE: Int32 {
-        get {
-            return GL_DONT_CARE
-        }
-    }
-    
-    public var FASTEST: Int32{
-        get {
-            return GL_FASTEST
-        }
-    }
-    
-    public var NICEST: Int32 {
-        get {
-            return GL_NICEST
-        }
-    }
-    
-    public var UNSIGNED_SHORT_5_6_5: Int32 {
-        get {
-            return GL_UNSIGNED_SHORT_5_6_5
-        }
-    }
-    
-    public var UNSIGNED_SHORT_4_4_4_4: Int32 {
-        get {
-            return GL_UNSIGNED_SHORT_4_4_4_4
-        }
-    }
-    
-    public var UNSIGNED_SHORT_5_5_5_1: Int32 {
-        get {
-            return GL_UNSIGNED_SHORT_5_5_5_1
-        }
-    }
-    
-    public var RGBA4: Int32 {
-        get {
-            return GL_RGBA4
-        }
-    }
-    
-    public var RGB565: Int32 {
-        get {
-            return GL_RGB565
-        }
-    }
-    
-    public var RGB5_A1: Int32 {
-        get {
-            return GL_RGB5_A1
-        }
-    }
-    
-    public var DEPTH_COMPONENT16: Int32 {
-        get {
-            return GL_DEPTH_COMPONENT16
-        }
-    }
-    
-    public var STENCIL_INDEX8: Int32 {
-        get {
-            return GL_STENCIL_INDEX8
-        }
-    }
-    
-    public var DEPTH_STENCIL: Int32 {
-        get {
-            return GL_DEPTH_STENCIL
-        }
-    }
-    
-    public var RGBA32F_EXT: Int32 {
-        get {
-            return GL_RGBA32F_EXT
-        }
-    }
-    
-    public var RGB32F_EXT: Int32 {
-        get {
-            return GL_RGB32F_EXT
-        }
-    }
-    
-    public var SRGB8_ALPHA8_EXT: Int32 {
-        get {
-            return GL_SRGB8_ALPHA8_EXT
-        }
-    }
-    
-    public var KEEP: Int32 {
-        get {
-            return GL_KEEP
-        }
-    }
-    
-    public var REPLACE: Int32 {
-        get {
-            return GL_REPLACE
-        }
-    }
-    
-    public var INCR: Int32 {
-        get {
-            return GL_INCR
-        }
-    }
-    
-    public var INCR_WRAP: Int32 {
-        get {
-            return GL_INCR_WRAP
-        }
-    }
-    public var DECR: Int32 {
-        get {
-            return GL_DECR
-        }
-    }
-    
-    public var DECR_WRAP: Int32 {
-        get {
-            return GL_DECR_WRAP
-        }
-    }
-    
-    public var INVERT: Int32 {
-        get {
-            return GL_INVERT
-        }
-    }
-    
-    public var REPEAT: Int32 {
-        get {
-            return GL_REPEAT
-        }
-    }
-    public var CLAMP_TO_EDGE: Int32 {
-        get {
-            return GL_CLAMP_TO_EDGE
-        }
-    }
-    
-    public var MIRRORED_REPEAT: Int32 {
-        get {
-            return GL_MIRRORED_REPEAT
-        }
-    }
-    
-    public var LINEAR: Int32 {
-        get {
-            return GL_LINEAR
-        }
-    }
-    
-    public var NEAREST: Int32 {
-        get {
-            return GL_NEAREST
-        }
-    }
-    
-    public var NEAREST_MIPMAP_NEAREST: Int32 {
-        get {
-            return GL_NEAREST_MIPMAP_NEAREST
-        }
-    }
-    
-    public var LINEAR_MIPMAP_NEAREST: Int32 {
-        get {
-            return GL_LINEAR_MIPMAP_NEAREST
-        }
-    }
-    
-    public var NEAREST_MIPMAP_LINEAR: Int32 {
-        get {
-            return GL_NEAREST_MIPMAP_LINEAR
-        }
-    }
-    
-    public var LINEAR_MIPMAP_LINEAR: Int32 {
-        get {
-            return GL_LINEAR_MIPMAP_LINEAR
-        }
-    }
-    
-    public var BROWSER_DEFAULT_WEBGL: Int32 {
-        get {
-            return 0x9244
-        }
-    }
-    
-    public var  NONE :Int32 {
-        return GL_NONE
-    }
-    
-    public var MIN_EXT: Int32 {
-        return GL_MIN_EXT
-    }
-    
-    public var MAX_EXT: Int32 {
-           return GL_MAX_EXT
-    }
-    
-    public var HALF_FLOAT : Int32 {
-        return 0x140B
-    }
+
+        /* Clearing buffers */
+
+        public var DEPTH_BUFFER_BIT : Int32 { return GL_DEPTH_BUFFER_BIT }
+
+        public var COLOR_BUFFER_BIT : Int32 { return GL_COLOR_BUFFER_BIT }
+
+        public var STENCIL_BUFFER_BIT : Int32 { return GL_STENCIL_BUFFER_BIT }
+
+        /* Clearing buffers */
+
+        /* Rendering primitives */
+
+        public var POINTS : Int32 { return GL_POINTS }
+
+        public var LINES : Int32 { return GL_LINES }
+
+        public var LINE_LOOP : Int32 { return GL_LINE_LOOP }
+
+        public var LINE_STRIP : Int32 { return GL_LINE_STRIP }
+
+        public var TRIANGLES : Int32 { return GL_TRIANGLES }
+
+        public var TRIANGLE_STRIP : Int32 { return GL_TRIANGLE_STRIP }
+
+        public var TRIANGLE_FAN : Int32 { return GL_TRIANGLE_FAN }
+
+        /* Rendering primitives */
+
+        /* Blending modes */
+
+
+        public var ONE : Int32 { return GL_ONE }
+
+        public var ZERO : Int32 { return GL_ZERO }
+        public var SRC_COLOR : Int32 { return GL_SRC_COLOR }
+
+        public var ONE_MINUS_SRC_COLOR : Int32 { return GL_ONE_MINUS_SRC_COLOR }
+
+        public var SRC_ALPHA : Int32 { return GL_SRC_ALPHA }
+
+        public var ONE_MINUS_SRC_ALPHA : Int32 { return GL_ONE_MINUS_SRC_ALPHA }
+
+        public var DST_ALPHA : Int32 { return GL_DST_ALPHA }
+
+        public var ONE_MINUS_DST_ALPHA : Int32 { return GL_ONE_MINUS_DST_ALPHA }
+
+        public var DST_COLOR : Int32 { return GL_DST_COLOR }
+
+        public var ONE_MINUS_DST_COLOR : Int32 { return GL_ONE_MINUS_DST_COLOR }
+
+        public var SRC_ALPHA_SATURATE : Int32 { return GL_SRC_ALPHA_SATURATE }
+
+        public var CONSTANT_COLOR : Int32 { return GL_CONSTANT_COLOR }
+        public var ONE_MINUS_CONSTANT_COLOR : Int32 { return GL_ONE_MINUS_CONSTANT_COLOR }
+
+        public var CONSTANT_ALPHA : Int32 { return GL_CONSTANT_ALPHA }
+        public var ONE_MINUS_CONSTANT_ALPHA : Int32 { return GL_ONE_MINUS_CONSTANT_ALPHA }
+
+        /* Blending modes */
+
+        /* Blending equations */
+        public var FUNC_ADD : Int32 { return GL_FUNC_ADD }
+
+        public var FUNC_SUBTRACT : Int32 { return GL_FUNC_SUBTRACT }
+
+        public var FUNC_REVERSE_SUBTRACT : Int32 { return GL_FUNC_REVERSE_SUBTRACT }
+
+        /* Blending equations */
+
+
+        /* Getting GL parameter information */
+
+        public var BLEND_EQUATION : Int32 { return GL_BLEND_EQUATION }
+
+        public var BLEND_EQUATION_RGB : Int32 { return GL_BLEND_EQUATION_RGB }
+
+        public var BLEND_EQUATION_ALPHA : Int32 { return GL_BLEND_EQUATION_ALPHA }
+
+        public var BLEND_DST_RGB : Int32 { return GL_BLEND_DST_RGB }
+
+        public var BLEND_SRC_RGB : Int32 { return GL_BLEND_SRC_RGB }
+
+        public var BLEND_DST_ALPHA : Int32 { return GL_BLEND_DST_ALPHA }
+
+        public var BLEND_SRC_ALPHA : Int32 { return GL_BLEND_SRC_ALPHA }
+
+        public var BLEND_COLOR : Int32 { return GL_BLEND_COLOR }
+
+        public var ARRAY_BUFFER_BINDING : Int32 { return GL_ARRAY_BUFFER_BINDING }
+
+        public var ELEMENT_ARRAY_BUFFER_BINDING : Int32 { return GL_ELEMENT_ARRAY_BUFFER_BINDING }
+
+        public var LINE_WIDTH : Int32 { return GL_LINE_WIDTH }
+
+        public var ALIASED_POINT_SIZE_RANGE : Int32 { return GL_ALIASED_POINT_SIZE_RANGE }
+
+        public var ALIASED_LINE_WIDTH_RANGE : Int32 { return GL_ALIASED_LINE_WIDTH_RANGE }
+
+        public var CULL_FACE_MODE : Int32 { return GL_CULL_FACE_MODE }
+
+        public var FRONT_FACE : Int32 { return GL_FRONT_FACE }
+
+        public var DEPTH_RANGE : Int32 { return GL_DEPTH_RANGE }
+
+        public var DEPTH_WRITEMASK : Int32 { return GL_DEPTH_WRITEMASK }
+
+        public var DEPTH_CLEAR_VALUE : Int32 { return GL_DEPTH_CLEAR_VALUE }
+
+        public var DEPTH_FUNC : Int32 { return GL_DEPTH_FUNC }
+
+        public var STENCIL_CLEAR_VALUE : Int32 { return GL_STENCIL_CLEAR_VALUE }
+
+        public var STENCIL_FUNC : Int32 { return GL_STENCIL_FUNC }
+
+        public var STENCIL_FAIL : Int32 { return GL_STENCIL_FAIL }
+
+        public var STENCIL_PASS_DEPTH_FAIL : Int32 { return GL_STENCIL_PASS_DEPTH_FAIL }
+
+        public var STENCIL_PASS_DEPTH_PASS : Int32 { return GL_STENCIL_PASS_DEPTH_PASS }
+
+        public var STENCIL_REF : Int32 { return GL_STENCIL_REF }
+
+        public var STENCIL_VALUE_MASK : Int32 { return GL_STENCIL_VALUE_MASK }
+
+        public var STENCIL_WRITEMASK : Int32 { return GL_STENCIL_WRITEMASK }
+
+        public var STENCIL_BACK_FUNC : Int32 { return GL_STENCIL_BACK_FUNC }
+
+        public var STENCIL_BACK_FAIL : Int32 { return GL_STENCIL_BACK_FAIL }
+
+        public var STENCIL_BACK_PASS_DEPTH_FAIL : Int32 { return GL_STENCIL_BACK_PASS_DEPTH_FAIL }
+
+        public var STENCIL_BACK_PASS_DEPTH_PASS : Int32 { return GL_STENCIL_BACK_PASS_DEPTH_PASS }
+
+        public var STENCIL_BACK_REF : Int32 { return GL_STENCIL_BACK_REF }
+
+        public var STENCIL_BACK_VALUE_MASK : Int32 { return GL_STENCIL_BACK_VALUE_MASK }
+
+        public var STENCIL_BACK_WRITEMASK : Int32 { return GL_STENCIL_BACK_WRITEMASK }
+
+        public var VIEWPORT : Int32 { return GL_VIEWPORT }
+
+        public var SCISSOR_BOX : Int32 { return GL_SCISSOR_BOX }
+
+        public var COLOR_CLEAR_VALUE : Int32 { return GL_COLOR_CLEAR_VALUE }
+
+        public var COLOR_WRITEMASK : Int32 { return GL_COLOR_WRITEMASK }
+
+        public var UNPACK_ALIGNMENT : Int32 { return GL_UNPACK_ALIGNMENT }
+
+        public var PACK_ALIGNMENT : Int32 { return GL_PACK_ALIGNMENT }
+
+        public var MAX_TEXTURE_SIZE : Int32 { return GL_MAX_TEXTURE_SIZE }
+
+        public var MAX_VIEWPORT_DIMS : Int32 { return GL_MAX_VIEWPORT_DIMS }
+
+        public var SUBPIXEL_BITS : Int32 { return GL_SUBPIXEL_BITS }
+
+        public var RED_BITS : Int32 { return GL_RED_BITS }
+
+        public var GREEN_BITS : Int32 { return GL_GREEN_BITS }
+
+        public var BLUE_BITS : Int32 { return GL_BLUE_BITS }
+
+        public var ALPHA_BITS : Int32 { return GL_ALPHA_BITS }
+
+        public var DEPTH_BITS : Int32 { return GL_DEPTH_BITS }
+
+        public var STENCIL_BITS : Int32 { return GL_STENCIL_BITS }
+
+        public var POLYGON_OFFSET_UNITS : Int32 { return GL_POLYGON_OFFSET_UNITS }
+
+        public var POLYGON_OFFSET_FACTOR : Int32 { return GL_POLYGON_OFFSET_FACTOR }
+
+        public var TEXTURE_BINDING_2D : Int32 { return GL_TEXTURE_BINDING_2D }
+
+        public var SAMPLE_BUFFERS : Int32 { return GL_SAMPLE_BUFFERS }
+
+        public var SAMPLES : Int32 { return GL_SAMPLES }
+
+        public var SAMPLE_COVERAGE_VALUE : Int32 { return GL_SAMPLE_COVERAGE_VALUE }
+
+        public var SAMPLE_COVERAGE_INVERT : Int32 { return GL_SAMPLE_COVERAGE_INVERT }
+
+        public var COMPRESSED_TEXTURE_FORMATS : Int32 { return GL_COMPRESSED_TEXTURE_FORMATS }
+
+        public var VENDOR : Int32 { return GL_VENDOR }
+
+        public var RENDERER : Int32 { return GL_RENDERER }
+
+        public var VERSION : Int32 { return GL_VERSION }
+
+        public var IMPLEMENTATION_COLOR_READ_TYPE : Int32 { return GL_IMPLEMENTATION_COLOR_READ_TYPE }
+
+        public var IMPLEMENTATION_COLOR_READ_FORMAT : Int32 { return GL_IMPLEMENTATION_COLOR_READ_FORMAT }
+
+        public var BROWSER_DEFAULT_WEBGL : Int32 { return  0x9244 }
+
+        /* Getting GL parameter information */
+
+        /* Buffers */
+
+        public var STATIC_DRAW : Int32 { return GL_STATIC_DRAW }
+
+        public var STREAM_DRAW : Int32 { return GL_STREAM_DRAW }
+
+        public var DYNAMIC_DRAW : Int32 { return GL_DYNAMIC_DRAW }
+
+        public var ARRAY_BUFFER : Int32 { return GL_ARRAY_BUFFER }
+
+        public var ELEMENT_ARRAY_BUFFER : Int32 { return GL_ELEMENT_ARRAY_BUFFER }
+
+        public var BUFFER_SIZE : Int32 { return GL_BUFFER_SIZE }
+
+        public var BUFFER_USAGE : Int32 { return GL_BUFFER_USAGE }
+
+        /* Buffers */
+
+        /* Vertex attributes */
+
+        public var CURRENT_VERTEX_ATTRIB : Int32 { return GL_CURRENT_VERTEX_ATTRIB }
+
+        public var VERTEX_ATTRIB_ARRAY_ENABLED : Int32 { return GL_VERTEX_ATTRIB_ARRAY_ENABLED }
+
+        public var VERTEX_ATTRIB_ARRAY_SIZE : Int32 { return GL_VERTEX_ATTRIB_ARRAY_SIZE }
+
+        public var VERTEX_ATTRIB_ARRAY_STRIDE : Int32 { return GL_VERTEX_ATTRIB_ARRAY_STRIDE }
+
+        public var VERTEX_ATTRIB_ARRAY_TYPE : Int32 { return GL_VERTEX_ATTRIB_ARRAY_TYPE }
+
+        public var VERTEX_ATTRIB_ARRAY_NORMALIZED : Int32 { return GL_VERTEX_ATTRIB_ARRAY_NORMALIZED }
+
+        public var VERTEX_ATTRIB_ARRAY_POINTER : Int32 { return GL_VERTEX_ATTRIB_ARRAY_POINTER }
+
+        public var VERTEX_ATTRIB_ARRAY_BUFFER_BINDING : Int32 { return GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING }
+
+        /* Vertex attributes */
+
+        /* Culling */
+
+        public var CULL_FACE : Int32 { return GL_CULL_FACE }
+
+        public var FRONT : Int32 { return GL_FRONT }
+
+        public var BACK : Int32 { return GL_BACK }
+
+        public var FRONT_AND_BACK : Int32 { return GL_FRONT_AND_BACK }
+
+        /* Culling */
+
+        /* Enabling and disabling */
+
+        public var BLEND : Int32 { return GL_BLEND }
+
+        public var DEPTH_TEST : Int32 { return GL_DEPTH_TEST }
+
+        public var DITHER : Int32 { return GL_DITHER }
+
+        public var POLYGON_OFFSET_FILL : Int32 { return GL_POLYGON_OFFSET_FILL }
+
+        public var SAMPLE_ALPHA_TO_COVERAGE : Int32 { return GL_SAMPLE_ALPHA_TO_COVERAGE }
+
+        public var SAMPLE_COVERAGE : Int32 { return GL_SAMPLE_COVERAGE }
+
+        public var SCISSOR_TEST : Int32 { return GL_SCISSOR_TEST }
+
+        public var STENCIL_TEST : Int32 { return GL_STENCIL_TEST }
+
+        /* Enabling and disabling */
+
+        /* Errors */
+        public var NO_ERROR : Int32 { return GL_NO_ERROR }
+
+        public var INVALID_ENUM : Int32 { return GL_INVALID_ENUM }
+
+        public var INVALID_VALUE : Int32 { return GL_INVALID_VALUE }
+
+        public var INVALID_OPERATION : Int32 { return GL_INVALID_OPERATION }
+
+        public var INVALID_FRAMEBUFFER_OPERATION : Int32 { return GL_INVALID_FRAMEBUFFER_OPERATION }
+
+        public var OUT_OF_MEMORY : Int32 { return GL_OUT_OF_MEMORY }
+
+        public var CONTEXT_LOST_WEBGL: Int32 { return 0x9242 }
+        /* Errors */
+
+        /* Front face directions */
+
+        public var CW : Int32 { return GL_CW }
+
+        public var CCW : Int32 { return GL_CCW }
+
+        /* Front face directions */
+
+
+        /* Hints */
+
+        public var DONT_CARE : Int32 { return GL_DONT_CARE }
+
+        public var FASTEST : Int32 { return GL_FASTEST }
+
+        public var NICEST : Int32 { return GL_NICEST }
+
+        public var GENERATE_MIPMAP_HINT : Int32 { return GL_GENERATE_MIPMAP_HINT }
+
+        /* Hints */
+
+
+        /* Data types */
+
+        public var BYTE : Int32 { return GL_BYTE }
+
+        public var UNSIGNED_BYTE : Int32 { return GL_UNSIGNED_BYTE }
+
+        public var UNSIGNED_SHORT : Int32 { return GL_UNSIGNED_SHORT }
+
+        public var SHORT : Int32 { return GL_SHORT }
+
+        public var UNSIGNED_INT : Int32 { return GL_UNSIGNED_INT }
+
+        public var INT : Int32 { return GL_INT }
+
+        public var FLOAT : Int32 { return GL_FLOAT }
+
+        /* Data types */
+
+
+        /* Pixel formats */
+
+        public var DEPTH_COMPONENT : Int32 { return GL_DEPTH_COMPONENT }
+
+        public var ALPHA : Int32 { return GL_ALPHA }
+
+        public var RGB : Int32 { return GL_RGB }
+
+        public var RGBA : Int32 { return GL_RGBA }
+
+        public var LUMINANCE : Int32 { return GL_LUMINANCE }
+
+        public var LUMINANCE_ALPHA : Int32 { return GL_LUMINANCE_ALPHA }
+
+        /* Pixel formats */
+
+        /* Pixel types */
+
+        // public var UNSIGNED_BYTE : Int32 { return GL_UNSIGNED_BYTE }
+
+        public var UNSIGNED_SHORT_4_4_4_4 : Int32 { return GL_UNSIGNED_SHORT_4_4_4_4 }
+
+        public var UNSIGNED_SHORT_5_5_5_1 : Int32 { return GL_UNSIGNED_SHORT_5_5_5_1 }
+
+        public var UNSIGNED_SHORT_5_6_5 : Int32 { return GL_UNSIGNED_SHORT_5_6_5 }
+
+        /* Pixel types */
+
+        /* Shaders */
+
+        public var FRAGMENT_SHADER : Int32 { return GL_FRAGMENT_SHADER }
+
+        public var VERTEX_SHADER : Int32 { return GL_VERTEX_SHADER }
+
+        public var COMPILE_STATUS : Int32 { return GL_COMPILE_STATUS }
+
+        public var DELETE_STATUS : Int32 { return GL_DELETE_STATUS }
+
+        public var LINK_STATUS : Int32 { return GL_LINK_STATUS }
+
+        public var VALIDATE_STATUS : Int32 { return GL_VALIDATE_STATUS }
+
+        public var ATTACHED_SHADERS : Int32 { return GL_ATTACHED_SHADERS }
+
+        public var ACTIVE_ATTRIBUTES : Int32 { return GL_ACTIVE_ATTRIBUTES }
+
+        public var ACTIVE_UNIFORMS : Int32 { return GL_ACTIVE_UNIFORMS }
+
+        public var MAX_VERTEX_UNIFORM_VECTORS : Int32 { return GL_MAX_VERTEX_UNIFORM_VECTORS }
+
+        public var MAX_VARYING_VECTORS : Int32 { return GL_MAX_VARYING_VECTORS }
+
+        public var MAX_COMBINED_TEXTURE_IMAGE_UNITS : Int32 { return GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS }
+
+        public var MAX_VERTEX_TEXTURE_IMAGE_UNITS : Int32 { return GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS }
+
+        public var MAX_TEXTURE_IMAGE_UNITS : Int32 { return GL_MAX_TEXTURE_IMAGE_UNITS }
+
+        public var MAX_VERTEX_ATTRIBS : Int32 { return GL_MAX_VERTEX_ATTRIBS }
+
+        public var MAX_FRAGMENT_UNIFORM_VECTORS : Int32 { return GL_MAX_FRAGMENT_UNIFORM_VECTORS }
+
+        public var SHADER_TYPE : Int32 { return GL_SHADER_TYPE }
+
+        public var SHADING_LANGUAGE_VERSION : Int32 { return GL_SHADING_LANGUAGE_VERSION }
+
+        public var CURRENT_PROGRAM : Int32 { return GL_CURRENT_PROGRAM }
+
+        /* Shaders */
+
+        /* Depth or stencil tests */
+
+        public var NEVER : Int32 { return GL_NEVER }
+
+        public var LESS : Int32 { return GL_LESS }
+
+        public var EQUAL : Int32 { return GL_EQUAL }
+
+        public var LEQUAL : Int32 { return GL_LEQUAL }
+
+        public var GREATER : Int32 { return GL_GREATER }
+
+        public var NOTEQUAL : Int32 { return GL_NOTEQUAL }
+
+        public var GEQUAL : Int32 { return GL_GEQUAL }
+
+        public var ALWAYS : Int32 { return GL_ALWAYS }
+
+        /* Depth or stencil tests */
+
+        /* Stencil actions */
+
+        public var KEEP : Int32 { return GL_KEEP }
+
+        public var REPLACE : Int32 { return GL_REPLACE }
+
+        public var INCR : Int32 { return GL_INCR }
+
+        public var DECR : Int32 { return GL_DECR }
+
+        public var INVERT : Int32 { return GL_INVERT }
+
+        public var INCR_WRAP : Int32 { return GL_INCR_WRAP }
+
+        public var DECR_WRAP : Int32 { return GL_DECR_WRAP }
+
+        /* Stencil actions */
+
+        /* Textures */
+
+        public var NEAREST : Int32 { return GL_NEAREST }
+
+        public var LINEAR : Int32 { return GL_LINEAR }
+
+        public var NEAREST_MIPMAP_NEAREST : Int32 { return GL_NEAREST_MIPMAP_NEAREST }
+
+        public var LINEAR_MIPMAP_NEAREST : Int32 { return GL_LINEAR_MIPMAP_NEAREST }
+
+        public var NEAREST_MIPMAP_LINEAR : Int32 { return GL_NEAREST_MIPMAP_LINEAR }
+
+        public var LINEAR_MIPMAP_LINEAR : Int32 { return GL_LINEAR_MIPMAP_LINEAR }
+
+        public var TEXTURE_MAG_FILTER : Int32 { return GL_TEXTURE_MAG_FILTER }
+
+        public var TEXTURE_MIN_FILTER : Int32 { return GL_TEXTURE_MIN_FILTER }
+
+        public var TEXTURE_WRAP_S : Int32 { return GL_TEXTURE_WRAP_S }
+
+        public var TEXTURE_WRAP_T : Int32 { return GL_TEXTURE_WRAP_T }
+
+        public var TEXTURE_2D : Int32 { return GL_TEXTURE_2D }
+
+        public var TEXTURE : Int32 { return GL_TEXTURE }
+
+        public var TEXTURE_CUBE_MAP : Int32 { return GL_TEXTURE_CUBE_MAP }
+
+        public var TEXTURE_BINDING_CUBE_MAP : Int32 { return GL_TEXTURE_BINDING_CUBE_MAP }
+
+        public var TEXTURE_CUBE_MAP_POSITIVE_X : Int32 { return GL_TEXTURE_CUBE_MAP_POSITIVE_X }
+
+        public var TEXTURE_CUBE_MAP_NEGATIVE_X : Int32 { return GL_TEXTURE_CUBE_MAP_NEGATIVE_X }
+
+        public var TEXTURE_CUBE_MAP_POSITIVE_Y : Int32 { return GL_TEXTURE_CUBE_MAP_POSITIVE_Y }
+
+        public var TEXTURE_CUBE_MAP_NEGATIVE_Y : Int32 { return GL_TEXTURE_CUBE_MAP_NEGATIVE_Y }
+
+        public var TEXTURE_CUBE_MAP_POSITIVE_Z : Int32 { return GL_TEXTURE_CUBE_MAP_POSITIVE_Z }
+
+        public var TEXTURE_CUBE_MAP_NEGATIVE_Z : Int32 { return GL_TEXTURE_CUBE_MAP_NEGATIVE_Z }
+
+        public var MAX_CUBE_MAP_TEXTURE_SIZE : Int32 { return GL_MAX_CUBE_MAP_TEXTURE_SIZE }
+
+        public var TEXTURE0 : Int32 { return GL_TEXTURE0 }
+
+        public var TEXTURE1 : Int32 { return GL_TEXTURE1 }
+
+        public var TEXTURE2 : Int32 { return GL_TEXTURE2 }
+
+        public var TEXTURE3 : Int32 { return GL_TEXTURE3 }
+
+        public var TEXTURE4 : Int32 { return GL_TEXTURE4 }
+
+        public var TEXTURE5 : Int32 { return GL_TEXTURE5 }
+
+        public var TEXTURE6 : Int32 { return GL_TEXTURE6 }
+
+        public var TEXTURE7 : Int32 { return GL_TEXTURE7 }
+
+        public var TEXTURE8 : Int32 { return GL_TEXTURE8 }
+
+        public var TEXTURE9 : Int32 { return GL_TEXTURE9 }
+
+        public var TEXTURE10 : Int32 { return GL_TEXTURE10 }
+
+        public var TEXTURE11 : Int32 { return GL_TEXTURE11 }
+
+        public var TEXTURE12 : Int32 { return GL_TEXTURE12 }
+
+        public var TEXTURE13 : Int32 { return GL_TEXTURE13 }
+
+        public var TEXTURE14 : Int32 { return GL_TEXTURE14 }
+
+        public var TEXTURE15 : Int32 { return GL_TEXTURE15 }
+
+        public var TEXTURE16 : Int32 { return GL_TEXTURE16 }
+
+        public var TEXTURE17 : Int32 { return GL_TEXTURE17 }
+
+        public var TEXTURE18 : Int32 { return GL_TEXTURE18 }
+
+        public var TEXTURE19 : Int32 { return GL_TEXTURE19 }
+
+        public var TEXTURE20 : Int32 { return GL_TEXTURE20 }
+
+        public var TEXTURE21 : Int32 { return GL_TEXTURE21 }
+
+        public var TEXTURE22 : Int32 { return GL_TEXTURE22 }
+
+        public var TEXTURE23 : Int32 { return GL_TEXTURE23 }
+
+        public var TEXTURE24 : Int32 { return GL_TEXTURE24 }
+
+        public var TEXTURE25 : Int32 { return GL_TEXTURE25 }
+
+        public var TEXTURE26 : Int32 { return GL_TEXTURE26 }
+
+        public var TEXTURE27 : Int32 { return GL_TEXTURE27 }
+
+        public var TEXTURE28 : Int32 { return GL_TEXTURE28 }
+
+        public var TEXTURE29 : Int32 { return GL_TEXTURE29 }
+
+        public var TEXTURE30 : Int32 { return GL_TEXTURE30 }
+
+        public var TEXTURE31 : Int32 { return GL_TEXTURE31 }
+
+        public var ACTIVE_TEXTURE : Int32 { return GL_ACTIVE_TEXTURE }
+
+        public var REPEAT : Int32 { return GL_REPEAT }
+
+        public var CLAMP_TO_EDGE : Int32 { return GL_CLAMP_TO_EDGE }
+
+        public var MIRRORED_REPEAT : Int32 { return GL_MIRRORED_REPEAT }
+
+        /* Textures */
+
+
+
+        /* Uniform types */
+
+        public var FLOAT_VEC2 : Int32 { return GL_FLOAT_VEC2 }
+
+        public var FLOAT_VEC3 : Int32 { return GL_FLOAT_VEC3 }
+
+        public var FLOAT_VEC4 : Int32 { return GL_FLOAT_VEC4 }
+
+        public var INT_VEC2 : Int32 { return GL_INT_VEC2 }
+
+        public var INT_VEC3 : Int32 { return GL_INT_VEC3 }
+
+        public var INT_VEC4 : Int32 { return GL_INT_VEC4 }
+
+
+        public var BOOL : Int32 { return GL_BOOL }
+
+
+        public var BOOL_VEC2 : Int32 { return GL_BOOL_VEC2 }
+
+        public var BOOL_VEC3 : Int32 { return GL_BOOL_VEC3 }
+
+        public var BOOL_VEC4 : Int32 { return GL_BOOL_VEC4 }
+
+
+        public var FLOAT_MAT2 : Int32 { return GL_FLOAT_MAT2 }
+
+
+        public var FLOAT_MAT3 : Int32 { return GL_FLOAT_MAT3 }
+
+
+        public var FLOAT_MAT4 : Int32 { return GL_FLOAT_MAT4 }
+
+        public var SAMPLER_2D : Int32 { return GL_SAMPLER_2D }
+
+        public var SAMPLER_CUBE : Int32 { return GL_SAMPLER_CUBE }
+
+        /* Uniform types */
+
+        /* Shader precision-specified types */
+
+        public var LOW_FLOAT : Int32 { return GL_LOW_FLOAT }
+        public var MEDIUM_FLOAT : Int32 { return GL_MEDIUM_FLOAT }
+        public var HIGH_FLOAT : Int32 { return GL_HIGH_FLOAT }
+        public var LOW_INT : Int32 { return GL_LOW_INT }
+        public var MEDIUM_INT : Int32 { return GL_MEDIUM_INT }
+        public var HIGH_INT : Int32 { return GL_HIGH_INT }
+
+        /* Shader precision-specified types */
+
+
+        /* Framebuffers and renderbuffers */
+
+        public var FRAMEBUFFER : Int32 { return GL_FRAMEBUFFER }
+
+        public var RENDERBUFFER : Int32 { return GL_RENDERBUFFER }
+
+        public var RGBA4 : Int32 { return GL_RGBA4 }
+
+        public var RGB565 : Int32 { return GL_RGB565 }
+
+        public var RGB5_A1 : Int32 { return GL_RGB5_A1 }
+
+        public var DEPTH_COMPONENT16 : Int32 { return GL_DEPTH_COMPONENT16 }
+
+        public var STENCIL_INDEX8 : Int32 { return GL_STENCIL_INDEX8 }
+
+        public var DEPTH_STENCIL : Int32 { return  0x84F9 }
+
+        public var RENDERBUFFER_WIDTH : Int32 { return GL_RENDERBUFFER_WIDTH }
+
+        public var RENDERBUFFER_HEIGHT : Int32 { return GL_RENDERBUFFER_HEIGHT }
+
+        public var RENDERBUFFER_INTERNAL_FORMAT : Int32 { return GL_RENDERBUFFER_INTERNAL_FORMAT }
+
+        public var RENDERBUFFER_RED_SIZE : Int32 { return GL_RENDERBUFFER_RED_SIZE }
+
+        public var RENDERBUFFER_GREEN_SIZE : Int32 { return GL_RENDERBUFFER_GREEN_SIZE }
+
+        public var RENDERBUFFER_BLUE_SIZE : Int32 { return GL_RENDERBUFFER_BLUE_SIZE }
+
+        public var RENDERBUFFER_ALPHA_SIZE : Int32 { return GL_RENDERBUFFER_ALPHA_SIZE }
+
+        public var RENDERBUFFER_DEPTH_SIZE : Int32 { return GL_RENDERBUFFER_DEPTH_SIZE }
+
+        public var RENDERBUFFER_STENCIL_SIZE : Int32 { return GL_RENDERBUFFER_STENCIL_SIZE }
+
+        public var FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE : Int32 { return GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE }
+
+        public var FRAMEBUFFER_ATTACHMENT_OBJECT_NAME : Int32 { return GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME }
+
+        public var FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL : Int32 { return GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL }
+
+        public var FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE : Int32 { return GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE }
+
+        public var COLOR_ATTACHMENT0 : Int32 { return GL_COLOR_ATTACHMENT0 }
+
+        public var DEPTH_ATTACHMENT : Int32 { return GL_DEPTH_ATTACHMENT }
+
+        public var STENCIL_ATTACHMENT : Int32 { return GL_STENCIL_ATTACHMENT }
+
+        public var DEPTH_STENCIL_ATTACHMENT: Int32 { return 0x821A }
+
+        public var NONE : Int32 { return GL_NONE }
+
+        public var FRAMEBUFFER_COMPLETE : Int32 { return GL_FRAMEBUFFER_COMPLETE }
+
+        public var FRAMEBUFFER_INCOMPLETE_ATTACHMENT : Int32 { return GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT }
+
+        public var FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT : Int32 { return GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT }
+
+        public var FRAMEBUFFER_INCOMPLETE_DIMENSIONS : Int32 { return GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS }
+
+        public var FRAMEBUFFER_UNSUPPORTED : Int32 { return GL_FRAMEBUFFER_UNSUPPORTED }
+
+        public var FRAMEBUFFER_BINDING : Int32 { return GL_FRAMEBUFFER_BINDING }
+
+        public var RENDERBUFFER_BINDING : Int32 { return GL_RENDERBUFFER_BINDING }
+
+        public var MAX_RENDERBUFFER_SIZE : Int32 { return GL_MAX_RENDERBUFFER_SIZE }
+
+        //public var INVALID_FRAMEBUFFER_OPERATION : Int32 { return GL_INVALID_FRAMEBUFFER_OPERATION }
+
+        /* Framebuffers and renderbuffers */
+
+        /* Pixel storage modes */
+
+        public var UNPACK_COLORSPACE_CONVERSION_WEBGL : Int32 { 0x9243 }
+
+        public var UNPACK_FLIP_Y_WEBGL : Int32 { return  0x9240 }
+
+        public var UNPACK_PREMULTIPLY_ALPHA_WEBGL : Int32 { return  0x9241 }
+
+        /* Pixel storage modes */
+    
+   
 }

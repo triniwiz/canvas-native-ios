@@ -47,7 +47,7 @@ public class GLRenderer: NSObject, Renderer, GLKViewDelegate {
         depthRenderbuffer = GLuint()
         var context = EAGLContext(api: .openGLES3, sharegroup: GLRenderer.sharedGroup)
         if context == nil {
-            context = EAGLContext(api: .openGLES2, sharegroup: GLRenderer.sharedGroup)!
+            context = EAGLContext(api: .openGLES2, sharegroup: GLRenderer.sharedGroup)
         }
         self.context = context!
         // glkView.isUserInteractionEnabled = false

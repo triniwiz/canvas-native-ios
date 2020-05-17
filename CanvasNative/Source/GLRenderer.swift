@@ -151,6 +151,11 @@ public class GLRenderer: NSObject, Renderer, GLKViewDelegate {
     
     public func updateSize() {
         let _ = ensureIsContextIsCurrent()
+        if(contextType == .twoD && done && canvas > 0){
+            let width = Int32(glkView.drawableWidth)
+            let height = Int32(glkView.drawableHeight)
+            native_surface_resized_legacy(width, height, Int32(displayFramebuffer), scale, canvas)
+        }
         //createDisplayFramebuffer()
         //view.layoutIfNeeded()
     }
@@ -169,9 +174,6 @@ public class GLRenderer: NSObject, Renderer, GLKViewDelegate {
     public func glkView(_ view: GLKView, drawIn rect: CGRect){
         if(!done){
             done = true
-           // let width = Int32(glkView.drawableWidth)
-           // let height = Int32(glkView.drawableHeight)
-            //glViewport(0, 0, GLsizei(width), GLsizei(height))
             glClearColor(1.0, 1.0, 1.0, 1.0)
             glClear(GLbitfield(GL_COLOR_BUFFER_BIT))
             var binding = GLint(0)

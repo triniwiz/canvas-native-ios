@@ -145,12 +145,12 @@ class ViewController: UIViewController {
     
     
     func drawAll() {
-      gl = (canvas1?.getContext(type: "webgl")  as! WebGLRenderingContext)
+     // gl = (canvas1?.getContext(type: "webgl")  as! WebGLRenderingContext)
        // canvas1?.handleInvalidationManually = true
         
        // drawPoints(canvas: canvas1!)
         
-        drawRotatingCube(gl: gl!)
+      //  drawRotatingCube(gl: gl!)
         
        // drawRotatingCube(gl: gl!)
        
@@ -162,7 +162,7 @@ class ViewController: UIViewController {
         
        // drawPoints(canvas: canvas1!)
       // canvas1?.handleInvalidationManually = true
-       // let ctx = canvas1?.getContext(type: "2d") as! CanvasRenderingContext2D
+        let ctx = canvas1?.getContext(type: "2d") as! CanvasRenderingContext2D
        // clearExample(ctx: ctx)
         //drawImageExample(ctx: ctx)
        // canvas1?.flush()
@@ -170,7 +170,7 @@ class ViewController: UIViewController {
         //  doSolarAnimation(ctx: ctx)
         //  drawFace(ctx: ctx)
         // fontExample(ctx: ctx)
-       // arcToAnimationExample(ctx: ctx)
+        arcToAnimationExample(ctx: ctx)
         //  saveRestoreExample(ctx: ctx)
         //ballExample(ctx: ctx)
         

@@ -21,6 +21,19 @@
             self.canvas = canvas
         }
         
+        public var currentTransform: CanvasDOMMatrix {
+            get {
+                let matrix = native_get_current_transform(canvas.canvas)
+                if(matrix == 0){
+                    return CanvasDOMMatrix()
+                }
+                return CanvasDOMMatrix(matrix: matrix)
+            }
+            set {
+                native_set_current_transform(canvas.canvas, newValue.matrix)
+            }
+        }
+        
         public var font: String {
             get {
                 return _font
@@ -502,12 +515,12 @@
             if context != nil {
                 
                 /*let count = data.count / MemoryLayout<UInt8>.size
-                // create an array of Uint8
-                var byteArray = [UInt8](repeating: 0, count: count)
-                // copy bytes into array
-                
-                data.copyBytes(to: &byteArray, count: count)
-                */
+                 // create an array of Uint8
+                 var byteArray = [UInt8](repeating: 0, count: count)
+                 // copy bytes into array
+                 
+                 data.copyBytes(to: &byteArray, count: count)
+                 */
                 var byteArray = [UInt8](data)
                 canvas.canvas = native_draw_image(canvas.canvas, &byteArray, data.count, Int32(width),Int32(height), dx, dy,self.canvas.getViewPtr())
                 canvas.doDraw()
@@ -517,12 +530,12 @@
         
         public func drawImage(asset image: ImageAsset, dx: Float, dy: Float, dWidth: Float, dHeight: Float){
             let size = image.width * image.height * 4
-                     let width = image.width
-                     let height = image.height
+            let width = image.width
+            let height = image.height
             
             canvas.canvas = native_draw_image_dw_raw(canvas.canvas, image.getRawBytes(), Int(size),Int32(width),Int32(height), dx, dy,dWidth,dHeight,self.canvas.getViewPtr())
             canvas.doDraw()
-               }
+        }
         
         public func drawImage(image: UIImage, dx: Float, dy: Float, dWidth: Float, dHeight: Float){
             let cgRef = image.cgImage
@@ -536,13 +549,13 @@
             let context = CGContext(data: &data, width:width, height: height, bitsPerComponent: bitsPerComponent, bytesPerRow: bytesPerRow, space: colorSpace, bitmapInfo: bitmapInfo.rawValue)
             if context != nil {
                 /*let count = data.count / MemoryLayout<UInt8>.size
-                
-                // create an array of Uint8
-                var byteArray = [UInt8](repeating: 0, count: count)
-                // copy bytes into array
-                
-                data.copyBytes(to: &byteArray, count: count)
-                */
+                 
+                 // create an array of Uint8
+                 var byteArray = [UInt8](repeating: 0, count: count)
+                 // copy bytes into array
+                 
+                 data.copyBytes(to: &byteArray, count: count)
+                 */
                 var byteArray = [UInt8](data)
                 canvas.canvas = native_draw_image_dw(canvas.canvas, &byteArray, data.count,Int32(width),Int32(height), dx, dy,dWidth,dHeight,self.canvas.getViewPtr())
                 canvas.doDraw()
@@ -550,10 +563,9 @@
         }
         
         public func drawImage(asset image: ImageAsset, sx: Float, sy: Float, sWidth: Float, sHeight: Float, dx: Float, dy: Float, dWidth: Float, dHeight: Float){
-            
             let size = image.width * image.height * 4
-                                let width = image.width
-                                let height = image.height
+            let width = image.width
+            let height = image.height
             canvas.canvas = native_draw_image_sw_raw(canvas.canvas, image.getRawBytes(),Int(size), Int32(width), Int32(height), sx, sy,sWidth, sHeight, dx, dy, dWidth, dHeight,self.canvas.getViewPtr())
             canvas.doDraw()
             
@@ -572,15 +584,6 @@
             let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.noneSkipFirst.rawValue)
             let context = CGContext(data: &data, width:width, height: height, bitsPerComponent: bitsPerComponent, bytesPerRow: bytesPerRow, space: colorSpace, bitmapInfo: bitmapInfo.rawValue)
             if context != nil {
-              /* let count = data.count / MemoryLayout<UInt8>.size
-                
-                // create an array of Uint8
-                var byteArray = [UInt8](repeating: 0, count: count)
-                // copy bytes into array
-                
-                data.copyBytes(to: &byteArray, count: count)
-                
-                */
                 var byteArray = [UInt8](data)
                 canvas.canvas = native_draw_image_sw(canvas.canvas, &byteArray, data.count, Int32(width), Int32(height), sx, sy,sWidth, sHeight, dx, dy, dWidth, dHeight,self.canvas.getViewPtr())
                 canvas.doDraw()
@@ -611,21 +614,19 @@
         public func putImageData(imageData: ImageData, dx: Float, dy: Float, dirtyX: Float, dirtyY: Float, dirtyWidth:Int, dirtyHeight: Int){
             
             /*
-            let count = imageData.data.count / MemoryLayout<UInt8>.size
-            
-            // create an array of Uint8
-            var byteArray = [UInt8](repeating: 0, count: count)
-            // copy bytes into array
-            
-            imageData.data.copyBytes(to: &byteArray, count: count)
-            
-            */
+             let count = imageData.data.count / MemoryLayout<UInt8>.size
+             
+             // create an array of Uint8
+             var byteArray = [UInt8](repeating: 0, count: count)
+             // copy bytes into array
+             
+             imageData.data.copyBytes(to: &byteArray, count: count)
+             
+             */
             
             var byteArray = [UInt8](imageData.data)
-            
             canvas.canvas = native_put_image_data(canvas.canvas, imageData.width, imageData.height, &byteArray, byteArray.count, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight)
             canvas.doDraw()
-            
         }
         
         public func getLineDash() -> [Float32]{

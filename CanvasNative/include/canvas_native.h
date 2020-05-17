@@ -15,15 +15,15 @@ typedef struct {
 } CanvasTextMetrics;
 
 typedef struct {
+  uint8_t *array;
+  size_t length;
+} NativeByteArray;
+
+typedef struct {
   const void *device;
   const void *queue;
   const void *drawable;
 } CanvasDevice;
-
-typedef struct {
-  uint8_t *array;
-  size_t length;
-} NativeByteArray;
 
 long long native_arc(long long canvas_native_ptr,
                      float x,
@@ -81,6 +81,10 @@ long long native_create_path_2d(void);
 long long native_create_path_2d_from_path_data(const char *data);
 
 long long native_create_path_from_path(long long path);
+
+long long native_create_text_decoder(const char *decoding);
+
+long long native_create_text_encoder(const char *encoding);
 
 void native_destroy(long long canvas_ptr);
 
@@ -193,9 +197,13 @@ long long native_fill_text(long long canvas_native_ptr,
 
 long long native_flush(long long canvas_ptr);
 
+void native_free_byte_array(NativeByteArray array);
+
 void native_free_matrix_data(CanvasArray data);
 
 void native_free_path_2d(long long path);
+
+long long native_get_current_transform(long long canvas_native_ptr);
 
 CanvasArray native_get_image_data(long long canvas_native_ptr,
                                   float sx,
@@ -338,6 +346,8 @@ long long native_save(long long canvas_native_ptr);
 
 long long native_scale(long long canvas_native_ptr, float x, float y, void *view);
 
+long long native_set_current_transform(long long canvas_native_ptr, long long matrix);
+
 long long native_set_fill_color(long long canvas_native_ptr, int32_t color);
 
 long long native_set_fill_color_rgba(long long canvas_native_ptr,
@@ -461,6 +471,18 @@ long long native_surface_resized_legacy(int width,
                                         long long canvas_native_ptr);
 
 long long native_text_align(long long canvas_native_ptr, const char *alignment);
+
+const char *native_text_decoder_decode(int64_t decoder, const uint8_t *data, size_t len);
+
+void native_text_decoder_free(int64_t decoder);
+
+const char *native_text_decoder_get_encoding(int64_t decoder);
+
+NativeByteArray native_text_encoder_encode(int64_t encoder, const char *text);
+
+void native_text_encoder_free(int64_t encoder);
+
+const char *native_text_encoder_get_encoding(int64_t encoder);
 
 char *native_to_data_url(long long canvas_ptr, const char *format, float quality);
 

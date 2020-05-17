@@ -53,6 +53,11 @@ public class CanvasDOMMatrix: NSObject {
         setInitialValues()
     }
     
+    init(matrix: Int64) {
+        super.init()
+        self.matrix = matrix
+        setInitialValues()
+    }
     func setInitialValues() {
         internalUpdate = true
         refreshValues()

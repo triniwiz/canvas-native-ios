@@ -75,8 +75,9 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     }
     
     public func bindAttribLocation(program: UInt32, index: UInt32, name: String){
-        var bindName = GLchar(name)!
-        glBindAttribLocation(program, index, &bindName)
+        print(program, index, name)
+        let bindName = (name as NSString).utf8String
+        glBindAttribLocation(program, index, bindName)
     }
     
     public func bindBuffer(target: Int32, buffer: UInt32){
@@ -482,9 +483,11 @@ public class WebGLRenderingContext: CanvasRenderingContext {
         var size = GLint()
         var type = GLenum()
         let zero = GLchar()
+        var nameLength = GLint()
         glGetProgramiv(program,GLenum(GL_ACTIVE_ATTRIBUTE_MAX_LENGTH), &length)
         var name = Array(repeatElement(zero, count: Int(length)))
-        glGetActiveAttrib(program, GLuint(index), length, nil, &size, &type, &name)
+        glGetActiveAttrib(program, GLuint(index), length, &nameLength, &size, &type, &name)
+        name.resize(Int(nameLength), fillWith: 0)
         return WebGLActiveInfo(name: String(cString: &name), size: size, type: Int32(type))
     }
     
@@ -493,10 +496,12 @@ public class WebGLRenderingContext: CanvasRenderingContext {
         var size = GLint()
         var type = GLenum()
         var length = GLint()
+        var nameLength = GLint()
         let zero = GLchar()
-        glGetProgramiv(program, GLenum(GL_ACTIVE_UNIFORMS), &length)
+        glGetProgramiv(program, GLenum(GL_ACTIVE_UNIFORM_MAX_LENGTH), &length)
         var name = Array(repeatElement(zero, count: Int(length)))
-        glGetActiveUniform(program, GLuint(index), length , nil, &size, &type, &name)
+        glGetActiveUniform(program, GLuint(index), length , &nameLength, &size, &type, &name)
+        name.resize(Int(nameLength), fillWith: 0)
         return WebGLActiveInfo(name: String(cString: &name), size: size, type: Int32(type))
     }
     

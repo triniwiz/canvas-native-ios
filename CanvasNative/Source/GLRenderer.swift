@@ -147,6 +147,7 @@ public class GLRenderer: NSObject, Renderer, GLKViewDelegate {
             let height = Int32(glkView.drawableHeight)
             glClear(GLbitfield(GL_COLOR_BUFFER_BIT))
             canvas = native_init_legacy(width, height, Int32(displayFramebuffer), Float(scale))
+            didInit = true
         }
         return ensured
     }
@@ -156,8 +157,7 @@ public class GLRenderer: NSObject, Renderer, GLKViewDelegate {
     public func setup() {
         let width = Int32(glkView.drawableWidth)
         let height = Int32(glkView.drawableHeight)
-        if(!done && (width > 0 && height > 0)){
-            done = true
+        if(!done && (width > 0 && height > 0 && displayFramebuffer == 0)){
             glClearColor(1.0, 1.0, 1.0, 1.0)
             glClear(GLbitfield(GL_COLOR_BUFFER_BIT))
             var binding = GLint(0)
@@ -173,19 +173,21 @@ public class GLRenderer: NSObject, Renderer, GLKViewDelegate {
                 glClearColor(1.0, 1.0, 1.0, 1.0)
                 glClear(GLbitfield(GL_COLOR_BUFFER_BIT))
                 canvas = native_init_legacy(width, height, Int32(displayFramebuffer), Float(scale))
+                didInit = true
             }
         }
     }
     
-    
+    var didInit = false
     public var contextType: ContextType  = .none
-    
     public func render() {
         if(didExit){return}
         let _ = ensureIsContextIsCurrent()
         glkView.display()
-        DispatchQueue.main.async {
-            self.listener?.didDraw()
+        if(didInit){
+            DispatchQueue.main.async {
+                self.listener?.didDraw()
+            }
         }
     }
     
@@ -193,8 +195,10 @@ public class GLRenderer: NSObject, Renderer, GLKViewDelegate {
         if(didExit){return}
         let _ = ensureIsContextIsCurrent()
         glkView.isDirty = true
-        DispatchQueue.main.async {
-            self.listener?.didDraw()
+        if(didInit){
+            DispatchQueue.main.async {
+                self.listener?.didDraw()
+            }
         }
     }
     
@@ -246,11 +250,16 @@ public class GLRenderer: NSObject, Renderer, GLKViewDelegate {
     var lastSize: [String:Int] = ["width":0,"height":0]
     
     func internalFlush(){
-        canvas = native_flush(canvas)
+        if(contextType == .twoD && canvas > 0){
+            canvas = native_flush(canvas)
+        }
     }
     
     public func glkView(_ view: GLKView, drawIn rect: CGRect){
         setup()
         internalFlush()
+        if(contextType == .webGL && !didInit){
+            didInit = true
+        }
     }
 }

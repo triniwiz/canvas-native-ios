@@ -231,6 +231,8 @@ public class Canvas: UIView, RenderListener {
                 renderingContext2d = CanvasRenderingContext2D(canvas: self)
             }
             renderer?.contextType = .twoD
+            // force draw to setup drawable
+            renderer?.render()
             return renderingContext2d!
         }else if(type.elementsEqual("webgl")){
             if(renderingContextWebGL == nil){

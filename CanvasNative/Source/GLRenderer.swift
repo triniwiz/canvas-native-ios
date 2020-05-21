@@ -228,6 +228,8 @@ public class GLRenderer: NSObject, Renderer, GLKViewDelegate {
             
             lastSize = ["width": Int(width), "height": Int(height)]
             
+        }else if(contextType == .twoD && !done && canvas == 0){
+            glkView.display()
         }
     }
     

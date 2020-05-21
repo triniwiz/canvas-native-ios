@@ -130,7 +130,7 @@ public class Canvas: UIView, RenderListener {
     var renderingContextWebGL2: CanvasRenderingContext?
     public func doDraw() {
         if(handleInvalidationManually){return}
-        isDirty = true
+        renderer?.isDirty = true
     }
     
     public func flush(){
@@ -159,8 +159,10 @@ public class Canvas: UIView, RenderListener {
         self.displayLink?.preferredFramesPerSecond = 60
         self.displayLink?.add(to: .main, forMode: .common)
         setup()
-        renderer?.view.frame = frame
-        renderer?.updateSize()
+        if(frame != .zero || frame != .null){
+            renderer?.view.frame = frame
+            renderer?.updateSize()
+        }
         NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: nil) { _ in
             self.displayLink?.invalidate()
             self.displayLink = nil
@@ -184,15 +186,15 @@ public class Canvas: UIView, RenderListener {
     
     @objc func handleAnimation(displayLink: CADisplayLink){
         self._fps = Float(1 / (displayLink.targetTimestamp - displayLink.timestamp))
-        if(isDirty){
+        if(renderer?.isDirty ?? false){
             renderer?.render()
-            isDirty = false
+            self.renderer?.isDirty = false
         }
     }
     
     public override var frame: CGRect {
         willSet {
-            renderer?.view.frame = newValue
+            renderer?.view.frame = bounds
             renderer?.updateSize()
         }
     }
@@ -250,7 +252,6 @@ public class Canvas: UIView, RenderListener {
         }
         return emptyCanvas
     }
-    
 }
 
 extension String {

@@ -14,6 +14,7 @@ public protocol Renderer {
     var view: UIView { get }
     var width: Float {get}
     var height: Float {get}
+    var isDirty: Bool {get set}
     func setup()
     func render()
     func flush()
@@ -21,6 +22,7 @@ public protocol Renderer {
     func setRenderListener(listener: RenderListener?)
     func pause()
     func resume()
+    func ensureIsReady()
 }
 
 

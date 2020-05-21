@@ -9,6 +9,8 @@ import Foundation
 import UIKit
 import MetalKit
 public class MetalRenderer:NSObject, Renderer, MTKViewDelegate {
+    public var isDirty: Bool = false
+    
     var listener: RenderListener?
     public func setRenderListener(listener: RenderListener?) {
         self.listener = listener
@@ -22,6 +24,11 @@ public class MetalRenderer:NSObject, Renderer, MTKViewDelegate {
     public var canvasState: [Int64] = []
     var scale: Float
     var done: Bool = false
+    
+    public func ensureIsReady() {
+        setup()
+    }
+    
     public func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
         setup()
     }

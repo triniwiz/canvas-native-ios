@@ -168,15 +168,15 @@ class ViewController: UIViewController {
        // canvas1?.flush()
       //  drawImageBlock(ctx: ctx)
         //  doSolarAnimation(ctx: ctx)
-        //  drawFace(ctx: ctx)
+         // drawFace(ctx: ctx)
         // fontExample(ctx: ctx)
-        arcToAnimationExample(ctx: ctx)
+        //arcToAnimationExample(ctx: ctx)
         //  saveRestoreExample(ctx: ctx)
         //ballExample(ctx: ctx)
         
         //ctx.fillRect(x: 200, y: 10, width: 200, height: 200);
         // scaleTransformation(ctx: ctx)
-        //particleAnimation(ctx: ctx)
+        particleAnimation(ctx: ctx)
         //        canvas1!.toDataURLAsync { (data) in
         //           print("data: ", data)
         //        }
@@ -1988,9 +1988,8 @@ class ViewController: UIViewController {
     
     
     func animloop(ctx: CanvasRenderingContext2D) {
-        particle_draw(ctx: ctx);
-        AnimationFrame.requestAnimationFrame(toLoop: {(_) in self.animloop(ctx: ctx)})
-        ctx.getCanvas().flush()
+         AnimationFrame.requestAnimationFrame(toLoop: {(_) in self.animloop(ctx: ctx)})
+        particle_draw(ctx: ctx)
     }
     
     func particleAnimation(ctx: CanvasRenderingContext2D){

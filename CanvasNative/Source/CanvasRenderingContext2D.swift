@@ -384,6 +384,7 @@
         }
         
         public func beginPath() {
+            canvas.renderer?.ensureIsReady()
             canvas.canvas = native_begin_path(canvas.canvas)
         }
         

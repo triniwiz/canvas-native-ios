@@ -8,7 +8,44 @@
 import Foundation
 import GLKit
 import UIKit
+
+@objcMembers
+@objc(CanvasGLKView)
+public class CanvasGLKView: GLKView {
+    var isDirty: Bool = false
+    public init() {
+        super.init(frame: .zero)
+    }
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+    
+    public override func setNeedsDisplay() {
+        super.setNeedsDisplay()
+        isDirty = true
+    }
+    
+    public override func setNeedsDisplay(_ rect: CGRect) {
+        super.setNeedsDisplay(rect)
+        isDirty = true
+    }
+}
+
+
 public class GLRenderer: NSObject, Renderer, GLKViewDelegate {
+    public var isDirty: Bool {
+        set{
+            glkView.isDirty = newValue
+        }
+        get{
+            return glkView.isDirty
+        }
+    }
+    
     var listener: RenderListener?
     var displayRenderbuffer: GLuint
     var displayFramebuffer: GLuint
@@ -36,12 +73,13 @@ public class GLRenderer: NSObject, Renderer, GLKViewDelegate {
         }
     }
     
-    var glkView: GLKView
+    var glkView: CanvasGLKView
     var scale: Float
     var didExit: Bool = false
     var context: EAGLContext
+    var currentOrientation: UIDeviceOrientation
     public override init() {
-        glkView = GLKView()
+        glkView = CanvasGLKView() //GLKView()
         displayFramebuffer = GLuint()
         displayRenderbuffer = GLuint()
         depthRenderbuffer = GLuint()
@@ -52,6 +90,7 @@ public class GLRenderer: NSObject, Renderer, GLKViewDelegate {
         self.context = context!
         // glkView.isUserInteractionEnabled = false
         scale = Float(UIScreen.main.nativeScale)
+        currentOrientation = UIDevice.current.orientation
         super.init()
         glkView.context = context!
         
@@ -65,9 +104,10 @@ public class GLRenderer: NSObject, Renderer, GLKViewDelegate {
         glkView.drawableDepthFormat = .format24
         glkView.drawableStencilFormat = .format8
         glkView.drawableColorFormat = .RGBA8888
-        glkView.enableSetNeedsDisplay = true
+        glkView.enableSetNeedsDisplay = false
         glkView.delegate = self
         glkView.contentMode = .bottomLeft
+        glkView.drawableMultisample = .multisample4X
         _ = ensureIsContextIsCurrent()
         exitObserver = NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: nil) { _ in
             self.didExit = true
@@ -105,7 +145,7 @@ public class GLRenderer: NSObject, Renderer, GLKViewDelegate {
             let scale:CGFloat = CGFloat(self.scale)
             let width = Int32(glkView.drawableWidth)
             let height = Int32(glkView.drawableHeight)
-            
+            glClear(GLbitfield(GL_COLOR_BUFFER_BIT))
             canvas = native_init_legacy(width, height, Int32(displayFramebuffer), Float(scale))
         }
         return ensured
@@ -114,8 +154,26 @@ public class GLRenderer: NSObject, Renderer, GLKViewDelegate {
     
     var fboid = GLint()
     public func setup() {
-        if(!done) {
-            
+        let width = Int32(glkView.drawableWidth)
+        let height = Int32(glkView.drawableHeight)
+        if(!done && (width > 0 && height > 0)){
+            done = true
+            glClearColor(1.0, 1.0, 1.0, 1.0)
+            glClear(GLbitfield(GL_COLOR_BUFFER_BIT))
+            var binding = GLint(0)
+            glGetIntegerv(GLenum(GL_FRAMEBUFFER_BINDING), &binding)
+            displayFramebuffer = GLuint(binding)
+        }
+        if(contextType == .twoD && canvas == 0 && displayFramebuffer > 0){
+            let _ = ensureIsContextIsCurrent()
+            if(canvas == 0){
+                done = true
+                let scale:CGFloat = CGFloat(self.scale)
+                glViewport(0, 0, GLsizei(width), GLsizei(height))
+                glClearColor(1.0, 1.0, 1.0, 1.0)
+                glClear(GLbitfield(GL_COLOR_BUFFER_BIT))
+                canvas = native_init_legacy(width, height, Int32(displayFramebuffer), Float(scale))
+            }
         }
     }
     
@@ -125,12 +183,7 @@ public class GLRenderer: NSObject, Renderer, GLKViewDelegate {
     public func render() {
         if(didExit){return}
         let _ = ensureIsContextIsCurrent()
-        glkView.setNeedsDisplay()
-        //glkView.setNeedsDisplay()
-        // glView.setNeedsDisplay()
-        
-        //  setDisplayFramebuffer()
-        // presentFramebuffer()
+        glkView.display()
         DispatchQueue.main.async {
             self.listener?.didDraw()
         }
@@ -139,13 +192,14 @@ public class GLRenderer: NSObject, Renderer, GLKViewDelegate {
     public func flush(){
         if(didExit){return}
         let _ = ensureIsContextIsCurrent()
-        glkView.setNeedsDisplay()
-        //glkView.display()
+        glkView.isDirty = true
         DispatchQueue.main.async {
             self.listener?.didDraw()
         }
-        //setDisplayFramebuffer()
-        //presentFramebuffer()
+    }
+    
+    public func ensureIsReady(){
+        glkView.isDirty = true
     }
     
     
@@ -154,10 +208,27 @@ public class GLRenderer: NSObject, Renderer, GLKViewDelegate {
         if(contextType == .twoD && done && canvas > 0){
             let width = Int32(glkView.drawableWidth)
             let height = Int32(glkView.drawableHeight)
-            native_surface_resized_legacy(width, height, Int32(displayFramebuffer), scale, canvas)
+            
+            if(UIDevice.current.orientation != currentOrientation){
+                glViewport(0, 0, width, height)
+                /* TODO fix rotation */
+                /*
+                var binding = GLint(0)
+                glGetIntegerv(GLenum(GL_FRAMEBUFFER_BINDING), &binding)
+                if(displayFramebuffer != binding){
+                    displayFramebuffer = GLuint(binding)
+                }
+                
+                canvas = native_surface_resized_legacy(width, height, Int32(displayFramebuffer), scale, canvas)
+                currentOrientation = UIDevice.current.orientation*/
+                /* TODO fix rotation */
+            }else {
+                glViewport(0, 0, width, height)
+            }
+            
+            lastSize = ["width": Int(width), "height": Int(height)]
+            
         }
-        //createDisplayFramebuffer()
-        //view.layoutIfNeeded()
     }
     
     public func pause(){
@@ -171,27 +242,13 @@ public class GLRenderer: NSObject, Renderer, GLKViewDelegate {
     var done: Bool = false
     var resize: Bool = false
     var lastSize: [String:Int] = ["width":0,"height":0]
+    
+    func internalFlush(){
+        canvas = native_flush(canvas)
+    }
+    
     public func glkView(_ view: GLKView, drawIn rect: CGRect){
-        if(!done){
-            done = true
-            glClearColor(1.0, 1.0, 1.0, 1.0)
-            glClear(GLbitfield(GL_COLOR_BUFFER_BIT))
-            var binding = GLint(0)
-            glGetIntegerv(GLenum(GL_FRAMEBUFFER_BINDING), &binding)
-            displayFramebuffer = GLuint(binding)
-        }
-        if(contextType == .twoD){
-            let _ = ensureIsContextIsCurrent()
-            if(canvas == 0){
-                done = true
-                let scale:CGFloat = CGFloat(self.scale)
-                let width = Int32(glkView.drawableWidth)
-                let height = Int32(glkView.drawableHeight)
-                glViewport(0, 0, GLsizei(width), GLsizei(height))
-                canvas = native_init_legacy(width, height, Int32(displayFramebuffer), Float(scale))
-            }
-            glClear(GLbitfield(GL_COLOR_BUFFER_BIT))
-            canvas = native_flush(canvas)
-        }
+        setup()
+        internalFlush()
     }
 }

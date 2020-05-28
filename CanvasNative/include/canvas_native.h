@@ -255,6 +255,26 @@ long long native_init(int width, int height, void *device, void *queue, void *vi
 
 long long native_init_legacy(int width, int height, int buffer_id, float scale);
 
+unsigned char native_is_point_in_path(int64_t canvas_ptr, float x, float y);
+
+unsigned char native_is_point_in_path_with_path_rule(int64_t canvas_ptr,
+                                                     int64_t path,
+                                                     float x,
+                                                     float y,
+                                                     const char *fill_rule);
+
+unsigned char native_is_point_in_path_with_rule(int64_t canvas_ptr,
+                                                float x,
+                                                float y,
+                                                const char *fill_rule);
+
+unsigned char native_is_point_in_stroke(int64_t canvas_ptr, float x, float y);
+
+unsigned char native_is_point_in_stroke_with_path(int64_t canvas_ptr,
+                                                  int64_t path,
+                                                  float x,
+                                                  float y);
+
 long long native_line_dash_offset(long long canvas_native_ptr, float offset);
 
 long long native_line_join(long long canvas_native_ptr, const char *line_cap);

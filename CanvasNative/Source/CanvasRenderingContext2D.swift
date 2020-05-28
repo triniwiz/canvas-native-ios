@@ -655,4 +655,26 @@
             canvas.canvas = native_transform(canvas.canvas, a, b, c, d, e, f,self.canvas.getViewPtr())
             canvas.doDraw()
         }
+        
+        public func isPointInPath(x: Float, y: Float) -> Bool {
+            return native_is_point_in_path(canvas.canvas, x, y) == 1
+        }
+        
+        public func isPointInPath(x: Float, y: Float, fillRule: String) -> Bool {
+            let ptr = (fillRule as NSString).utf8String
+            return native_is_point_in_path_with_rule(canvas.canvas, x, y, ptr) == 1
+        }
+        
+        public func isPointInPath(path: CanvasPath2D,x: Float, y: Float, fillRule: String) -> Bool {
+            let ptr = (fillRule as NSString).utf8String
+            return native_is_point_in_path_with_path_rule(canvas.canvas, path.path, x, y, ptr) == 1
+        }
+        
+        public func isPointInStroke(x: Float, y: Float) -> Bool {
+            return native_is_point_in_stroke(canvas.canvas, x, y) == 1
+        }
+
+        public func isPointInStroke(path: CanvasPath2D, x: Float, y: Float) -> Bool {
+            return native_is_point_in_stroke_with_path(canvas.canvas, path.path, x, y) == 1
+        }
     }

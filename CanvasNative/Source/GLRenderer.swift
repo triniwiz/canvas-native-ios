@@ -107,7 +107,8 @@ public class GLRenderer: NSObject, Renderer, GLKViewDelegate {
         glkView.enableSetNeedsDisplay = false
         glkView.delegate = self
         glkView.contentMode = .bottomLeft
-        glkView.drawableMultisample = .multisample4X
+        // TODO disable for now
+        // glkView.drawableMultisample = .multisample4X
         _ = ensureIsContextIsCurrent()
         exitObserver = NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: nil) { _ in
             self.didExit = true

@@ -25,6 +25,7 @@ public class Canvas: UIView, RenderListener {
     public static func createSVGMatrix() -> CanvasDOMMatrix{
         CanvasDOMMatrix()
     }
+    var isContextLost: Bool = false
     var _handleInvalidationManually: Bool = false
     public var handleInvalidationManually: Bool {
         get {
@@ -62,8 +63,15 @@ public class Canvas: UIView, RenderListener {
     }
     
     public func toDataURL(type: String, format: Float) -> String {
+        if(renderer?.contextType ?? .none == ContextType.webGL){
+            var ss = snapshot()
+            let data = Data(bytes: &ss, count: ss.count)
+            return data.base64EncodedString(options: Data.Base64EncodingOptions(rawValue: 0))
+            
+        }
         let result = native_to_data_url(canvas, type, format)
         let data = String(cString: result!)
+        native_free_char(result)
         return data
     }
     
@@ -80,6 +88,33 @@ public class Canvas: UIView, RenderListener {
     
     public func toDataURLAsync(type: String, format: Float, callback: @escaping (String) -> Void) {
         dataURLCallbacks.append(DataURLRequest(type: type, format: format, callback: callback))
+    }
+    
+    public func snapshot() -> [UInt8]{
+        let _ = renderer?.ensureIsContextIsCurrent() ?? false
+        if(renderer?.contextType ?? .none == ContextType.twoD){
+            let result = native_snapshot_canvas(canvas)
+            let data = [UInt8](Data(bytes: result.array, count: result.length))
+            native_free_byte_array(result)
+            return data
+        }else if(renderer?.contextType ?? .none == ContextType.webGL){
+            if let gl = renderer as? GLRenderer {
+                let pixels = (gl.view as! CanvasGLKView).snapshot
+                let data = pixels.pngData() ?? Data()
+                return [UInt8](data)
+            }else if let metal = renderer as? MetalRenderer {
+                let metalView = (metal.view as! MTKView)
+                UIGraphicsBeginImageContextWithOptions(frame.size, true, 0.0)
+                let context = UIGraphicsGetCurrentContext()!
+                context.fill(frame)
+                metalView.layer.render(in: context)
+                let image = UIGraphicsGetImageFromCurrentImageContext()
+                UIGraphicsEndImageContext()
+                let data = image?.pngData() ?? Data()
+                return [UInt8](data)
+            }
+        }
+        return []
     }
     
     var _isGL: Bool = false
@@ -134,7 +169,7 @@ public class Canvas: UIView, RenderListener {
     }
     
     public func flush(){
-        renderer?.flush()
+        renderer?.render()
     }
     
     var useGL: Bool = false
@@ -154,7 +189,7 @@ public class Canvas: UIView, RenderListener {
     public init(frame: CGRect, useGL: Bool) {
         self.useGL = useGL
         super.init(frame: frame)
-        self.isOpaque = true
+        self.isOpaque = false
         self.displayLink = CADisplayLink(target: self, selector: #selector(handleAnimation))
         self.displayLink?.preferredFramesPerSecond = 60
         self.displayLink?.add(to: .main, forMode: .common)
@@ -193,7 +228,7 @@ public class Canvas: UIView, RenderListener {
     }
     
     public override var frame: CGRect {
-        willSet {
+        didSet {
             renderer?.view.frame = bounds
             renderer?.updateSize()
         }
@@ -226,19 +261,58 @@ public class Canvas: UIView, RenderListener {
     
     private var emptyCanvas = CanvasRenderingContext()
     public func getContext(type: String) -> CanvasRenderingContext {
+        var attributes: [String:Any] = [:]
+        if type.elementsEqual("2d"){
+            attributes["alpha"] = true
+        }else if(type.contains("webgl")){
+            attributes["alpha"] = true
+            attributes["depth"] = true
+            attributes["failIfMajorPerformanceCaveat"] = false
+            attributes["powerPreference"] = "default"
+            attributes["premultipliedAlpha"] = true
+            attributes["preserveDrawingBuffer"] = false
+            attributes["stencil"] = false
+            attributes["xrCompatible"] = false
+        }
+        return getContext(type: type, contextAttributes: attributes)
+    }
+    
+    public func getContext(type: String, contextAttributes: [String: Any]) -> CanvasRenderingContext {
         if type.elementsEqual("2d"){
             if(renderingContext2d == nil){
                 renderingContext2d = CanvasRenderingContext2D(canvas: self)
+            }else {
+                if let gl = renderer as? GLRenderer{
+                    let _ = gl.ensureIsContextIsCurrent()
+                }
             }
+            
             renderer?.contextType = .twoD
             // force draw to setup drawable
-            renderer?.render()
+            
+            if(contextAttributes["alpha"] != nil){
+                let alpha = contextAttributes["alpha"] as! Bool
+                renderer?.isOpaque = !alpha
+            }
+            if let renderer = renderer as? GLRenderer {
+                if(renderer.canvas == 0 && renderer.width != 0 && renderer.height != 0){
+                    renderer.render()
+                }
+            }
             return renderingContext2d!
         }else if(type.elementsEqual("webgl")){
             if(renderingContextWebGL == nil){
                 renderingContextWebGL = WebGLRenderingContext(canvas: self)
+            }else {
+                if let gl = renderer as? GLRenderer{
+                    let _ = gl.ensureIsContextIsCurrent()
+                }
             }
             renderer?.contextType = .webGL
+            if(contextAttributes["alpha"] != nil){
+                let alpha = contextAttributes["alpha"] as! Bool
+                renderer?.isOpaque = !alpha
+            }
             return renderingContextWebGL!
         }else if(type.elementsEqual("webgl2")){
             if let render = renderer as? GLRenderer {
@@ -248,6 +322,14 @@ public class Canvas: UIView, RenderListener {
             }
             if(renderingContextWebGL2 == nil){
                 renderingContextWebGL2 = WebGL2RenderingContext(canvas: self)
+                if(contextAttributes["alpha"] != nil){
+                    let alpha = contextAttributes["alpha"] as! Bool
+                    renderer?.isOpaque = !alpha
+                }
+            }else {
+                if let gl = renderer as? GLRenderer{
+                    let _ = gl.ensureIsContextIsCurrent()
+                }
             }
             renderer?.contextType = .webGL
             return renderingContextWebGL2!

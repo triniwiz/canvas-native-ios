@@ -13,7 +13,7 @@ import UIKit
     case Gradient
     case Pattern
     public typealias RawValue = String
-
+    
     public var rawValue: RawValue {
         switch self {
         case .Color:
@@ -24,8 +24,8 @@ import UIKit
             return "pattern"
         }
     }
-
-
+    
+    
     public init?(rawValue: RawValue) {
         switch rawValue {
         case "gradient":
@@ -36,7 +36,7 @@ import UIKit
             self = .Color
         }
     }
-
+    
 }
 
 @objc public protocol ICanvasColorStyle {
@@ -48,9 +48,9 @@ import UIKit
     case RepeatX
     case RepeatY
     case NoRepeat
-
+    
     public typealias RawValue = String
-
+    
     public var rawValue: String {
         switch self {
         case .RepeatX:
@@ -98,38 +98,50 @@ public class CanvasColorStyle: NSObject {
             return .Color
         }
     }
-
+    
     @objcMembers
     @objc(Gradient)
     public class Gradient:NSObject, ICanvasColorStyle {
         var gradientMap: NSMutableDictionary = [:]
-
+        
         public func getStyleType() -> CanvasColorStyleType {
             return .Gradient
         }
-
-        public func addColorStop(offset: Float, color: UIColor){
+        
+        public func addColorStop(offset: Float, color: UInt32){
             if (offset < 0) {
                 return
             }
-
+            
             if (offset > 1) {
                 return
             }
-            gradientMap[offset] = Int(color.colorCode)
+            gradientMap[offset] = color
         }
         
-    
+        @objc(addColorStopWithOffsetUIColor::)
+        public func addColorStop(offset: Float,color: UIColor){
+            if (offset < 0) {
+                return
+            }
+            
+            if (offset > 1) {
+                return
+            }
+            gradientMap[offset] = UInt32(color.colorCode)
+        }
+        
+        
         func getPostions() -> [Float] {
             return Array(gradientMap.allKeys) as! [Float]
         }
-
-        func getColors() -> [Int] {
-            return Array(gradientMap.allValues) as! [Int]
+        
+        func getColors() -> [UInt32] {
+            return Array(gradientMap.allValues) as! [UInt32]
         }
     }
-
-
+    
+    
     @objcMembers
     @objc(LinearGradient)
     public class LinearGradient: Gradient {
@@ -137,7 +149,7 @@ public class CanvasColorStyle: NSObject {
         let y0: Float
         let x1: Float
         let y1: Float
-
+        
         public init(x0: Float, y0: Float, x1: Float, y1: Float) {
             self.x0 = x0
             self.y0 = y0
@@ -145,7 +157,7 @@ public class CanvasColorStyle: NSObject {
             self.y1 = y1
         }
     }
-
+    
     @objcMembers
     @objc(RadialGradient)
     public class RadialGradient: Gradient {
@@ -155,7 +167,7 @@ public class CanvasColorStyle: NSObject {
         let x1: Float
         let y1: Float
         let r1: Float
-
+        
         public init(x0:Float, y0: Float, r0: Float, x1: Float, y1: Float, r1: Float) {
             self.x0 = x0
             self.y0 = y0
@@ -165,17 +177,69 @@ public class CanvasColorStyle: NSObject {
             self.y1 = y1
         }
     }
-
+    
     @objcMembers
     @objc(Pattern)
     public class Pattern:NSObject, ICanvasColorStyle {
-        let src: AnyObject
-        let pattern: PatternRepetition
-        public init(src: AnyObject, pattern: PatternRepetition){
-            self.src = src
-            self.pattern = pattern
+        var nativePattern: Int64 = 0
+        public init(src: UIImage, pattern: PatternRepetition){
+            super.init()
+            
+            var cgImage: CGImage?
+            
+            if let image = src.cgImage {
+                cgImage = image
+            } else if let image = src.ciImage {
+                let ctx = CIContext()
+                cgImage = ctx.createCGImage(image, from: image.extent)
+            }
+            if let image = cgImage {
+                let width = Int(src.size.width)
+                let height = Int(src.size.height)
+                let buffer = calloc(width * height, 4)
+                let colorSpace = CGColorSpaceCreateDeviceRGB()
+                let imageCtx = CGContext(data: buffer, width: width, height: height, bitsPerComponent: 8, bytesPerRow: width * 4, space: colorSpace, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue)
+                imageCtx!.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
+                let rep = (pattern.rawValue as NSString).utf8String
+                nativePattern = native_create_pattern(buffer?.assumingMemoryBound(to: UInt8.self), width * height  * 4, Int32(width), Int32(height), rep)
+                buffer?.deallocate()
+            }
         }
-
+        
+        
+        public init(canvas: Canvas, pattern: PatternRepetition){
+            super.init()
+            let rep = (pattern.rawValue as NSString).utf8String
+            let context = EAGLContext.current()
+            var ss = canvas.snapshot()
+            if context != nil {
+                EAGLContext.setCurrent(context)
+            }
+            nativePattern = native_create_pattern_encoded(&ss, ss.count, rep)
+        }
+        
+        
+        public init(asset src: ImageAsset, pattern: PatternRepetition){
+            super.init()
+            let size = src.width * src.height * 4
+            let width = src.width
+            let height = src.height
+            let rep = (pattern.rawValue as NSString).utf8String
+            nativePattern = native_create_pattern(src.getRawBytes(), Int(size), width, height, rep)
+        }
+        
+        
+        public func setTransform(matrix: CanvasDOMMatrix) {
+            nativePattern = native_set_pattern_transform(nativePattern, matrix.matrix)
+        }
+        
+        deinit {
+            if(nativePattern != 0){
+                native_free_pattern(nativePattern)
+                nativePattern = 0
+            }
+        }
+        
         public func getStyleType() -> CanvasColorStyleType {
             return .Pattern
         }

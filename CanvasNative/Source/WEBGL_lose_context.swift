@@ -17,14 +17,12 @@ public class Canvas_WEBGL_lose_context: NSObject {
     }
     
     public func loseContext(){
-        if (canvas.renderer as? GLRenderer) != nil {
-            EAGLContext.setCurrent(nil)
-        }
+        print("loseContext", canvas)
+        canvas.isContextLost = true
     }
     
     public func restoreContext(){
-        if let renderer = canvas.renderer as? GLRenderer {
-            EAGLContext.setCurrent(renderer.context)
-        }
+        print("restoreContext", canvas)
+        canvas.isContextLost = false
     }
 }

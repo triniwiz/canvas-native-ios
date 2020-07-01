@@ -67,24 +67,28 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     }
     
     public func activeTexture(texture: UInt32){
+      let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glActiveTexture(texture)
     }
     
     public func attachShader(program: UInt32, shader: UInt32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glAttachShader(program, shader)
     }
     
     public func bindAttribLocation(program: UInt32, index: UInt32, name: String){
-        print(program, index, name)
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         let bindName = (name as NSString).utf8String
         glBindAttribLocation(program, index, bindName)
     }
     
     public func bindBuffer(target: Int32, buffer: UInt32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glBindBuffer(GLenum(target), buffer)
     }
     
     public func bindFramebuffer(target: Int32, framebuffer: UInt32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         if(framebuffer == 0){
             if let renderer = canvas.renderer as? GLRenderer {
                 glBindFramebuffer(GLenum(target), renderer.displayFramebuffer)
@@ -95,30 +99,37 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     }
     
     public func bindRenderbuffer(target: Int32, renderbuffer: UInt32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glBindRenderbuffer(GLenum(target), renderbuffer)
     }
     
     public func bindTexture(target: Int32, texture: UInt32) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glBindTexture(GLenum(target), texture)
     }
     
     public func blendColor(red: Float32, green: Float32, blue: Float32, alpha: Float32) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glBlendColor(red, green, blue, alpha)
     }
     
     public func blendEquation(mode: Int32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glBlendEquation(GLenum(mode))
     }
     
     public func blendEquationSeparate(modeRGB: Int32, modeAlpha: Int32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glBlendEquationSeparate(GLenum(modeRGB), GLenum(modeAlpha))
     }
     
     public func blendFunc(sfactor: Int32, dfactor: Int32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glBlendFunc(GLenum(sfactor), GLenum(dfactor))
     }
     
     public func blendFuncSeparate(srcRGB: Int32, dstRGB: Int32, srcAlpha: Int32, dstAlpha: Int32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glBlendFuncSeparate(GLenum(srcRGB), GLenum(dstRGB), GLenum(srcAlpha), GLenum(dstAlpha))
     }
     
@@ -128,33 +139,39 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     var SIZE_OF_INT = MemoryLayout<GLint>.size
     var SIZE_OF_DOUBLE = MemoryLayout<Double>.size
     public func bufferData(target: Int32, size: Int32, usage: Int32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glBufferData(GLenum(target), GLsizeiptr(size), nil, GLenum(usage))
     }
     
     public func bufferData(target: Int32,srcData: NSNull, usage: Int32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var buffer = srcData
         glBufferData(GLenum(target), 0, &buffer, GLenum(usage))
     }
     
     public func bufferData(target: Int32,byteArray srcData: [UInt8], usage: Int32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var buffer = srcData
         let count = SIZE_OF_BYTE * buffer.count
         glBufferData(GLenum(target), count, &buffer, GLenum(usage))
     }
     
     public func bufferData(target: Int32,shortArray srcData: [UInt16], usage: Int32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var buffer = srcData
         let count = SIZE_OF_SHORT * buffer.count
         glBufferData(GLenum(target), count, &buffer, GLenum(usage))
     }
     
     public func bufferData(target: Int32,intArray srcData: [Int32], usage: Int32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var buffer = srcData
         let count = SIZE_OF_INT * buffer.count
         glBufferData(GLenum(target), count, &buffer, GLenum(usage))
     }
     
     public func bufferData(target: Int32,floatArray srcData: [Float], usage: Int32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var buffer = srcData
         let count = SIZE_OF_FLOAT * buffer.count
         glBufferData(GLenum(target), count, &buffer, GLenum(usage))
@@ -162,6 +179,7 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     
     
     public func bufferSubData(target: Int32, offset: Int32,byteArray srcData: [UInt8]){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var buffer = srcData
         let count = SIZE_OF_BYTE * buffer.count
         let os = SIZE_OF_BYTE * Int(offset)
@@ -170,12 +188,14 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     
     
     public func bufferSubData(target: Int32, offset: Int32,shortArray srcData: [Int16]){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var buffer = srcData
         let count = SIZE_OF_SHORT * buffer.count
         let os = SIZE_OF_SHORT * Int(offset)
         glBufferSubData(GLenum(target), os, count, &buffer)
     }
     public func bufferSubData(target: Int32, offset: Int32,intArray srcData: [Int32]){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var buffer = srcData
         let count = SIZE_OF_INT * buffer.count
         let os = SIZE_OF_INT * Int(offset)
@@ -183,6 +203,7 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     }
     
     public func bufferSubData(target: Int32, offset: Int32,floatArray srcData: [Float]){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var buffer = srcData
         let count = SIZE_OF_FLOAT * buffer.count
         let os = SIZE_OF_FLOAT * Int(offset)
@@ -191,22 +212,27 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     
     
     public func checkFramebufferStatus(target: Int32) -> Int32{
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         return Int32(glCheckFramebufferStatus(GLenum(target)))
     }
     
     public func clear(mask: UInt32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glClear(GLbitfield(mask))
     }
     
     public func clearColor(red: Float32, green: Float32, blue: Float32, alpha: Float32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glClearColor(red, green, blue, alpha)
     }
     
     public func clearDepth(depth: Float32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glClearDepthf(depth)
     }
     
     public func clearStencil(stencil: Int32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glClearStencil(stencil)
     }
     
@@ -222,6 +248,7 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     }
     
     public func colorMask(red: Bool, green: Bool, blue: Bool, alpha: Bool){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glColorMask(boolConverter(value: red), boolConverter(value: green), boolConverter(value: blue), boolConverter(value: alpha))
     }
     
@@ -230,27 +257,32 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     }
     
     public func compileShader(shader: UInt32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glCompileShader(shader)
     }
     
     public func compressedTexImage2D(target: Int32, level: Int32, internalformat: Int32, width: Int32, height: Int32, border: Int32, pixels: NSNull){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glCompressedTexImage2D(GLenum(target), level, GLenum(internalformat), width, height, border, 0, nil)
     }
     
     
     public func compressedTexImage2D(target: Int32, level: Int32, internalformat: Int32, width: Int32, height: Int32, border: Int32,byteArray pixels: [UInt8]){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var image = pixels
         let size = SIZE_OF_BYTE * image.count
         glCompressedTexImage2D(GLenum(target), level, GLenum(internalformat), width, height, border, GLsizei(size), &image)
     }
     
     public func compressedTexImage2D(target: Int32, level: Int32, internalformat: Int32, width: Int32, height: Int32, border: Int32,shortArray pixels: [Int16]){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var image = pixels
         let size = SIZE_OF_SHORT * image.count
         glCompressedTexImage2D(GLenum(target), level, GLenum(internalformat), width, height, border, GLsizei(size), &image)
     }
     
     public func compressedTexImage2D(target: Int32, level: Int32, internalformat: Int32, width: Int32, height: Int32, border: Int32,intArray pixels: [Int32]){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var image = pixels
         let size = SIZE_OF_INT * image.count
         glCompressedTexImage2D(GLenum(target), level, GLenum(internalformat), width, height, border, GLsizei(size), &image)
@@ -258,6 +290,7 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     
     
     public func compressedTexImage2D(target: Int32, level: Int32, internalformat: Int32, width: Int32, height: Int32, border: Int32,floatArray pixels: [Float]){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var image = pixels
         let size = SIZE_OF_FLOAT * image.count
         glCompressedTexImage2D(GLenum(target), level, GLenum(internalformat), width, height, border, GLsizei(size), &image)
@@ -265,11 +298,13 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     
     
     public func compressedTexSubImage2D(target: Int32, level: Int32, xoffset: Int32, yoffset: Int32, width: Int32, height: Int32, format: Int32,pixels: NSNull){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glCompressedTexSubImage2D(GLenum(target), level, xoffset, yoffset, width, height, GLenum(format), 0, nil)
     }
     
     
     public func compressedTexSubImage2D(target: Int32, level: Int32, xoffset: Int32, yoffset: Int32, width: Int32, height: Int32, format: Int32,byteArray pixels: [UInt8]){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var image = pixels
         let size = SIZE_OF_BYTE * image.count
         glCompressedTexSubImage2D(GLenum(target), level, xoffset, yoffset, width, height, GLenum(format), GLsizei(size), &image)
@@ -277,6 +312,7 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     
     
     public func compressedTexSubImage2D(target: Int32, level: Int32, xoffset: Int32, yoffset: Int32, width: Int32, height: Int32, format: Int32,shortArray pixels: [Int16]){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var image = pixels
         let size = SIZE_OF_SHORT * image.count
         glCompressedTexSubImage2D(GLenum(target), level, xoffset, yoffset, width, height, GLenum(format), GLsizei(size), &image)
@@ -284,12 +320,14 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     
     
     public func compressedTexSubImage2D(target: Int32, level: Int32, xoffset: Int32, yoffset: Int32, width: Int32, height: Int32, format: Int32,intArray pixels: [Int32]){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var image = pixels
         let size = SIZE_OF_INT * image.count
         glCompressedTexSubImage2D(GLenum(target), level, xoffset, yoffset, width, height, GLenum(format), GLsizei(size), &image)
     }
     
     public func compressedTexSubImage2D(target: Int32, level: Int32, xoffset: Int32, yoffset: Int32, width: Int32, height: Int32, format: Int32,floatArray pixels: [Float]){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var image = pixels
         let size = SIZE_OF_FLOAT * image.count
         glCompressedTexSubImage2D(GLenum(target), level, xoffset, yoffset, width, height, GLenum(format), GLsizei(size), &image)
@@ -297,31 +335,37 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     
     
     public func copyTexImage2D(target: Int32, level: Int32, internalformat: Int32, x: Int32, y: Int32, width: Int32, height: Int32, border: Int32) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glCopyTexImage2D(GLenum(target), level, GLenum(internalformat), x, y, width, height, border)
     }
     
     
     public func copyTexSubImage2D(target: Int32, level: Int32, xoffset: Int32, yoffset: Int32, x: Int32, y: Int32, width: Int32, height: Int32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glCopyTexSubImage2D(GLenum(target), level, xoffset, yoffset, x, y, width, height)
     }
     
     public func createBuffer() -> UInt32{
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var bufferId = GLuint()
         glGenBuffers(1, &bufferId)
         return bufferId
     }
     
     public func createFramebuffer() -> UInt32 {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var frameBufferId = GLuint()
         glGenFramebuffers(1, &frameBufferId)
         return frameBufferId
     }
     
     public func createProgram() -> UInt32 {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         return glCreateProgram()
     }
     
     public func createRenderbuffer() -> UInt32 {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var renderBufferId = GLuint()
         glGenRenderbuffers(1, &renderBufferId)
         return renderBufferId
@@ -329,63 +373,79 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     
     
     public func createShader(type :Int32) -> UInt32{
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         return glCreateShader(GLenum(type))
     }
     
     public func createTexture() -> UInt32 {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var textureId = GLuint()
         glGenTextures(1, &textureId)
         return textureId
     }
     
     public func cullFace(mode: Int32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glCullFace(GLenum(mode))
     }
     
     public func deleteBuffer(buffer: UInt32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var id = buffer
         glDeleteBuffers(1, &id)
     }
     
     public func deleteFramebuffer(frameBuffer: UInt32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var id = frameBuffer
         glDeleteFramebuffers(1, &id)
     }
     
     public func deleteProgram(program: UInt32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glDeleteProgram(program)
     }
     
     public func deleteRenderbuffer(renderbuffer: UInt32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var id = renderbuffer
         glDeleteRenderbuffers(1, &id)
     }
     public func deleteShader(shader: UInt32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glDeleteShader(shader)
     }
     public func deleteTexture(texture: UInt32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var id = texture
         glDeleteTextures(1, &id)
     }
     public func depthFunc(fn: Int32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glDepthFunc(GLenum(fn))
     }
     public func depthMask(flag: Bool){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glDepthMask(boolConverter(value: flag))
     }
     public func depthRange(zNear: Float, zFar: Float){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glDepthRangef(zNear, zFar)
     }
     public func detachShader(program: UInt32, shader: UInt32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glDetachShader(program, shader)
     }
     public func disable(cap: Int32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glDisable(GLenum(cap))
     }
     public func disableVertexAttribArray(index: Int32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glDisableVertexAttribArray(GLuint(index))
     }
     public func drawArrays(mode: Int32, first: Int32, count: Int32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glDrawArrays(GLenum(mode), first, count)
     }
     
@@ -398,28 +458,34 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     }
     
     public func drawElements(mode: Int32, count: Int32, type: Int32, offset: Int32) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         let ptr = BUFFER_OFFSET(n: Int(offset))
         glDrawElements(GLenum(mode), count, GLenum(type), ptr)
     }
     
     public func enable(cap: Int32) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glEnable(GLenum(cap))
     }
     
     public func enableVertexAttribArray(index: Int32) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glEnableVertexAttribArray(GLuint(index))
     }
     
     public func finish(){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glFinish()
     }
     
     public func flush(){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glFlush()
     }
     
     
     public func framebufferRenderbuffer(target: Int32, attachment: Int32, renderbuffertarget: Int32, renderbuffer: UInt32) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         /*if(attachment == GL_DEPTH_ATTACHMENT){
          if let renderer = canvas.renderer as? GLRenderer {
          glFramebufferRenderbuffer(GLenum(target), GLenum(GL_DEPTH_ATTACHMENT), GLenum(renderbuffertarget),renderer.displayRenderbuffer)
@@ -467,18 +533,22 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     }
     
     public func framebufferTexture2D(target: Int32, attachment:Int32, textarget: Int32, texture: UInt32, level: Int32) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glFramebufferTexture2D(GLenum(target), GLenum(attachment), GLenum(textarget), texture, level)
     }
     
     public func frontFace(mode: Int32) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glFrontFace(GLenum(mode))
     }
     
     public func generateMipmap(target: Int32) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glGenerateMipmap(GLenum(target))
     }
     
     public func getActiveAttrib(program: UInt32,index: Int32) -> WebGLActiveInfo{
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var length = GLint()
         var size = GLint()
         var type = GLenum()
@@ -493,6 +563,7 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     
     
     public func getActiveUniform(program: UInt32,index: Int32) -> WebGLActiveInfo{
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var size = GLint()
         var type = GLenum()
         var length = GLint()
@@ -506,6 +577,7 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     }
     
     public func getAttachedShaders(program: UInt32) -> [UInt32]{
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var count = GLint()
         let zero = GLuint()
         glGetProgramiv(program,GLenum(GL_ATTACHED_SHADERS), &count)
@@ -515,11 +587,13 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     }
     
     public func getAttribLocation(program: UInt32, name: String) -> Int32{
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         let ptr = (name as NSString).cString(using: String.Encoding.utf8.rawValue)
         return glGetAttribLocation(program, ptr)
     }
     
     public func getBufferParameter(target: Int32, pname: Int32) -> Int32 {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var params = GLint()
         glGetBufferParameteriv(GLenum(target), GLenum(pname), &params)
         return params
@@ -555,6 +629,7 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     }
     
     public func getError() -> Int32 {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         return Int32(glGetError())
     }
     
@@ -569,6 +644,7 @@ public class WebGLRenderingContext: CanvasRenderingContext {
         return name.uppercased()
     }
     public func getExtension(name: String) -> Any? {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         let realName = getRealExtName(name: name)
         if let extPtr = glGetString(GLenum(GL_EXTENSIONS)) {
             let extensions = String(cString: extPtr)
@@ -671,6 +747,7 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     }
     
     public func getFramebufferAttachmentParameter(target: Int32, attachment: Int32, pname: Int32) -> FramebufferAttachmentParameter {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var params = GLint()
         let result = FramebufferAttachmentParameter(isTexture: false, isRenderbuffer: false, value: 0)
         if(attachment == FRAMEBUFFER_ATTACHMENT_OBJECT_NAME){
@@ -710,6 +787,7 @@ public class WebGLRenderingContext: CanvasRenderingContext {
         }
     }
     public func getParameter(pname: Int32) -> Any?{
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         switch pname {
         case ACTIVE_TEXTURE, ALPHA_BITS, ARRAY_BUFFER_BINDING, BLEND_DST_ALPHA, BLEND_DST_RGB, BLEND_EQUATION, BLEND_EQUATION_ALPHA, BLEND_EQUATION_RGB, BLEND_SRC_ALPHA, BLEND_SRC_RGB, BLUE_BITS, CULL_FACE_MODE, CURRENT_PROGRAM, DEPTH_BITS, DEPTH_FUNC, ELEMENT_ARRAY_BUFFER_BINDING, FRAMEBUFFER_BINDING, FRONT_FACE, GENERATE_MIPMAP_HINT, GREEN_BITS, IMPLEMENTATION_COLOR_READ_FORMAT, IMPLEMENTATION_COLOR_READ_TYPE, MAX_COMBINED_TEXTURE_IMAGE_UNITS, MAX_CUBE_MAP_TEXTURE_SIZE, MAX_FRAGMENT_UNIFORM_VECTORS, MAX_RENDERBUFFER_SIZE, MAX_TEXTURE_IMAGE_UNITS, MAX_TEXTURE_SIZE,MAX_VARYING_VECTORS, MAX_VERTEX_ATTRIBS, MAX_VERTEX_TEXTURE_IMAGE_UNITS, MAX_VERTEX_UNIFORM_VECTORS, PACK_ALIGNMENT, RED_BITS, RENDERBUFFER_BINDING, SAMPLE_BUFFERS, SAMPLES, STENCIL_BACK_FAIL, STENCIL_BACK_FUNC, STENCIL_BACK_PASS_DEPTH_FAIL, STENCIL_BACK_PASS_DEPTH_PASS, STENCIL_BACK_REF, STENCIL_BACK_VALUE_MASK, STENCIL_BACK_WRITEMASK, STENCIL_BITS,STENCIL_CLEAR_VALUE,STENCIL_FAIL, STENCIL_FUNC,STENCIL_PASS_DEPTH_FAIL,STENCIL_PASS_DEPTH_PASS,STENCIL_REF,STENCIL_VALUE_MASK, STENCIL_WRITEMASK, SUBPIXEL_BITS, TEXTURE_BINDING_2D, TEXTURE_BINDING_CUBE_MAP, UNPACK_ALIGNMENT:
             var param = GLint()
@@ -774,6 +852,7 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     }
     
     public func getProgramInfoLog(program: UInt32) -> String {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var length = GLint()
         glGetProgramiv(program, GLenum(GL_INFO_LOG_LENGTH), &length)
         // let zero = GLchar()
@@ -787,6 +866,7 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     
     
     public func getProgramParameter(program: UInt32, pname: Int32) -> Any {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var param = GLint()
         glGetProgramiv(program, GLenum(pname), &param)
         switch pname {
@@ -812,12 +892,14 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     
     
     public func getRenderbufferParameter(target: Int32, pname: Int32) -> Int32{
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var params = GLint()
         glGetRenderbufferParameteriv(GLenum(target), GLenum(pname), &params)
         return params
     }
     
     public func getShaderInfoLog(shader: UInt32) -> String  {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var length = GLint()
         glGetShaderiv(shader, GLenum(GL_INFO_LOG_LENGTH), &length)
         let ptr = UnsafeMutablePointer<GLchar>.allocate(capacity: Int(length))
@@ -830,6 +912,7 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     }
     
     public func getShaderParameter(shader: UInt32, pname: Int32) -> Any {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var params = GLint()
         glGetShaderiv(shader, GLenum(pname), &params)
         switch pname {
@@ -849,6 +932,7 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     }
     
     public func getShaderPrecisionFormat(shaderType: UInt32, precisionType: Int32) -> WebGLShaderPrecisionFormat{
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var range = Array(repeating: GLint(), count: 2)
         var precision = GLint()
         glGetShaderPrecisionFormat(shaderType, GLenum(precisionType), &range, &precision)
@@ -856,6 +940,7 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     }
     
     public func getShaderSource(shader: UInt32) -> String{
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var length = GLint()
         let zero = GLchar()
         glGetShaderiv(shader, GLenum(GL_SHADER_SOURCE_LENGTH), &length)
@@ -865,6 +950,7 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     }
     
     public func getSupportedExtensions() -> [String]{
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         let extensions = String(cString: glGetString(GLenum(GL_EXTENSIONS)))
         var list = extensions.components(separatedBy: .whitespaces)
         if let last = list.last {
@@ -898,6 +984,7 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     
     
     public func getTexParameter(target: Int32, pname: Int32) -> Int32{
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var params = GLint()
         glGetTexParameteriv(GLenum(target), GLenum(pname), &params)
         return params
@@ -912,6 +999,7 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     }
     
     public func getUniform(program: UInt32, location: Int32) -> Any{
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var type = GLuint()
         glGetActiveUniform(program, GLuint(location), 0, nil, nil, &type, nil)
         switch Int32(type) {
@@ -994,12 +1082,14 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     }
     
     public func getUniformLocation(program: UInt32, name: String) -> Int32 {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         let namePtr = (name as NSString).cString(using: String.Encoding.utf8.rawValue)
         return glGetUniformLocation(program, namePtr)
     }
     
     
     public func getVertexAttrib(index: UInt32, pname: Int32) -> Any {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         if(pname == CURRENT_VERTEX_ATTRIB){
             let zero = GLfloat()
             var params = Array(repeating: zero, count: 4)
@@ -1026,6 +1116,7 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     
     
     public func getVertexAttribOffset(index: Int32, pname: Int32) -> Int {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         let ptr = UnsafeMutablePointer<GLintptr>.allocate(capacity: 1)
         // var pointer = UnsafeMutableRawPointer(&ptr)
         var pointer: UnsafeMutableRawPointer? = ptr.deinitialize(count: 1)
@@ -1035,53 +1126,60 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     
     
     public func hint(target: Int32, mode: Int32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glHint(GLenum(target), GLenum(mode))
     }
     
     
     public func isBuffer(buffer: UInt32) -> Bool{
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         return glIsBuffer(buffer) == GL_TRUE
     }
     
     public func isContextLost() -> Bool {
-        if let renderer = canvas.renderer as? GLRenderer {
-            return EAGLContext.current() != renderer.glkView.context
-        }
-        return false
+        return canvas.isContextLost
     }
     
     
     public func isEnabled(cap: Int32) -> Bool {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         return glIsEnabled(GLenum(cap)) == GL_TRUE
     }
     
     
     public func isFramebuffer(framebuffer: UInt32) -> Bool {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         return glIsFramebuffer(framebuffer) == GL_TRUE
     }
     
     
     public func isProgram(program: UInt32) -> Bool {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         return glIsProgram(program) == GL_TRUE
     }
     
     public func isRenderbuffer(renderbuffer: UInt32) -> Bool {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         return glIsRenderbuffer(renderbuffer) == GL_TRUE
     }
     
     public func isShader(shader: UInt32) ->Bool {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         return glIsShader(shader) == GL_TRUE
     }
     
     public func isTexture(texture: UInt32) -> Bool {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         return glIsTexture(texture)  == GL_TRUE
     }
     
     public func lineWidth(width: Float){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glLineWidth(width)
     }
     
     public func linkProgram(program: UInt32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glLinkProgram(program)
     }
     
@@ -1124,6 +1222,7 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     var premultiplyAlphaWebGL: Bool = false
     var colorSpaceConversionWebGL: Int32 = -1
     public func pixelStorei(pname: Int32, param: Int32) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         switch pname {
         case UNPACK_ALIGNMENT, PACK_ALIGNMENT:
             glPixelStorei(GLenum(pname), anyToInt(param, 4))
@@ -1141,77 +1240,93 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     
     
     public func polygonOffset(factor: Float, units: Float){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glPolygonOffset(factor, units)
     }
     
     public func readPixels(x: Int32, y: Int32, width: Int32, height: Int32, format: Int32, type: Int32,byteArray pixels: [UInt8]) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var array = pixels
         glReadPixels(x, y, width, height, GLenum(format), GLenum(type), &array)
     }
     
     public func readPixels(x: Int32, y: Int32, width: Int32, height: Int32, format: Int32, type: Int32,shortArray pixels: [UInt16]) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var array = pixels
         glReadPixels(x, y, width, height, GLenum(format), GLenum(type), &array)
     }
     
     
     public func readPixels(x: Int32, y: Int32, width: Int32, height: Int32, format: Int32, type: Int32,floatArray pixels: [Float]) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var array = pixels
         glReadPixels(x, y, width, height, GLenum(format), GLenum(type), &array)
     }
     
     
     public func renderbufferStorage(target: Int32, internalFormat: Int32, width: Int32, height: Int32) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glRenderbufferStorage(GLenum(target), GLenum(internalFormat), width, height)
     }
     
     
     public func sampleCoverage(value:Float, invert: Bool){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glSampleCoverage(value, boolConverter(value: invert))
     }
     
     
     public func scissor(x: Int32, y: Int32, width: Int32, height: Int32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glScissor(x, y, width, height)
     }
     
     public func shaderSource(shader: UInt32, source: String) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var ptr = (source as NSString).cString(using: String.Encoding.utf8.rawValue)
         glShaderSource(shader, 1, &ptr, nil)
     }
     
     public func stencilFunc(fn:Int32, ref: Int32, mask: UInt32) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glStencilFunc(GLenum(fn), ref, mask)
     }
     
     
     public func stencilFuncSeparate(face: Int32, fn: Int32, ref:Int32, mask: UInt32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glStencilFuncSeparate(GLenum(face), GLenum(fn), ref, mask)
     }
     
     public func stencilMask(mask: UInt32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glStencilMask(mask)
     }
     
     public func stencilMaskSeparate(face: Int32, mask: UInt32) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glStencilMaskSeparate(GLenum(face), mask)
     }
     
     public func stencilOp(fail: Int32, zfail: Int32, zpass: Int32) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glStencilOp(GLenum(fail), GLenum(zfail), GLenum(zpass))
     }
     
     public func stencilOpSeparate(face: Int32, fail: Int32, zfail: Int32, zpass: Int32) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glStencilOpSeparate(GLenum(face), GLenum(fail), GLenum(zfail), GLenum(zpass))
     }
     
     
     public func texImage2D(target: Int32, level: Int32, internalformat: Int32, width: Int32, height: Int32, border: Int32, format: Int32, type: Int32, pixels: NSNull) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glTexImage2D(GLenum(target), level, internalformat, width, height, border, GLenum(format), GLenum(type), nil)
     }
     
     
     public func texImage2D(target: Int32, level: Int32, internalformat: Int32, width: Int32, height: Int32, border: Int32, format: Int32, type: Int32,byteArray pixels: [UInt8]) {
+       let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var data = pixels
         if(flipYWebGL){
             native_image_asset_flip_x_in_place_owned(UInt32(width), UInt32(height), &data, UInt(pixels.count))
@@ -1220,23 +1335,26 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     }
     
     public func texImage2D(target: Int32, level: Int32, internalformat: Int32, width: Int32, height: Int32, border: Int32, format: Int32, type: Int32,shortArray pixels: [Int16]) {
+       let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var data = pixels
         glTexImage2D(GLenum(target), level, internalformat, width, height, border, GLenum(format), GLenum(type), &data)
     }
     
     public func texImage2D(target: Int32, level: Int32, internalformat: Int32, width: Int32, height: Int32, border: Int32, format: Int32, type: Int32,intArray pixels: [Int32]) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var data = pixels
         glTexImage2D(GLenum(target), level, internalformat, width, height, border, GLenum(format), GLenum(type), &data)
     }
     
     public func texImage2D(target: Int32, level: Int32, internalformat: Int32, width: Int32, height: Int32, border: Int32, format: Int32, type: Int32,floatArray pixels: [Float]) {
+       let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var data = pixels
         glTexImage2D(GLenum(target), level, internalformat, width, height, border, GLenum(format), GLenum(type), &data)
     }
     
     public func texImage2D(target: Int32, level: Int32, internalformat: Int32, format: Int32, type: Int32, pixels: UIImage) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var cgImage: CGImage?
-        
         if let image = pixels.cgImage {
             cgImage = image
         } else if let image = pixels.ciImage {
@@ -1272,6 +1390,7 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     }
     
     public func texImage2D(target: Int32, level: Int32, internalformat: Int32, format: Int32, type: Int32, asset: ImageAsset) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         if(flipYWebGL){
             native_image_asset_flip_x_in_place_owned(UInt32(asset.width), UInt32(asset.height), asset.getRawBytes(), UInt(asset.length))
         }
@@ -1282,22 +1401,35 @@ public class WebGLRenderingContext: CanvasRenderingContext {
         glTexImage2D(GLenum(target), level, internalformat, 0, 0, 0, GLenum(format), GLenum(type), nil)
     }
     
+    public func texImage2D(target: Int32, level: Int32, internalformat: Int32, format: Int32, type: Int32, canvas: Canvas) {
+        var snapshot = canvas.snapshot()
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
+          if(flipYWebGL){
+              native_image_asset_flip_x_in_place_owned(UInt32(canvas.width), UInt32(canvas.height), &snapshot, UInt(snapshot.count))
+          }
+          glTexImage2D(GLenum(target), level, internalformat, GLsizei(canvas.width), GLsizei(canvas.height), 0, GLenum(format), GLenum(type), &snapshot)
+      }
+    
     
     public func texParameterf(target: Int32, pname: Int32, param: Float) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glTexParameterf(GLenum(target), GLenum(pname), param)
     }
     
     public func texParameteri(target: Int32, pname: Int32, param: Int32) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glTexParameteri(GLenum(target), GLenum(pname), param)
     }
     
     
     public func texSubImage2D(target: Int32, level: Int32, xoffset: Int32, yoffset: Int32, width: Int32, height: Int32, format: Int32, type:Int32,pixels: NSNull) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glTexSubImage2D(GLenum(target), level, xoffset, yoffset, width, height, GLenum(format), GLenum(type), nil)
     }
     
     public func texSubImage2D(target: Int32, level: Int32, xoffset: Int32, yoffset: Int32, width: Int32, height: Int32, format: Int32, type:Int32,byteArray pixels: [UInt8]) {
         var data = pixels
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         if(flipYWebGL){
             native_image_asset_flip_y_in_place_owned(UInt32(width), UInt32(height), &data, UInt(data.count))
         }
@@ -1305,16 +1437,19 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     }
     
     public func texSubImage2D(target: Int32, level: Int32, xoffset: Int32, yoffset: Int32, width: Int32, height: Int32, format: Int32, type:Int32,shortArray pixels: [Int16]) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var data = pixels
         glTexSubImage2D(GLenum(target), level, xoffset, yoffset, width, height, GLenum(format), GLenum(type), &data)
     }
     
     public func texSubImage2D(target: Int32, level: Int32, xoffset: Int32, yoffset: Int32, width: Int32, height: Int32, format: Int32, type:Int32,floatArray pixels: [Float]) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var data = pixels
         glTexSubImage2D(GLenum(target), level, xoffset, yoffset, width, height, GLenum(format), GLenum(type), &data)
     }
     
     public func texSubImage2D(target: Int32, level: Int32, xoffset: Int32, yoffset: Int32, format: Int32, type:Int32, pixels: UIImage) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var cgImage: CGImage?
         if let image = pixels.cgImage {
             cgImage = image
@@ -1347,6 +1482,7 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     
     
     public func texSubImage2D(target: Int32, level: Int32, xoffset: Int32, yoffset: Int32, format: Int32, type:Int32, asset: ImageAsset) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         let width = asset.width
         let height = asset.height
         if(flipYWebGL){
@@ -1357,154 +1493,198 @@ public class WebGLRenderingContext: CanvasRenderingContext {
     }
     
     
+    public func texSubImage2D(target: Int32, level: Int32, xoffset: Int32, yoffset: Int32, format: Int32, type:Int32, canvas: Canvas) {
+        let width = canvas.width
+        let height = canvas.height
+        var snapshot = canvas.snapshot()
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
+        if(flipYWebGL){
+            native_image_asset_flip_y_in_place_owned(UInt32(width), UInt32(height), &snapshot, UInt(snapshot.count))
+        }
+        
+        glTexSubImage2D(GLenum(target), level, xoffset, yoffset, GLsizei(canvas.width), GLsizei(canvas.height), GLenum(format), GLenum(type), &snapshot)
+    }
+    
     public func texSubImage2D(target: Int32, level: Int32, xoffset: Int32, yoffset: Int32, format: Int32, type:Int32,none pixels: NSNull) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glTexSubImage2D(GLenum(target), level, xoffset, yoffset, 0, 0, GLenum(format), GLenum(type), nil)
     }
     
     
     public func uniform1f(location: Int32, v0: Float) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glUniform1f(location, v0)
     }
     
     public func uniform1fv(location: Int32, value: [Float]) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var v0 = value
         glUniform1fv(location, 1, &v0)
     }
     
     
     public func uniform1i(location: Int32, v0: Int32) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glUniform1i(location, v0)
     }
     
     public func uniform1iv(location: Int32, value: [Int32]) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var v0 = value
         glUniform1iv(location, 1, &v0)
     }
     
     
     public func uniform2f(location: Int32, v0: Float, v1: Float) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glUniform2f(location, v0, v1)
     }
     
     public func uniform2fv(location: Int32, value: [Float]) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var v0 = value
         glUniform1fv(location, 1, &v0)
     }
     
     
     public func uniform2i(location: Int32, v0: Int32, v1: Int32) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glUniform2i(location, v0, v1)
     }
     
     public func uniform2iv(location: Int32, value: [Int32]) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var v0 = value
         glUniform2iv(location, 1, &v0)
     }
     
     
     public func uniform3f(location: Int32, v0: Float, v1: Float, v2: Float) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glUniform3f(location, v0, v1, v2)
     }
     
     public func uniform3fv(location: Int32, value: [Float]) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var v0 = value
         glUniform3fv(location, 1, &v0)
     }
     
     
     public func uniform3i(location: Int32, v0: Int32, v1: Int32, v2: Int32) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glUniform3i(location, v0, v1, v2)
     }
     
     public func uniform3iv(location: Int32, value: [Int32]) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var v0 = value
         glUniform3iv(location, 1, &v0)
     }
     
     public func uniform4f(location: Int32, v0: Float, v1: Float, v2: Float, v3: Float) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glUniform4f(location, v0, v1, v2, v3)
     }
     
     public func uniform4fv(location: Int32, value: [Float]) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var v0 = value
         glUniform4fv(location, 1, &v0)
     }
     
     public func uniform4i(location: Int32, v0: Int32, v1: Int32, v2: Int32, v3: Int32) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glUniform4i(location, v0, v1, v2, v3)
     }
     
     public func uniform4iv(location: Int32, value: [Int32]) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var v0 = value
         glUniform4iv(location, 1, &v0)
     }
     
     public func uniformMatrix2fv(location: Int32, transpose: Bool, value: [Float]) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var array = value
         glUniformMatrix2fv(location, 1, boolConverter(value: transpose), &array)
     }
     
     public func uniformMatrix3fv(location: Int32, transpose: Bool, value: [Float]) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var array = value
         glUniformMatrix3fv(location, 1, boolConverter(value: transpose), &array)
     }
     
     public func uniformMatrix4fv(location: Int32, transpose: Bool, value: [Float]) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var array = value
         glUniformMatrix4fv(location, 1, boolConverter(value: transpose), &array)
     }
     
     public func useProgram(program: UInt32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glUseProgram(program)
     }
     
     public func validateProgram(program: UInt32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glValidateProgram(program)
     }
     
     public func vertexAttrib1f(index: Int32, v0: Float) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glVertexAttrib1f(GLuint(index), v0)
     }
     
     public func vertexAttrib2f(index: Int32, v0: Float, v1: Float) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glVertexAttrib2f(GLuint(index), v0, v1)
     }
     
     public func vertexAttrib3f(index: Int32, v0: Float, v1: Float, v2: Float) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glVertexAttrib3f(GLuint(index), v0, v1, v2)
     }
     
     public func vertexAttrib4f(index: Int32, v0: Float, v1: Float, v2: Float, v3: Float) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glVertexAttrib4f(GLuint(index), v0, v1, v2, v3)
     }
     
     public func vertexAttrib1fv(index: Int32, value: [Float]) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var v0 = value
         glVertexAttrib1fv(GLuint(index),&v0)
     }
     
     public func vertexAttrib2fv(index: Int32, value: [Float]) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var v0 = value
         glVertexAttrib2fv(GLuint(index),&v0)
     }
     
     public func vertexAttrib3fv(index: Int32, value: [Float]) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var v0 = value
         glVertexAttrib3fv(GLuint(index),&v0)
     }
     
     public func vertexAttrib4fv(index: Int32, value: [Float]) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         var v0 = value
         glVertexAttrib4fv(GLuint(index),&v0)
     }
     
     public func vertexAttribPointer(index: Int32, size: Int32, type: Int32, normalized: Bool, stride: Int32, offset: Int) {
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         let ptr = BUFFER_OFFSET(n: offset)
         glVertexAttribPointer(GLuint(index), size, GLenum(type), boolConverter(value: normalized), stride, ptr)
     }
     
     
     public func viewport(x: Int32, y: Int32, width: Int32, height: Int32){
+        let _ = canvas.renderer?.ensureIsContextIsCurrent() ?? false
         glViewport(x, y, width, height)
     }
     

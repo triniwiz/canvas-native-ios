@@ -617,6 +617,14 @@ public class WebGL2RenderingContext: WebGLRenderingContext {
         glTexImage3D(GLenum(target), level, internalformat, width, height, depth, border, GLenum(format), GLenum(type), asset.getRawBytes())
     }
     
+    public func texImage3D(target: Int32, level: Int32, internalformat: Int32, width: Int32, height: Int32, depth: Int32, border: Int32, format: Int32, type: Int32, canvas: Canvas) {
+        var snapshot = canvas.snapshot()
+        if(flipYWebGL){
+            native_image_asset_flip_x_in_place_owned(UInt32(canvas.width), UInt32(canvas.height), &snapshot, UInt(snapshot.count))
+        }
+        glTexImage3D(GLenum(target), level, internalformat, width, height, depth, border, GLenum(format), GLenum(type), &snapshot)
+    }
+    
     
     
     public func texStorage2D(target: Int32, levels: Int32, internalformat: Int32, width: Int32, height: Int32){
@@ -660,6 +668,16 @@ public class WebGL2RenderingContext: WebGLRenderingContext {
             buffer?.deallocate()
         }
     }
+    
+    
+    public func texSubImage3D(target: Int32, level: Int32, xoffset: Int32, yoffset: Int32, zoffset: Int32, width: Int32, height: Int32, depth: Int32, format: Int32, type: Int32, canvas: Canvas){
+        var snapshot = canvas.snapshot()
+        if(flipYWebGL){
+            native_image_asset_flip_x_in_place_owned(UInt32(canvas.width), UInt32(canvas.height), &snapshot, UInt(snapshot.count))
+        }
+        glTexSubImage3D(GLenum(target), level, xoffset, yoffset, zoffset, width, height, depth, GLenum(format), GLenum(type), &snapshot)
+    }
+    
     
     
     public func texSubImage3D(target: Int32, level: Int32, xoffset: Int32, yoffset: Int32, zoffset: Int32, width: Int32, height: Int32, depth: Int32, format: Int32, type: Int32, asset: ImageAsset){
@@ -1337,9 +1355,9 @@ public class WebGL2RenderingContext: WebGLRenderingContext {
 
     public var DEPTH32F_STENCIL8 : Int32 { return GL_DEPTH32F_STENCIL8 }
 
-    public var INVALID_INDEX : Int32 { return Int32(GL_INVALID_INDEX) }
+    public var INVALID_INDEX : Int { return Int(GL_INVALID_INDEX) }
 
-    public var TIMEOUT_IGNORED : Int64 { return Int64(GL_TIMEOUT_IGNORED) }
+    public var TIMEOUT_IGNORED : UInt64 { return GL_TIMEOUT_IGNORED }
 
     public var MAX_CLIENT_WAIT_TIMEOUT_WEBGL: Int32 { return 0x9247 }
 

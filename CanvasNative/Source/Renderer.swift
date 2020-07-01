@@ -15,6 +15,7 @@ public protocol Renderer {
     var width: Float {get}
     var height: Float {get}
     var isDirty: Bool {get set}
+    var isOpaque: Bool {get set}
     func setup()
     func render()
     func flush()
@@ -23,6 +24,7 @@ public protocol Renderer {
     func pause()
     func resume()
     func ensureIsReady()
+    func ensureIsContextIsCurrent() -> Bool
 }
 
 

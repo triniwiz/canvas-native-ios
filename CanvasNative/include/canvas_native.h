@@ -3,8 +3,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#define SK_SCALAR1 1
-
 typedef struct {
   const void *array;
   size_t length;
@@ -81,6 +79,16 @@ long long native_create_path_2d(void);
 long long native_create_path_2d_from_path_data(const char *data);
 
 long long native_create_path_from_path(long long path);
+
+long long native_create_pattern(uint8_t *image_array,
+                                size_t image_size,
+                                int original_width,
+                                int original_height,
+                                const char *repetition);
+
+long long native_create_pattern_encoded(uint8_t *image_array,
+                                        size_t image_size,
+                                        const char *repetition);
 
 long long native_create_text_decoder(const char *decoding);
 
@@ -199,9 +207,13 @@ long long native_flush(long long canvas_ptr);
 
 void native_free_byte_array(NativeByteArray array);
 
+void native_free_char(const char *text);
+
 void native_free_matrix_data(CanvasArray data);
 
 void native_free_path_2d(long long path);
+
+void native_free_pattern(long long pattern);
 
 long long native_get_current_transform(long long canvas_native_ptr);
 
@@ -251,9 +263,13 @@ long long native_image_smoothing_enabled(long long canvas_native_ptr, bool enabl
 
 long long native_image_smoothing_quality(long long canvas_native_ptr, const char *quality);
 
-long long native_init(int width, int height, void *device, void *queue, void *view, float scale);
+long long native_init(void *device, void *queue, void *view, float scale, const char *direction);
 
-long long native_init_legacy(int width, int height, int buffer_id, float scale);
+long long native_init_legacy(int width,
+                             int height,
+                             int buffer_id,
+                             float scale,
+                             const char *direction);
 
 unsigned char native_is_point_in_path(int64_t canvas_ptr, float x, float y);
 
@@ -368,7 +384,7 @@ long long native_scale(long long canvas_native_ptr, float x, float y, void *view
 
 long long native_set_current_transform(long long canvas_native_ptr, long long matrix);
 
-long long native_set_fill_color(long long canvas_native_ptr, int32_t color);
+long long native_set_fill_color(long long canvas_native_ptr, uint32_t color);
 
 long long native_set_fill_color_rgba(long long canvas_native_ptr,
                                      uint8_t red,
@@ -382,7 +398,7 @@ long long native_set_fill_gradient_linear(long long canvas_native_ptr,
                                           float x1,
                                           float y1,
                                           size_t colors_size,
-                                          const size_t *colors_array,
+                                          const unsigned int *colors_array,
                                           size_t positions_size,
                                           const float *positions_array);
 
@@ -394,9 +410,11 @@ long long native_set_fill_gradient_radial(long long canvas_native_ptr,
                                           float y1,
                                           float radius_1,
                                           size_t colors_size,
-                                          const size_t *colors_array,
+                                          const unsigned int *colors_array,
                                           size_t positions_size,
                                           const float *positions_array);
+
+long long native_set_fill_pattern(long long canvas_native_ptr, long long pattern);
 
 long long native_set_font(long long canvas_native_ptr, const char *font);
 
@@ -412,7 +430,9 @@ long long native_set_line_width(long long canvas_native_ptr, float line_width);
 
 long long native_set_matrix(long long matrix, const void *array, size_t length);
 
-long long native_set_stroke_color(long long canvas_native_ptr, int32_t color);
+long long native_set_pattern_transform(long long pattern, long long matrix);
+
+long long native_set_stroke_color(long long canvas_native_ptr, uint32_t color);
 
 long long native_set_stroke_color_rgba(long long canvas_native_ptr,
                                        uint8_t red,
@@ -426,7 +446,7 @@ long long native_set_stroke_gradient_linear(long long canvas_native_ptr,
                                             float x1,
                                             float y1,
                                             size_t colors_size,
-                                            const size_t *colors_array,
+                                            const unsigned int *colors_array,
                                             size_t positions_size,
                                             const float *positions_array);
 
@@ -438,9 +458,11 @@ long long native_set_stroke_gradient_radial(long long canvas_native_ptr,
                                             float y1,
                                             float radius_1,
                                             size_t colors_size,
-                                            const size_t *colors_array,
+                                            const unsigned int *colors_array,
                                             size_t positions_size,
                                             const float *positions_array);
+
+long long native_set_stroke_pattern(long long canvas_native_ptr, long long pattern);
 
 long long native_set_transform(long long canvas_native_ptr,
                                float a,
@@ -458,6 +480,8 @@ long long native_shadow_color(long long canvas_native_ptr, uint32_t color);
 long long native_shadow_offset_x(long long canvas_native_ptr, float x);
 
 long long native_shadow_offset_y(long long canvas_native_ptr, float y);
+
+NativeByteArray native_snapshot_canvas(long long canvas_native_ptr);
 
 long long native_stroke(long long canvas_native_ptr, void *view);
 
@@ -477,22 +501,28 @@ long long native_stroke_text(long long canvas_native_ptr,
                              float width,
                              void *view);
 
-long long native_surface_resized(int width,
-                                 int height,
-                                 void *device,
-                                 void *queue,
-                                 float scale,
+long long native_surface_resized(int _width,
+                                 int _height,
+                                 void *_device,
+                                 void *_queue,
+                                 float _scale,
                                  long long current_canvas);
 
 long long native_surface_resized_legacy(int width,
                                         int height,
                                         int buffer_id,
-                                        float scale,
+                                        float _scale,
                                         long long canvas_native_ptr);
 
 long long native_text_align(long long canvas_native_ptr, const char *alignment);
 
 const char *native_text_decoder_decode(int64_t decoder, const uint8_t *data, size_t len);
+
+const char *native_text_decoder_decode_i16(int64_t decoder, const int16_t *data, size_t len);
+
+const char *native_text_decoder_decode_i32(int64_t decoder, const int32_t *data, size_t len);
+
+const char *native_text_decoder_decode_u16(int64_t decoder, const uint16_t *data, size_t len);
 
 void native_text_decoder_free(int64_t decoder);
 

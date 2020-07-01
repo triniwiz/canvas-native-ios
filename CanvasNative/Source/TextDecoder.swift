@@ -27,16 +27,23 @@ public class NativeTextDecoder: NSObject {
     }
     
     public var encoding: String {
-        return String(cString: native_text_decoder_get_encoding(nativeDecoder))
+        let raw = native_text_encoder_get_encoding(nativeDecoder)
+        if(raw == nil){
+            // Return default utf8 ?
+            return String()
+        }
+        let encoding = String(cString: raw!)
+        native_free_char(raw)
+        return encoding
     }
     
     public func decode(buffer: Data) -> String{
-
         var data = [UInt8](buffer)
         let raw = native_text_decoder_decode(nativeDecoder, &data, buffer.count)
         if(raw == nil){
             return String()
         }
+        native_free_char(raw)
         return String(cString: raw!)
     }
     
@@ -46,6 +53,55 @@ public class NativeTextDecoder: NSObject {
         if(raw == nil){
             return String()
         }
+        native_free_char(raw)
+        return String(cString: raw!)
+    }
+    
+    
+    public func decode(i8 bytes: [Int8]) -> String{
+        let data = bytes.withUnsafeBytes { (buf) -> UnsafePointer<UInt8>? in
+            return buf.baseAddress?.assumingMemoryBound(to: UInt8.self)
+        }
+        let raw = native_text_decoder_decode(nativeDecoder, data, bytes.count)
+        if(raw == nil){
+            return String()
+        }
+        native_free_char(raw)
+        return String(cString: raw!)
+    }
+    
+    
+    
+    public func decode(u16 bytes: [UInt16]) -> String {
+        var data = bytes
+        let raw = native_text_decoder_decode_u16(nativeDecoder, &data, bytes.count)
+        if(raw == nil){
+            return String()
+        }
+        native_free_char(raw)
+        return String(cString: raw!)
+    }
+    
+    
+    public func decode(i16 bytes: [Int16]) -> String{
+        var data = bytes
+        let raw = native_text_decoder_decode_i16(nativeDecoder, &data, bytes.count)
+        if(raw == nil){
+            return String()
+        }
+        native_free_char(raw)
+        return String(cString: raw!)
+    }
+    
+    
+    
+    public func decode(i32 bytes: [Int32]) -> String{
+        let data = bytes
+        let raw = native_text_decoder_decode_i32(nativeDecoder, data, bytes.count)
+        if(raw == nil){
+            return String()
+        }
+        native_free_char(raw)
         return String(cString: raw!)
     }
     

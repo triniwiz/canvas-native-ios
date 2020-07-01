@@ -26,14 +26,21 @@ public class NativeTextEncoder: NSObject {
     }
     
     public var encoding: String {
-        return String(cString: native_text_encoder_get_encoding(nativeEncoder))
+        let raw = native_text_encoder_get_encoding(nativeEncoder)
+        if(raw == nil){
+            // Return default utf8 ?
+            return String()
+        }
+        let encoding = String(cString: raw!)
+        native_free_char(raw)
+        return encoding
     }
     
     public func encode(text: String) -> NSData {
         let txt = (text as NSString).utf8String
         let result = native_text_encoder_encode(nativeEncoder, txt)
         let bytes = NSData(bytes: result.array, length: result.length)
-        //native_free_byte_array(result)
+        native_free_byte_array(result)
         return bytes
     }
     

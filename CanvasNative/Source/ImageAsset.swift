@@ -152,7 +152,7 @@ public class ImageAsset: NSObject {
         if(nativeAsset == 0){
             return
         }
-        native_image_asset_flip_x(nativeAsset)
+        self.nativeAsset = native_image_asset_flip_x(nativeAsset)
         if(self.raw_data != nil){
             native_image_asset_free_bytes(self.raw_data!)
             self.raw_data = nil
@@ -164,7 +164,7 @@ public class ImageAsset: NSObject {
             return
         }
         
-        native_image_asset_flip_y(nativeAsset)
+       self.nativeAsset = native_image_asset_flip_y(nativeAsset)
         if(self.raw_data != nil){
             native_image_asset_free_bytes(self.raw_data!)
             self.raw_data = nil
@@ -175,7 +175,7 @@ public class ImageAsset: NSObject {
         if(nativeAsset == 0){
             return
         }
-        native_image_asset_scale(nativeAsset, x, y)
+       self.nativeAsset = native_image_asset_scale(nativeAsset, x, y)
         
         if(self.raw_data != nil){
             native_image_asset_free_bytes(self.raw_data!)

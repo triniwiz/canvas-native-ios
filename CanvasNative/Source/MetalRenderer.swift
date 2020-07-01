@@ -25,6 +25,15 @@ public class MetalRenderer:NSObject, Renderer, MTKViewDelegate {
     var scale: Float
     var done: Bool = false
     
+    public var isOpaque: Bool {
+          get {
+              return mtlView.isOpaque
+          }
+          set {
+              mtlView.isOpaque = newValue
+          }
+      }
+    
     public func ensureIsReady() {
         setup()
     }
@@ -35,7 +44,11 @@ public class MetalRenderer:NSObject, Renderer, MTKViewDelegate {
     
     public func setup() {
         if(!done){
-            canvas = native_init(0, 0, devicePtr, queuePtr, viewPtr, Float(scale))
+            var direction = "ltr"
+            if(UIView.userInterfaceLayoutDirection(for: mtlView.semanticContentAttribute) == .rightToLeft){
+                direction = "rtl"
+            }
+            canvas = native_init(devicePtr, queuePtr, viewPtr, Float(scale), (direction as NSString).utf8String)
             done = true
         }
     }
@@ -87,6 +100,10 @@ public class MetalRenderer:NSObject, Renderer, MTKViewDelegate {
     var layerPtr: UnsafeMutableRawPointer?
     var drawQueue = DispatchQueue(label: "CanvasMetalQueue", qos: .userInteractive, attributes: [], autoreleaseFrequency: .workItem)
     private var mtlView: MTKView
+    
+    public func ensureIsContextIsCurrent() -> Bool {
+        return true
+    }
     
     override init() {
         mtlView = MTKView()

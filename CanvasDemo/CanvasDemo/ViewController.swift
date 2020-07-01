@@ -145,7 +145,7 @@ class ViewController: UIViewController {
     
     
     func drawAll() {
-     // gl = (canvas1?.getContext(type: "webgl")  as! WebGLRenderingContext)
+     gl = (canvas1?.getContext(type: "webgl")  as! WebGLRenderingContext)
        // canvas1?.handleInvalidationManually = true
         
        // drawPoints(canvas: canvas1!)
@@ -162,7 +162,7 @@ class ViewController: UIViewController {
         
        // drawPoints(canvas: canvas1!)
       // canvas1?.handleInvalidationManually = true
-        let ctx = canvas1?.getContext(type: "2d") as! CanvasRenderingContext2D
+       // let ctx = canvas1?.getContext(type: "2d") as! CanvasRenderingContext2D
        // clearExample(ctx: ctx)
         //drawImageExample(ctx: ctx)
        // canvas1?.flush()
@@ -170,17 +170,47 @@ class ViewController: UIViewController {
         //  doSolarAnimation(ctx: ctx)
          // drawFace(ctx: ctx)
         // fontExample(ctx: ctx)
-        //arcToAnimationExample(ctx: ctx)
+       // arcToAnimationExample(ctx: ctx)
         //  saveRestoreExample(ctx: ctx)
         //ballExample(ctx: ctx)
         
         //ctx.fillRect(x: 200, y: 10, width: 200, height: 200);
         // scaleTransformation(ctx: ctx)
-        particleAnimation(ctx: ctx)
+       // particleAnimation(ctx: ctx)
         //        canvas1!.toDataURLAsync { (data) in
         //           print("data: ", data)
         //        }
+        
+        //drawPatterWithCanvas(canvas: canvas1!)
+        //ellipseExample(ctx: ctx)
     }
+    
+    
+    func drawPatterWithCanvas(canvas: Canvas){
+        let patternCanvas = Canvas(frame: .zero, useGL: true)
+        let patternContext = patternCanvas.getContext(type: "2d") as! CanvasRenderingContext2D
+        let scale = UIScreen.main.scale
+        let width = 50
+        let height = 50
+        var frame = CGRect()
+        frame.size.width = CGFloat(width)
+        frame.size.height = CGFloat(height)
+        patternCanvas.frame = frame
+
+
+    // Give the pattern a background color and draw an arc
+        patternContext.fillStyle = "#fec"
+        print(patternCanvas.width,patternCanvas.height)
+        patternContext.fillRect(x: 0, y: 0, width: patternCanvas.width, height: patternCanvas.height)
+        patternContext.arc(x: 0, y: 0, radius: Float(50 * scale), startAngle: 0, endAngle: (0.5 * PI))
+        patternContext.stroke()
+    // Create our primary canvas and fill it with the pattern
+
+        let ctx = canvas.getContext(type: "2d") as! CanvasRenderingContext2D
+        let pattern = ctx.createPattern(canvas: patternCanvas, repetition: .Repeat)
+        ctx.fillStyle = pattern
+        ctx.fillRect(x: 0, y: 0, width: canvas.width, height: canvas.height)
+        }
     
     var vertCode2 = """
                    attribute vec3 coordinates;
@@ -1102,26 +1132,17 @@ class ViewController: UIViewController {
     }
     
     func ellipseExample(ctx: CanvasRenderingContext2D){
-        // Draw the ellipse
-        ctx.beginPath();
-        ctx.ellipse(x: 100, y: 100, radiusX: 50, radiusY: 75, rotation: (PI / 4), startAngle: 0, endAngle: TWO_PI);
-        ctx.stroke();
-        
-        // Draw the ellipse's line of reflection
-        ctx.beginPath();
-        ctx.setLineDash(segments: [5, 5]);
-        ctx.moveTo(x: 0, y: 200);
-        ctx.lineTo(x: 200, y: 0);
-        ctx.stroke();
-        ctx.clearRect(x: 0, y: 0, width: ctx.getCanvas().width, height: ctx.getCanvas().height)
-        ctx.setLineDash(segments: []);
-        ctx.beginPath();
-        ctx.ellipse(x: 100, y: 100, radiusX: 50, radiusY: 75, rotation: (PI / 4), startAngle: 0, endAngle: TWO_PI);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(x: 0, y: 200);
-        ctx.lineTo(x: 200, y: 0);
-        ctx.stroke();
+       // Draw the ellipse
+       ctx.beginPath()
+        ctx.ellipse(x: 100, y: 100, radiusX: 50, radiusY: 75, rotation: PI / 4, startAngle: 0, endAngle: TWO_PI)
+       ctx.stroke()
+
+       // Draw the ellipse's line of reflection
+       ctx.beginPath()
+        ctx.setLineDash(segments: [5, 5])
+        ctx.moveTo(x: 0, y: 200)
+        ctx.lineTo(x: 200, y: 0)
+       ctx.stroke()
     }
     
     func getCanvasWidth(canvas: Canvas) -> Float32 {
@@ -1522,27 +1543,28 @@ class ViewController: UIViewController {
             self.solarSystemExample(ctx: ctx)
         })
     }
+    var didScaleSolar = false
     
+    var sun: UIImage?
+    var moon: UIImage?
+    var earth: UIImage?
     func solarSystemExample(ctx: CanvasRenderingContext2D){
         do{
-            let sun_url = NSURL(fileURLWithPath: NSTemporaryDirectory() + "/Canvas_sun.png")
-            let moon_url = NSURL(fileURLWithPath: NSTemporaryDirectory() + "/Canvas_moon.png")
-            let earth_url = NSURL(fileURLWithPath: NSTemporaryDirectory() + "/Canvas_earth.png")
-            var sun = UIImage(contentsOfFile: sun_url.absoluteString!)
-            var moon = UIImage(contentsOfFile: sun_url.absoluteString!)
-            var earth = UIImage(contentsOfFile: sun_url.absoluteString!)
             if sun == nil {
+                let sun_url = NSURL(fileURLWithPath: NSTemporaryDirectory() + "/Canvas_sun.png")
                 let sun_data = try Data(contentsOf: URL(string: "https://mdn.mozillademos.org/files/1456/Canvas_sun.png")!)
                 try sun_data.write(to: sun_url.absoluteURL!, options: .atomicWrite)
                 sun = UIImage(data: sun_data)
             }
             if moon == nil {
+                let moon_url = NSURL(fileURLWithPath: NSTemporaryDirectory() + "/Canvas_moon.png")
                 let moon_data = try Data(contentsOf: URL(string: "https://mdn.mozillademos.org/files/1443/Canvas_moon.png")!)
                 try moon_data.write(to: moon_url.absoluteURL!, options: .atomicWrite)
                 moon = UIImage(data: moon_data)
             }
             
             if earth == nil {
+                let earth_url = NSURL(fileURLWithPath: NSTemporaryDirectory() + "/Canvas_earth.png")
                 let earth_data = try Data(contentsOf: URL(string: "https://mdn.mozillademos.org/files/1429/Canvas_earth.png")!)
                 try earth_data.write(to: earth_url.absoluteURL!, options: .atomicWrite)
                 earth = UIImage(data: earth_data)
@@ -1562,13 +1584,13 @@ class ViewController: UIViewController {
             let calendar = Calendar.current
             let components = calendar.dateComponents([.second,.nanosecond], from: time)
             _ = components.second!
-            let nanoseconds = components.nanosecond!
-            let milliseconds = nanoseconds/1000000
-            let part_one = (TWO_PI / 60) * Float(milliseconds)
+            let seconds = components.second!
+            let milliseconds = seconds * 1000
+            let part_one = (TWO_PI / 60) * Float(seconds)
             let part_two = (TWO_PI / 60000) * Float(milliseconds)
-            
-            
             let first_angle = part_one + part_two
+            
+        
             ctx.rotate(angle: first_angle)
             ctx.translate(x: 105, y: 0);
             ctx.fillRect(x: 0, y: -12, width: 40, height: 24); // Shadow
@@ -1577,7 +1599,7 @@ class ViewController: UIViewController {
             
             // Moon
             ctx.save();
-            let part_one_second = (TWO_PI / 6) * Float(milliseconds)
+            let part_one_second = (TWO_PI / 6) * Float(seconds)
             let part_two_second = (TWO_PI / 60000) * Float(milliseconds)
             let second_angle = part_one_second + part_two_second
             ctx.rotate(angle: second_angle)
@@ -1592,6 +1614,11 @@ class ViewController: UIViewController {
             ctx.stroke();
             
             ctx.drawImage(image: sun!, dx: 0, dy: 0, dWidth: 300, dHeight: 300);
+            
+            if(!didScaleSolar){
+              //  ctx.scale(x: ctx.getCanvas().width / 300, y: ctx.getCanvas().height / 300)
+                didScaleSolar = true
+            }
             
             AnimationFrame.requestAnimationFrame(toLoop:{ id in
                 self.solarSystemExample(ctx: ctx)

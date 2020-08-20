@@ -8,7 +8,16 @@
 import Foundation
 import UIKit
 import MetalKit
-public class MetalRenderer:NSObject, Renderer, MTKViewDelegate {
+public class MetalRenderer: NSObject, Renderer, MTKViewDelegate {
+     public var attributes: [String : Any] = [:]
+    
+    public var didMoveOffMain: Bool = false
+    var cachedDirection = "ltr"
+    var cachedFrame: CGRect = .zero
+    public func updateDirection(_ direction: String) {
+        cachedDirection = direction
+    }
+    
     public var isDirty: Bool = false
     
     var listener: RenderListener?
@@ -17,6 +26,7 @@ public class MetalRenderer:NSObject, Renderer, MTKViewDelegate {
     }
     
     public func updateSize() {
+        cachedFrame = mtlView.frame
         mtlView.drawableSize = CGSize(width: mtlView.frame.size.width * CGFloat(scale), height: mtlView.frame.size.height * CGFloat(scale))
     }
     
@@ -45,8 +55,12 @@ public class MetalRenderer:NSObject, Renderer, MTKViewDelegate {
     public func setup() {
         if(!done){
             var direction = "ltr"
-            if(UIView.userInterfaceLayoutDirection(for: mtlView.semanticContentAttribute) == .rightToLeft){
-                direction = "rtl"
+            if(didMoveOffMain){
+                direction = cachedDirection
+            }else {
+                if(UIView.userInterfaceLayoutDirection(for: mtlView.semanticContentAttribute) == .rightToLeft){
+                               direction = "rtl"
+                           }
             }
             canvas = native_init(devicePtr, queuePtr, viewPtr, Float(scale), (direction as NSString).utf8String)
             done = true
@@ -56,12 +70,18 @@ public class MetalRenderer:NSObject, Renderer, MTKViewDelegate {
     
     public var width: Float {
         get {
+            if(didMoveOffMain){
+                return Float(cachedFrame.size.width * CGFloat(scale))
+            }
             return Float(mtlView.frame.size.width * CGFloat(scale))
         }
     }
     
     public var height: Float {
         get {
+            if(didMoveOffMain){
+                return Float(cachedFrame.size.height * CGFloat(scale))
+            }
             return Float(mtlView.frame.size.height * CGFloat(scale))
         }
     }

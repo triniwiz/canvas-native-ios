@@ -2,7 +2,7 @@ Pod::Spec.new do |s|
 
     s.name         = "CanvasNative"
 
-    s.version      = "0.8.0"
+    s.version      = "0.9.0"
 
     s.summary      = "A Canvas library"
 
@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
 
     #s.preserve_path = 'CanvasNative/include/stbi/stbi.modulemap'
     #s.module_map = 'CanvasNative/include/stbi/stbi.modulemap'
-    s.source_files  = 'CanvasNative/**/*.{swift,m,h,modulemap,c}'
+    s.source_files  = 'CanvasNative/**/*.{swift,m,mm,h,modulemap,c}'
     s.preserve_paths = 'CanvasNative/include/*.h', 'CanvasNative/include/**/*.h', 'CanvasNative/include/**/**/*.h', 'CanvasNative/libs/*.a'
     s.pod_target_xcconfig = {
 'USER_HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/CanvasNative/include" "${PODS_ROOT}/CanvasNative/CanvasNative/include"',

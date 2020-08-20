@@ -26,10 +26,10 @@ public class CanvasPath2D: NSObject {
     public init(data: String){
         path = native_create_path_2d_from_path_data(data)
     }
-    public func addPath(path: CanvasPath2D){
-        self.addPath(path: path, transform: nil)
+    public func addPath(_ path: CanvasPath2D){
+        self.addPath(path, nil)
     }
-    public func addPath(path: CanvasPath2D, transform: CanvasDOMMatrix?){
+    public func addPath(_ path: CanvasPath2D,_ transform: CanvasDOMMatrix?){
         self.path = native_path_2d_add_path(self.path, path.path, transform?.matrix ?? 0)
     }
     
@@ -37,45 +37,45 @@ public class CanvasPath2D: NSObject {
         path = native_path_2d_close_path(path)
     }
     
-    public func moveTo(x: Float, y: Float){
+    public func moveTo(_ x: Float,_ y: Float){
         path =  native_path_2d_move_to(path, x, y)
     }
     
-    public func lineTo(x: Float, y: Float){
+    public func lineTo(_ x: Float,_ y: Float){
         path =  native_path_2d_line_to(path, x, y)
     }
     
-    public func bezierCurveTo(cp1x: Float, cp1y: Float, cp2x: Float, cp2y: Float, x: Float, y: Float) {
+    public func bezierCurveTo(_ cp1x: Float,_ cp1y: Float,_ cp2x: Float,_ cp2y: Float,_ x: Float,_ y: Float) {
         path = native_path_2d_bezier_curve_to(path, cp1x, cp1y, cp2x, cp2y, x, y)
     }
     
-    public func quadraticCurveTo(cpx: Float, cpy: Float, x: Float, y: Float){
+    public func quadraticCurveTo(_ cpx: Float,_ cpy: Float,_ x: Float,_ y: Float){
         path = native_path_2d_quadratic_curve_to(path, cpx, cpy, x, y)
     }
     
     
-    public func arc(x: Float, y: Float, radius: Float, startAngle: Float, endAngle: Float) {
-        arc(x: x, y: y, radius: radius, startAngle: startAngle, endAngle: endAngle, anticlockwise: false);
+    public func arc(_ x: Float,_ y: Float,_ radius: Float,_ startAngle: Float,_ endAngle: Float) {
+        arc(x, y, radius, startAngle, endAngle, false);
     }
     
-    public func arc(x: Float, y: Float, radius: Float, startAngle: Float, endAngle: Float, anticlockwise: Bool) {
+    public func arc(_ x: Float,_ y: Float,_ radius: Float,_ startAngle: Float,_ endAngle: Float,_ anticlockwise: Bool) {
         path = native_path_2d_arc(path, x, y, radius, startAngle, endAngle, anticlockwise)
     }
     
-    public func arcTo(x1: Float, y1: Float, x2: Float, y2: Float, radius: Float) {
+    public func arcTo(_ x1: Float,_ y1: Float,_ x2: Float,_ y2: Float,_ radius: Float) {
         path = native_path_2d_arc_to(path, x1, y1, x2, y2, radius)
     }
     
     
-    public func ellipse(x: Float, y: Float, radiusX: Float, radiusY: Float, rotation: Float, startAngle: Float, endAngle: Float) {
-        ellipse(x: x, y: y, radiusX: radiusX, radiusY: radiusY, rotation: rotation, startAngle: startAngle, endAngle: endAngle, anticlockwise: false)
+    public func ellipse(_ x: Float,_ y: Float,_ radiusX: Float,_ radiusY: Float,_ rotation: Float,_ startAngle: Float,_ endAngle: Float) {
+        ellipse(x, y, radiusX, radiusY, rotation, startAngle, endAngle, false)
     }
     
-    public func ellipse(x: Float, y: Float, radiusX: Float, radiusY: Float, rotation: Float, startAngle: Float, endAngle: Float, anticlockwise: Bool) {
+    public func ellipse(_ x: Float,_ y: Float, _ radiusX: Float,_ radiusY: Float,_ rotation: Float, _ startAngle: Float,_ endAngle: Float,_ anticlockwise: Bool) {
         path = native_path_2d_ellipse(path, x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise)
     }
     
-    public func rect(x: Float, y: Float, width: Float, height: Float) {
+    public func rect(_ x: Float,_ y: Float,_ width: Float,_ height: Float) {
         path = native_path_2d_rect(path, x, y, width, height)
     }
     

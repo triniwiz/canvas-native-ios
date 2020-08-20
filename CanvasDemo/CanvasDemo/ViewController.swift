@@ -69,21 +69,22 @@ class ViewController: UIViewController {
     var gl: WebGLRenderingContext?
     var program : UInt32?
     func initializeAttributes(gl: WebGLRenderingContext?) {
-        gl!.enableVertexAttribArray(index: 0)
+        gl!.enableVertexAttribArray(0)
         buffer = gl!.createBuffer()
-        gl!.bindBuffer(target: gl!.ARRAY_BUFFER, buffer: buffer!)
-        let data: [Float] = [0.0, 0.0]
-        gl!.bufferData(target: gl!.ARRAY_BUFFER, floatArray: data, usage: gl!.STATIC_DRAW)
-        gl!.vertexAttribPointer(index: 0, size: 2, type: gl!.FLOAT, normalized: false, stride: 0, offset: 0);
+        gl!.bindBuffer(gl!.ARRAY_BUFFER, buffer!)
+        print(CACurrentMediaTime())
+        let data:[Float32] = [0.0, 0.0]
+        gl!.bufferData(gl!.ARRAY_BUFFER,f32: data, gl!.STATIC_DRAW)
+        gl!.vertexAttribPointer(0, 2, gl!.FLOAT, false, 0, 0);
     }
     
     func cleanup(gl: WebGLRenderingContext?){
-        gl!.useProgram(program: 0)
+        gl!.useProgram(0)
         if (buffer != nil){
-            gl!.deleteBuffer(buffer: buffer!)
+            gl!.deleteBuffer(buffer!)
         }
         if (program != nil){
-            gl!.deleteProgram(program: program!)
+            gl!.deleteProgram(program!)
         }
         
     }
@@ -92,35 +93,35 @@ class ViewController: UIViewController {
     
     
     func drawGL(canvas: Canvas){
-        var gl = canvas.getContext(type: "webgl") as! WebGLRenderingContext
-        gl.viewport(x: 0, y: 0,
-        width: gl.drawingBufferWidth, height: gl.drawingBufferHeight)
+        let gl = canvas.getContext("webgl") as! WebGLRenderingContext
+        gl.viewport(0, 0,
+                    gl.drawingBufferWidth, gl.drawingBufferHeight)
         
-        let vertexShader = gl.createShader(type: gl.VERTEX_SHADER)
-        gl.shaderSource(shader: vertexShader,source: vertexShaderSource)
-        gl.compileShader(shader: vertexShader)
-        let fragmentShader = gl.createShader(type: gl.FRAGMENT_SHADER)
-        gl.shaderSource(shader: fragmentShader,source: fragmentShaderSource)
-        gl.compileShader(shader: fragmentShader)
+        let vertexShader = gl.createShader(gl.VERTEX_SHADER)
+        gl.shaderSource(vertexShader,vertexShaderSource)
+        gl.compileShader(vertexShader)
+        let fragmentShader = gl.createShader(gl.FRAGMENT_SHADER)
+        gl.shaderSource(fragmentShader,fragmentShaderSource)
+        gl.compileShader(fragmentShader)
         let program = gl.createProgram()
-        gl.attachShader(program: program, shader: vertexShader)
-        gl.attachShader(program: program, shader: fragmentShader)
-        gl.linkProgram(program: program)
-        gl.detachShader(program: program, shader: vertexShader)
-        gl.detachShader(program: program, shader: fragmentShader)
-        gl.deleteShader(shader: vertexShader)
-        gl.deleteShader(shader: fragmentShader)
+        gl.attachShader(program, vertexShader)
+        gl.attachShader(program, fragmentShader)
+        gl.linkProgram(program)
+        gl.detachShader(program, vertexShader)
+        gl.detachShader(program, fragmentShader)
+        gl.deleteShader(vertexShader)
+        gl.deleteShader(fragmentShader)
         
         
-        if (!(gl.getProgramParameter(program: program, pname: gl.LINK_STATUS) as! Bool)) {
-        let linkErrLog = gl.getProgramInfoLog(program: program)
+        if (!(gl.getProgramParameter(program, gl.LINK_STATUS) as! Bool)) {
+            let linkErrLog = gl.getProgramInfoLog(program)
         print("error", linkErrLog)
             cleanup(gl: gl)
         }
         
         initializeAttributes(gl: gl)
-        gl.useProgram(program: program)
-        gl.drawArrays(mode: gl.POINTS, first: 0, count: 1)
+        gl.useProgram(program)
+        gl.drawArrays(gl.POINTS, 0, 1)
         cleanup(gl: gl)
         canvas1?.flush()
     }
@@ -128,33 +129,32 @@ class ViewController: UIViewController {
     func clearExample(ctx: CanvasRenderingContext2D) {
         ctx.beginPath()
         ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromString: "#ff6"))
-        ctx.fillRect(x: 0, y: 0, width: canvas1!.width, height: canvas1!.height)
+        ctx.fillRect(0, 0, canvas1!.width, canvas1!.height)
 
         // Draw blue triangle
         ctx.beginPath();
         ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromString: "blue"))
-        ctx.moveTo(x: 20, y: 20)
-        ctx.lineTo(x: 180, y: 20)
-        ctx.lineTo(x: 130, y: 130)
+        ctx.moveTo(20, 20)
+        ctx.lineTo(180, 20)
+        ctx.lineTo(130, 130)
         ctx.closePath()
         ctx.fill()
 
         // Clear part of the canvas
-        ctx.clearRect(x: 10, y: 10, width: 120, height: 100)
+        ctx.clearRect(10, 10, 120, 100)
     }
     
     
     func drawAll() {
-     gl = (canvas1?.getContext(type: "webgl")  as! WebGLRenderingContext)
+     gl = (canvas1?.getContext("webgl")  as! WebGLRenderingContext)
        // canvas1?.handleInvalidationManually = true
         
        // drawPoints(canvas: canvas1!)
         
-      //  drawRotatingCube(gl: gl!)
+       drawRotatingCube(gl: gl!)
         
        // drawRotatingCube(gl: gl!)
-       
-     // drawGL(canvas: canvas1!) // sun
+       // drawGL(canvas: canvas1!) // sun
         
        // drawTextures(canvas: canvas1!)
         
@@ -162,12 +162,23 @@ class ViewController: UIViewController {
         
        // drawPoints(canvas: canvas1!)
       // canvas1?.handleInvalidationManually = true
-       // let ctx = canvas1?.getContext(type: "2d") as! CanvasRenderingContext2D
+       /* canvas1?.moveOffMain()
+        DispatchQueue.global(qos: .default).async {
+            self.canvas1?.handleMoveOffMain()
+            //let ctx = self.canvas1?.getContext("2d") as! CanvasRenderingContext2D
+            //self.doSolarAnimation(ctx: ctx)
+            //self.drawFace(ctx: ctx)
+            self.gl = (self.canvas1?.getContext("webgl")  as! WebGLRenderingContext)
+           // self.drawTextures(canvas: self.canvas1!)
+            
+        }
+        */
+        //let ctx = canvas1?.getContext(type: "2d") as! CanvasRenderingContext2D
        // clearExample(ctx: ctx)
         //drawImageExample(ctx: ctx)
        // canvas1?.flush()
       //  drawImageBlock(ctx: ctx)
-        //  doSolarAnimation(ctx: ctx)
+//          doSolarAnimation(ctx: ctx)
          // drawFace(ctx: ctx)
         // fontExample(ctx: ctx)
        // arcToAnimationExample(ctx: ctx)
@@ -188,7 +199,7 @@ class ViewController: UIViewController {
     
     func drawPatterWithCanvas(canvas: Canvas){
         let patternCanvas = Canvas(frame: .zero, useGL: true)
-        let patternContext = patternCanvas.getContext(type: "2d") as! CanvasRenderingContext2D
+        let patternContext = patternCanvas.getContext("2d") as! CanvasRenderingContext2D
         let scale = UIScreen.main.scale
         let width = 50
         let height = 50
@@ -201,15 +212,15 @@ class ViewController: UIViewController {
     // Give the pattern a background color and draw an arc
         patternContext.fillStyle = "#fec"
         print(patternCanvas.width,patternCanvas.height)
-        patternContext.fillRect(x: 0, y: 0, width: patternCanvas.width, height: patternCanvas.height)
-        patternContext.arc(x: 0, y: 0, radius: Float(50 * scale), startAngle: 0, endAngle: (0.5 * PI))
+        patternContext.fillRect(0, 0, patternCanvas.width, patternCanvas.height)
+        patternContext.arc(0, 0, Float(50 * scale), 0, (0.5 * PI))
         patternContext.stroke()
     // Create our primary canvas and fill it with the pattern
 
-        let ctx = canvas.getContext(type: "2d") as! CanvasRenderingContext2D
-        let pattern = ctx.createPattern(canvas: patternCanvas, repetition: .Repeat)
+        let ctx = canvas.getContext("2d") as! CanvasRenderingContext2D
+        let pattern = ctx.createPattern(patternCanvas, .Repeat)
         ctx.fillStyle = pattern
-        ctx.fillRect(x: 0, y: 0, width: canvas.width, height: canvas.height)
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
         }
     
     var vertCode2 = """
@@ -227,7 +238,7 @@ class ViewController: UIViewController {
 """
     
     func drawPoints(canvas: Canvas){
-        let gl = canvas.getContext(type: "webgl") as! WebGLRenderingContext
+        let gl = canvas.getContext("webgl") as! WebGLRenderingContext
 
                 /*==========Defining and storing the geometry=======*/
 
@@ -242,14 +253,14 @@ class ViewController: UIViewController {
      
 
                 //Bind appropriate array buffer to it
-        gl.bindBuffer(target: gl.ARRAY_BUFFER, buffer: vertex_buffer);
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
         
 
                 // Pass the vertex data to the buffer
-        gl.bufferData(target: gl.ARRAY_BUFFER, floatArray: vertices, usage: gl.STATIC_DRAW);
+        gl.bufferData(gl.ARRAY_BUFFER,f32: vertices, gl.STATIC_DRAW);
 
                 // Unbind the buffer
-       gl.bindBuffer(target: gl.ARRAY_BUFFER, buffer: 0)
+        gl.bindBuffer(gl.ARRAY_BUFFER, 0)
 
                 /*=========================Shaders========================*/
 
@@ -257,89 +268,89 @@ class ViewController: UIViewController {
            
 
                 // Create a vertex shader object
-        let vertShader = gl.createShader(type: gl.VERTEX_SHADER);
+        let vertShader = gl.createShader(gl.VERTEX_SHADER);
                 
                 // Attach vertex shader source code
-        gl.shaderSource(shader: vertShader, source: vertCode2);
+        gl.shaderSource(vertShader, vertCode2);
 
                 // Compile the vertex shader
-        gl.compileShader(shader: vertShader);
+        gl.compileShader(vertShader);
 
                 // fragment shader source code
                 
 
                 // Create fragment shader object
-        let fragShader = gl.createShader(type: gl.FRAGMENT_SHADER);
+        let fragShader = gl.createShader(gl.FRAGMENT_SHADER);
 
                 // Attach fragment shader source code
-        gl.shaderSource(shader: fragShader, source: fragCode2);
+        gl.shaderSource(fragShader, fragCode2);
 
                 // Compile the fragmentt shader
-        gl.compileShader(shader: fragShader);
+        gl.compileShader(fragShader);
                 
                 // Create a shader program object to store
                 // the combined shader program
         let shaderProgram = gl.createProgram();
 
                 // Attach a vertex shader
-        gl.attachShader(program: shaderProgram, shader: vertShader);
+        gl.attachShader(shaderProgram, vertShader);
 
                 // Attach a fragment shader
-        gl.attachShader(program: shaderProgram, shader: fragShader);
+        gl.attachShader(shaderProgram, fragShader);
 
                 // Link both programs
-        gl.linkProgram(program: shaderProgram);
+        gl.linkProgram(shaderProgram);
         
         
-        let linked = gl.getProgramParameter(program: shaderProgram, pname: gl.LINK_STATUS) as! Bool
+        let linked = gl.getProgramParameter(shaderProgram, gl.LINK_STATUS) as! Bool
                if (!linked) {
                  // something went wrong with the link
-                   let lastError = gl.getProgramInfoLog(program: shaderProgram);
+                let lastError = gl.getProgramInfoLog(shaderProgram);
                  print("Error in program linking:" + lastError);
 
-                   gl.deleteProgram(program: shaderProgram);
+                gl.deleteProgram(shaderProgram);
                  return
                }
 
                 // Use the combined shader program object
-        gl.useProgram(program: shaderProgram);
+        gl.useProgram(shaderProgram);
 
                 /*======== Associating shaders to buffer objects ========*/
 
                 // Bind vertex buffer object
-        gl.bindBuffer(target: gl.ARRAY_BUFFER, buffer: vertex_buffer);
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
 
                 // Get the attribute location
-        let coord = gl.getAttribLocation(program: shaderProgram, name: "coordinates");
+        let coord = gl.getAttribLocation(shaderProgram, "coordinates");
                 // Point an attribute to the currently bound VBO
-        gl.vertexAttribPointer(index: coord, size: 3, type: gl.FLOAT, normalized: false, stride: 0, offset: 0);
+        gl.vertexAttribPointer(UInt32(coord), 3, gl.FLOAT, false, 0, 0)
 
                 // Enable the attribute
-        gl.enableVertexAttribArray(index: coord);
+        gl.enableVertexAttribArray(UInt32(coord))
 
                 /*============= Drawing the primitive ===============*/
 
                 // Clear the canvas
-        gl.clearColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 0.9);
+        gl.clearColor(0.5, 0.5, 0.5, 0.9);
 
                 // Enable the depth test
-        gl.enable(cap: gl.DEPTH_TEST);
+        gl.enable(gl.DEPTH_TEST);
         
                 // Clear the color buffer bit
-        gl.clear(mask: UInt32(gl.COLOR_BUFFER_BIT));
+        gl.clear(UInt32(gl.COLOR_BUFFER_BIT));
    
                 // Set the view port
-        gl.viewport(x: 0,y: 0,width: Int32(canvas.width),height: Int32(canvas.height));
+        gl.viewport(0,0,Int32(canvas.width),Int32(canvas.height));
 
                 // Draw the triangle
-        gl.drawArrays(mode: gl.POINTS, first: 0, count: 3);
+        gl.drawArrays(gl.POINTS, 0, 3);
         canvas1?.flush()
     }
     
     
     
     func drawTextures(canvas: Canvas) {
-        let gl = canvas.getContext(type: "webgl") as! WebGLRenderingContext
+        let gl = canvas.getContext("webgl") as! WebGLRenderingContext
     
         let vertexShaderSrc = """
       attribute vec2 a_position;
@@ -362,116 +373,117 @@ class ViewController: UIViewController {
 
         // setup GLSL program
 
-        let vertexShader = gl.createShader(type: gl.VERTEX_SHADER);
-        gl.shaderSource(shader: vertexShader, source: vertexShaderSrc);
-        gl.compileShader(shader: vertexShader);
+        let vertexShader = gl.createShader(gl.VERTEX_SHADER);
+        gl.shaderSource(vertexShader, vertexShaderSrc);
+        gl.compileShader(vertexShader);
 
-        var compiled = gl.getShaderParameter(shader: vertexShader, pname: gl.COMPILE_STATUS) as! Bool
+        var compiled = gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS) as! Bool
         if (!compiled) {
           // Something went wrong during compilation; get the error
-            let lastError = gl.getShaderInfoLog(shader: vertexShader);
+            let lastError = gl.getShaderInfoLog(vertexShader);
           print(
             "*** Error compiling vertexShader ", vertexShader, ":" , lastError
           )
-            gl.deleteShader(shader: vertexShader)
+            gl.deleteShader(vertexShader)
           return
         }
 
-        let fragmentShader = gl.createShader(type: gl.FRAGMENT_SHADER);
-        gl.shaderSource(shader: fragmentShader, source: fragmentShaderSrc);
-        gl.compileShader(shader: fragmentShader);
+        let fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+        gl.shaderSource(fragmentShader, fragmentShaderSrc);
+        gl.compileShader(fragmentShader);
 
-        compiled = gl.getShaderParameter(shader: fragmentShader, pname: gl.COMPILE_STATUS) as! Bool
+        compiled = gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS) as! Bool
         if (!compiled) {
           // Something went wrong during compilation; get the error
-            let lastError = gl.getShaderInfoLog(shader: fragmentShader);
+            let lastError = gl.getShaderInfoLog(fragmentShader);
           print(
             "*** Error compiling fragmentShader ",
               fragmentShader,
               ":",
               lastError
           );
-            gl.deleteShader(shader: fragmentShader);
+            gl.deleteShader(fragmentShader);
           return;
         }
 
         let program = gl.createProgram();
 
-        gl.attachShader(program: program, shader: vertexShader);
-        gl.attachShader(program: program, shader: fragmentShader);
-        gl.linkProgram(program: program);
+        gl.attachShader(program, vertexShader);
+        gl.attachShader(program, fragmentShader);
+        gl.linkProgram(program);
 
         // Check the link status
-        let linked = gl.getProgramParameter(program: program, pname: gl.LINK_STATUS) as! Bool
+        let linked = gl.getProgramParameter(program, gl.LINK_STATUS) as! Bool
         if (!linked) {
           // something went wrong with the link
-            let lastError = gl.getProgramInfoLog(program: program);
+            let lastError = gl.getProgramInfoLog(program);
           print("Error in program linking:" + lastError);
 
-            gl.deleteProgram(program: program);
+            gl.deleteProgram(program);
           return
         }
 
         // look up where the vertex data needs to go.
-        let positionAttributeLocation = gl.getAttribLocation(program: program, name: "a_position");
+        let positionAttributeLocation = gl.getAttribLocation(program, "a_position");
 
         // look up uniform locations
         let resolutionUniformLocation = gl.getUniformLocation(
-            program: program,
-            name: "u_resolution"
+            program,
+            "u_resolution"
         );
    
-        let colorUniformLocation = gl.getUniformLocation(program: program, name: "u_color");
+        let colorUniformLocation = gl.getUniformLocation(program, "u_color");
 
         // Create a buffer to put three 2d clip space points in
         let positionBuffer = gl.createBuffer();
 
         // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = positionBuffer)
-        gl.bindBuffer(target: gl.ARRAY_BUFFER, buffer: positionBuffer);
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-        print(gl.drawingBufferWidth, gl.drawingBufferHeight)
         // Tell WebGL how to convert from clip space to pixels
-        gl.viewport(x: 0, y: 0, width: gl.drawingBufferWidth, height: gl.drawingBufferHeight);
+        gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 
         // Clear the canvas
-        gl.clearColor(red: 1, green: 1, blue: 1, alpha: 1);
-        gl.clear(mask: UInt32(gl.COLOR_BUFFER_BIT));
+        gl.clearColor(1, 1, 1, 1);
+        gl.clear(gl.COLOR_BUFFER_BIT);
 
         // Tell it to use our program (pair of shaders)
-        gl.useProgram(program: program);
+        gl.useProgram(program);
 
         // Bind the position buffer.
-        gl.bindBuffer(target: gl.ARRAY_BUFFER, buffer: positionBuffer);
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
         // create the buffer
         let indexBuffer = gl.createBuffer();
   
 
         // make this buffer the current 'ELEMENT_ARRAY_BUFFER'
-        gl.bindBuffer(target: gl.ELEMENT_ARRAY_BUFFER, buffer: indexBuffer);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 
         // Fill the current element array buffer with data
-        let indices: [UInt16] = [
-          0,
-          1,
-          2, // first triangle
-          2,
-          1,
-          3, // second triangle
+        let indices : [UInt16] = [
+                    0,
+                     1,
+                     2, // first triangle
+                     2,
+                     1,
+                     3, // second triangle
         ]
+            
         
         gl.bufferData(
-            target: gl.ELEMENT_ARRAY_BUFFER,
-            shortArray: indices,
-            usage: gl.STATIC_DRAW
+            gl.ELEMENT_ARRAY_BUFFER,
+            u16: indices,
+            gl.STATIC_DRAW
         )
 
         // code above this line is initialization code
         // --------------------------------
         // code below this line is rendering code
 
+        print(positionAttributeLocation)
         // Turn on the attribute
-        gl.enableVertexAttribArray(index: positionAttributeLocation);
+        gl.enableVertexAttribArray(UInt32(positionAttributeLocation));
 
         // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
         var size = 2; // 2 components per iteration
@@ -481,23 +493,24 @@ class ViewController: UIViewController {
         var offset = 0; // start at the beginning of the buffer
         
         gl.vertexAttribPointer(
-            index: positionAttributeLocation,
-            size: Int32(size),
-            type: type,
-            normalized: normalize,
-            stride: Int32(stride),
-            offset: offset
+            UInt32(positionAttributeLocation),
+            Int32(size),
+            type,
+            normalize,
+            Int32(stride),
+            offset
         );
 
         // bind the buffer containing the indices
-        gl.bindBuffer(target: gl.ELEMENT_ARRAY_BUFFER, buffer: indexBuffer);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 
         // set the resolution
         gl.uniform2f(
-            location: resolutionUniformLocation,
-            v0: Float(gl.drawingBufferWidth),
-            v1: Float(gl.drawingBufferHeight)
+            resolutionUniformLocation,
+            Float(gl.drawingBufferWidth),
+            Float(gl.drawingBufferHeight)
         );
+        
 
         // draw 50 random rectangles in random colors
         for i in 0 ... 50 {
@@ -515,11 +528,11 @@ class ViewController: UIViewController {
 
             // Set a random color.
             gl.uniform4f(
-                location: colorUniformLocation,
-                v0: Float.random(in: 0 ... 1),
-                v1: Float.random(in: 0 ... 1),
-                v2: Float.random(in: 0 ... 1),
-                v3: 1
+                colorUniformLocation,
+                Float.random(in: 0 ... 1),
+                Float.random(in: 0 ... 1),
+                Float.random(in: 0 ... 1),
+                1
             );
 
             // Draw the rectangle.
@@ -527,7 +540,7 @@ class ViewController: UIViewController {
             let offset = 0
             let count = 6
             let indexType = gl.UNSIGNED_SHORT
-            gl.drawElements(mode: primitiveType, count: Int32(count), type: indexType, offset: Int32(offset));
+            gl.drawElements(primitiveType, Int32(count), indexType, Int(offset))
         }
      
         canvas.flush()
@@ -545,9 +558,9 @@ class ViewController: UIViewController {
         let y1 = y;
         let y2 = y + height;
         gl.bufferData(
-            target: gl.ARRAY_BUFFER,
-            floatArray: [x1, y1, x2, y1, x1, y2, x2, y2],
-            usage: gl.STATIC_DRAW
+            gl.ARRAY_BUFFER,
+            f32: [x1, y1, x2, y1, x1, y2, x2, y2],
+            gl.STATIC_DRAW
         );
       }
 
@@ -557,7 +570,7 @@ class ViewController: UIViewController {
     func drawRotatingCube(gl: WebGLRenderingContext){
         let width = gl.getCanvas().width
         let height = gl.getCanvas().height
-        let vertices: [Float] = [
+        let vertices: [Float32] = [
             -1,-1,-1, 1,-1,-1, 1, 1,-1, -1, 1,-1,
             -1,-1, 1, 1,-1, 1, 1, 1, 1, -1, 1, 1,
             -1,-1,-1, -1, 1,-1, -1, 1, 1, -1,-1, 1,
@@ -565,7 +578,7 @@ class ViewController: UIViewController {
             -1,-1,-1, -1,-1, 1, 1,-1, 1, 1,-1,-1,
             -1, 1,-1, -1, 1, 1, 1, 1, 1, 1, 1,-1,
         ]
-        let colors: [Float] = [
+        let colors: [Float32] = [
             5,3,7, 5,3,7, 5,3,7, 5,3,7,
             1,1,3, 1,1,3, 1,1,3, 1,1,3,
             0,0,1, 0,0,1, 0,0,1, 0,0,1,
@@ -584,59 +597,59 @@ class ViewController: UIViewController {
         
         // Create and store data into vertex buffer
         let vertex_buffer = gl.createBuffer()
-        gl.bindBuffer(target: gl.ARRAY_BUFFER, buffer: vertex_buffer)
-        gl.bufferData(target: gl.ARRAY_BUFFER, floatArray: vertices, usage: gl.STATIC_DRAW)
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer)
+        gl.bufferData(gl.ARRAY_BUFFER, f32: vertices, gl.STATIC_DRAW)
         
         // Create and store data into color buffer
         let color_buffer = gl.createBuffer ()
-        gl.bindBuffer(target: gl.ARRAY_BUFFER, buffer: color_buffer)
-        gl.bufferData(target: gl.ARRAY_BUFFER, floatArray: colors, usage: gl.STATIC_DRAW)
+        gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer)
+        gl.bufferData(gl.ARRAY_BUFFER,f32: colors, gl.STATIC_DRAW)
         
         // Create and store data into index buffer
         index_buffer = gl.createBuffer()
-        gl.bindBuffer(target: gl.ELEMENT_ARRAY_BUFFER, buffer: index_buffer)
-        gl.bufferData(target: gl.ELEMENT_ARRAY_BUFFER, shortArray: indices, usage: gl.STATIC_DRAW)
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, index_buffer)
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,u16: indices, gl.STATIC_DRAW)
     
         
-        let vertShader = gl.createShader(type: gl.VERTEX_SHADER)
-        gl.shaderSource(shader: vertShader, source: vertCode)
-        gl.compileShader(shader: vertShader)
+        let vertShader = gl.createShader(gl.VERTEX_SHADER)
+        gl.shaderSource(vertShader, vertCode)
+        gl.compileShader(vertShader)
         
         
-        let fragShader = gl.createShader(type: gl.FRAGMENT_SHADER)
-        gl.shaderSource(shader: fragShader, source: fragCode)
-        gl.compileShader(shader: fragShader)
+        let fragShader = gl.createShader(gl.FRAGMENT_SHADER)
+        gl.shaderSource(fragShader, fragCode)
+        gl.compileShader(fragShader)
         
         
         let shaderProgram = gl.createProgram()
-        gl.attachShader(program: shaderProgram, shader: vertShader)
-        gl.attachShader(program: shaderProgram, shader: fragShader)
-        gl.linkProgram(program: shaderProgram)
+        gl.attachShader(shaderProgram, vertShader)
+        gl.attachShader(shaderProgram, fragShader)
+        gl.linkProgram(shaderProgram)
         
         /* ====== Associating attributes to vertex shader =====*/
-        Pmatrix = gl.getUniformLocation(program: shaderProgram, name: "Pmatrix")
-        Vmatrix = gl.getUniformLocation(program: shaderProgram, name: "Vmatrix")
-        Mmatrix = gl.getUniformLocation(program: shaderProgram, name: "Mmatrix")
+        Pmatrix = gl.getUniformLocation(shaderProgram, "Pmatrix")
+        Vmatrix = gl.getUniformLocation(shaderProgram, "Vmatrix")
+        Mmatrix = gl.getUniformLocation(shaderProgram, "Mmatrix")
 
         
-        gl.bindBuffer(target: gl.ARRAY_BUFFER, buffer: vertex_buffer)
-        let position = gl.getAttribLocation(program: shaderProgram, name: "position")
-        gl.vertexAttribPointer(index: position, size: 3, type: gl.FLOAT, normalized: false,stride: 0,offset: 0)
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer)
+        let position = gl.getAttribLocation(shaderProgram, "position")
+        gl.vertexAttribPointer(UInt32(position), 3, gl.FLOAT, false,0,0)
         
         // Position
-        gl.enableVertexAttribArray(index: position)
-        gl.bindBuffer(target: gl.ARRAY_BUFFER, buffer: color_buffer)
-        let color = gl.getAttribLocation(program: shaderProgram, name: "color")
-        gl.vertexAttribPointer(index: color, size: 3, type: gl.FLOAT, normalized: false,stride: 0,offset: 0)
+        gl.enableVertexAttribArray(UInt32(position))
+        gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer)
+        let color = gl.getAttribLocation(shaderProgram, "color")
+        gl.vertexAttribPointer(UInt32(color), 3, gl.FLOAT, false,0,0)
         
         // Color
-        gl.enableVertexAttribArray(index: color)
-        gl.useProgram(program: shaderProgram)
+        gl.enableVertexAttribArray(UInt32(color))
+        gl.useProgram(shaderProgram)
         
         
         proj_matrix = get_projection(angle: 40, a: Int32(width / height), zMin: 1, zMax: 100)
-        
         mov_matrix = [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]
+        
         view_matrix = [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]
         
         // translating z
@@ -653,22 +666,22 @@ class ViewController: UIViewController {
         let width = gl.drawingBufferWidth
         let height = gl.drawingBufferHeight
         let dt = time - time_old
-        rotateZ(m: &mov_matrix, angle: dt*0.005) //time
-        rotateY(m: &mov_matrix, angle: dt*0.002)
-        rotateX(m: &mov_matrix, angle: dt*0.003)
+        rotateZ(matrix: &mov_matrix, angle: dt*0.005) //time
+        rotateY(matrix: &mov_matrix, angle: dt*0.002)
+        rotateX(matrix: &mov_matrix, angle: dt*0.003)
         time_old = time
         
-        gl.enable(cap: gl.DEPTH_TEST)
-        gl.depthFunc(fn: gl.LEQUAL)
-        gl.clearColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 0.9)
-        gl.clearDepth(depth: 1.0)
-        gl.viewport(x: 0, y: 0, width: Int32(width), height: Int32(height))
-        gl.clear(mask: UInt32(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT))
-        gl.uniformMatrix4fv(location: Pmatrix, transpose: false, value: proj_matrix)
-        gl.uniformMatrix4fv(location: Vmatrix, transpose: false, value: view_matrix)
-        gl.uniformMatrix4fv(location: Mmatrix, transpose: false, value: mov_matrix)
-        gl.bindBuffer(target: gl.ELEMENT_ARRAY_BUFFER, buffer: index_buffer)
-        gl.drawElements(mode: gl.TRIANGLES, count: Int32(indices.count), type: gl.UNSIGNED_SHORT, offset: 0)
+        gl.enable(gl.DEPTH_TEST)
+        gl.depthFunc(gl.LEQUAL)
+        gl.clearColor(0.5, 0.5, 0.5, 0.9)
+        gl.clearDepth(1.0)
+        gl.viewport(0, 0, Int32(width), Int32(height))
+        gl.clear(UInt32(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT))
+        gl.uniformMatrix4fv(Pmatrix, false, proj_matrix)
+        gl.uniformMatrix4fv(Vmatrix, false, view_matrix)
+        gl.uniformMatrix4fv(Mmatrix, false, mov_matrix)
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, index_buffer)
+        gl.drawElements(gl.TRIANGLES, Int32(indices.count), gl.UNSIGNED_SHORT, 0)
         gl.getCanvas().flush()
         AnimationFrame.requestAnimationFrame { (t) in
             self.cubeRotationAnimation(gl: gl, time: t)
@@ -680,26 +693,27 @@ class ViewController: UIViewController {
     var Pmatrix: Int32 = 0
     var Vmatrix: Int32 = 0
     var Mmatrix: Int32 = 0
-    var proj_matrix: [Float]  = []
-    var mov_matrix: [Float] = []
-    var view_matrix:[Float] = []
+    var proj_matrix: [Float32] = []
+    var mov_matrix: [Float32] = []
+    var view_matrix: [Float32] = []
     var time_old: Float = 0
     
-    func get_projection(angle: Float, a: Int32, zMin: Int32, zMax: Int32) -> [Float] {
+    func get_projection(angle: Float, a: Int32, zMin: Int32, zMax: Int32) -> [Float32] {
         let ang = tan((angle * Float(0.5)) * PI/180) //angle*.5
         return [
             0.5 / ang, 0.0 , 0.0, 0.0,
             0.0, Float(0.5) * (Float(a)/ang), 0.0, 0.0,
             0.0, 0.0, -(Float(zMax) + Float(zMin)) / (Float(zMax) - Float(zMin)), -1.0,
             0.0, 0.0, (-2 * Float(zMax) * Float(zMin))/(Float(zMax) - Float(zMin)), 0.0
-        ];
+        ]
     }
     
     
     
-    func rotateZ(m: inout Array<Float>, angle: Float) {
+    func rotateZ(matrix: inout [Float32], angle: Float) {
         let c = cos(angle)
         let s = sin(angle)
+        var m = matrix
         let mv0 = m[0], mv4 = m[4], mv8 = m[8]
         
         m[0] = c*m[0]-s*m[1]
@@ -711,9 +725,10 @@ class ViewController: UIViewController {
         m[9]=c*m[9]+s*mv8
     }
     
-    func rotateX(m: inout Array<Float>, angle: Float) {
+    func rotateX(matrix: inout [Float32], angle: Float) {
         let c = cos(angle)
         let s = sin(angle)
+        var m = matrix
         let mv1 = m[1], mv5 = m[5], mv9 = m[9]
         
         m[1] = m[1]*c-m[2]*s
@@ -725,9 +740,10 @@ class ViewController: UIViewController {
         m[10] = m[10]*c+mv9*s
     }
     
-    func rotateY(m: inout Array<Float>, angle: Float) {
+    func rotateY(matrix:inout [Float32], angle: Float) {
         let c = cos(angle)
         let s = sin(angle)
+        var m = matrix
         let mv0 = m[0], mv4 = m[4], mv8 = m[8]
         
         m[0] = c*m[0]+s*m[2]
@@ -743,41 +759,41 @@ class ViewController: UIViewController {
     
     func scaleTransformation(ctx: CanvasRenderingContext2D){
         // Scaled rectangle
-        ctx.scale(x: 9, y: 3);
+        ctx.scale(9, 3);
         ctx.fillStyle = CanvasColorStyle.Color(color: .red);
-        ctx.fillRect(x: 10, y: 10, width: 8, height: 20);
+        ctx.fillRect(10, 10, 8, 20);
         
         // Reset current transformation matrix to the identity matrix
-        ctx.setTransform(a: 1, b: 0, c: 0, d: 1, e: 0, f: 0);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
         
         // Non-scaled rectangle
         ctx.fillStyle = CanvasColorStyle.Color(color: .gray);
-        ctx.fillRect(x: 10, y: 10, width: 8, height: 20);
+        ctx.fillRect(10, 10, 8, 20);
     }
     
     func drawNight(ctx: CanvasRenderingContext2D) {
-        ctx.fillRect(x: 0, y: 0, width: 150, height: 150);
-        ctx.translate(x: 75, y: 75);
+        ctx.fillRect(0, 0, 150, 150);
+        ctx.translate(75, 75);
         
         // Create a circular clipping path
         ctx.beginPath();
-        ctx.arc(x: 0, y: 0, radius: 60, startAngle: 0, endAngle: PI * 2, anticlockwise: true);
+        ctx.arc(0, 0,  60,  0, PI * 2, true);
         ctx.clip();
         
         // draw background
-        let lingrad = ctx.createLinearGradient(x0: 0, y0: -75, x1: 0, y1: 75);
+        let lingrad = ctx.createLinearGradient(0, -75, 0, 75);
         lingrad.addColorStop(offset: 0, color: UIColor(fromString: "#232256"));
         lingrad.addColorStop(offset: 1, color: UIColor(fromString: "#143778"));
         
         ctx.fillStyle = lingrad;
-        ctx.fillRect(x: -75, y: -75, width: 150, height: 150);
+        ctx.fillRect(-75, -75, 150, 150);
         
         // draw stars
         for _ in 0 ... 49 {
             ctx.save()
             ctx.fillStyle = CanvasColorStyle.Color.init(color: .white)
-            ctx.translate(x: 75 - floor(Float.random(in: 0.0...1.0) * 150),
-                          y: 75 - floor(Float.random(in: 0.0...1.0) * 150));
+            ctx.translate(75 - floor(Float.random(in: 0.0...1.0) * 150),
+                          75 - floor(Float.random(in: 0.0...1.0) * 150));
             drawStar(ctx: ctx, r: floor(Float.random(in: 0.0...1.0) * 4) + 2);
             ctx.restore();
         }
@@ -787,13 +803,13 @@ class ViewController: UIViewController {
     func drawStar(ctx: CanvasRenderingContext2D, r: Float) {
         ctx.save();
         ctx.beginPath();
-        ctx.moveTo(x: r, y: 0)
+        ctx.moveTo(r, 0)
         for i in 0 ... 8 {
-            ctx.rotate(angle: PI / 5);
+            ctx.rotate(PI / 5);
             if (i % 2 == 0) {
-                ctx.lineTo(x: (r / 0.525731) * 0.200811, y: 0);
+                ctx.lineTo((r / 0.525731) * 0.200811, 0);
             } else {
-                ctx.lineTo(x: r, y: 0);
+                ctx.lineTo(r, 0);
             }
         }
         ctx.closePath();
@@ -806,27 +822,27 @@ class ViewController: UIViewController {
         ctx.save();
         // blue rect
         ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromString: "#0095DD"));
-        ctx.fillRect(x: 30, y: 30, width: 100, height: 100);
-        ctx.rotate(angle: (PI / 180) * 25);
+        ctx.fillRect(30, 30, 100, 100);
+        ctx.rotate((PI / 180) * 25);
         // grey rect
         ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromString: "#4D4E53"));
-        ctx.fillRect(x: 30, y: 30, width: 100, height: 100);
+        ctx.fillRect(30, 30, 100, 100);
         ctx.restore();
         
         // right rectangles, rotate from rectangle center
         // draw blue rect
         ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromString: "#0095DD"));
-        ctx.fillRect(x: 150, y: 30, width: 100, height: 100);
+        ctx.fillRect(150, 30, 100, 100);
         
-        ctx.translate(x: 200, y: 80); // translate to rectangle center
+        ctx.translate(200, 80); // translate to rectangle center
         // x = x + 0.5 * width
         // y = y + 0.5 * height
-        ctx.rotate(angle: (PI / 180) * 25); // rotate
-        ctx.translate(x: -200, y: -80); // translate back
+        ctx.rotate((PI / 180) * 25); // rotate
+        ctx.translate(-200, -80); // translate back
         
         // draw grey rect
         ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromString: "#4D4E53"));
-        ctx.fillRect(x: 150, y: 30, width: 100, height: 100);
+        ctx.fillRect(150, 30, 100, 100);
     }
     
     func drawImageBlock(ctx: CanvasRenderingContext2D){
@@ -846,7 +862,7 @@ class ViewController: UIViewController {
             
             for i in 0...3{
                 for j in 0 ... 3 {
-                    ctx.drawImage(image: image!, dx: Float(j * 50) * s, dy: Float(i * 38) * s, dWidth: 50 * s, dHeight: 38 * s);
+                    ctx.drawImage(image!, Float(j * 50) * s, Float(i * 38) * s, 50 * s, 38 * s);
                 }
             }
             ctx.getCanvas().flush()
@@ -858,46 +874,46 @@ class ViewController: UIViewController {
     
     func radialGradient(ctx: CanvasRenderingContext2D){
         // Create gradients
-        var radgrad = ctx.createRadialGradient(x0: 45, y0: 45, r0: 10, x1: 52, y1: 50, r1: 30);
+        let radgrad = ctx.createRadialGradient(45, 45, 10, 52, 50, 30);
         radgrad.addColorStop(offset: 0, color: UIColor(fromString: "#A7D30C"))
         radgrad.addColorStop(offset: 0.9, color: UIColor(fromString: "#019F62"));
         radgrad.addColorStop(offset: 1, color: UIColor(fromString: "rgba(1, 159, 98, 0)"));
         
-        var radgrad2 = ctx.createRadialGradient(x0: 105, y0: 105, r0: 20, x1: 112, y1: 120, r1: 50);
+        let radgrad2 = ctx.createRadialGradient(105, 105, 20, 112, 120, 50);
         radgrad2.addColorStop(offset: 0, color: UIColor(fromString: "#FF5F98"));
         radgrad2.addColorStop(offset: 0.75, color: UIColor(fromString: "#FF0188"));
         radgrad2.addColorStop(offset: 1, color: UIColor(fromString: "rgba(255, 1, 136, 0)"));
         
-        var radgrad3 = ctx.createRadialGradient(x0: 95, y0: 15, r0: 15, x1: 102, y1: 20, r1: 40);
+        let radgrad3 = ctx.createRadialGradient(95, 15, 15, 102, 20, 40);
         radgrad3.addColorStop(offset: 0, color: UIColor(fromString: "#00C9FF"));
         radgrad3.addColorStop(offset: 0.8, color: UIColor(fromString: "#00B5E2"));
         radgrad3.addColorStop(offset: 1, color: UIColor(fromString: "rgba(0, 201, 255, 0)"));
         
-        var radgrad4 = ctx.createRadialGradient(x0: 0, y0: 150, r0: 50, x1: 0, y1: 140, r1: 90);
+        let radgrad4 = ctx.createRadialGradient(0, 150, 50, 0, 140, 90);
         radgrad4.addColorStop(offset: 0, color: UIColor(fromString: "#F4F201"));
         radgrad4.addColorStop(offset: 0.8, color: UIColor(fromString: "#E4C700"));
         radgrad4.addColorStop(offset: 1, color: UIColor(fromString: "rgba(228, 199, 0, 0)"));
         
         // draw shapes
         ctx.fillStyle = radgrad4;
-        ctx.fillRect(x: 0, y: 0, width: 150, height: 150);
+        ctx.fillRect(0, 0, 150, 150);
         ctx.fillStyle = radgrad3;
-        ctx.fillRect(x: 0, y: 0, width: 150, height: 150);
+        ctx.fillRect(0, 0, 150, 150);
         ctx.fillStyle = radgrad2;
-        ctx.fillRect(x: 0, y: 0, width: 150, height: 150);
+        ctx.fillRect(0, 0, 150, 150);
         ctx.fillStyle = radgrad;
-        ctx.fillRect(x: 0, y: 0, width: 150, height: 150);
+        ctx.fillRect(0, 0, 150, 150);
     }
     
     func drawLinearGradient(ctx: CanvasRenderingContext2D) {
         // Create gradients
-        var lingrad = ctx.createLinearGradient(x0: 0, y0: 0, x1: 0, y1: 150);
+        let lingrad = ctx.createLinearGradient(0, 0, 0, 150);
         lingrad.addColorStop(offset: 0, color: UIColor(fromHex: "#00ABEB"))
         lingrad.addColorStop(offset: 0.5, color: UIColor(fromHex: "#fff"));
         lingrad.addColorStop(offset: 0.5, color: UIColor(fromHex: "#26C000"));
         lingrad.addColorStop(offset: 1, color: UIColor(fromHex: "#fff"));
         
-        var lingrad2 = ctx.createLinearGradient(x0: 0, y0: 50, x1: 0, y1: 95);
+        let lingrad2 = ctx.createLinearGradient(0, 50, 0, 95);
         lingrad2.addColorStop(offset: 0.5, color: UIColor(fromHex: "#000"));
         lingrad2.addColorStop(offset: 1, color: UIColor(red: 0, green: 0, blue: 0, alpha: 0));
         
@@ -906,8 +922,8 @@ class ViewController: UIViewController {
         ctx.strokeStyle = lingrad2;
         
         // draw shapes
-        ctx.fillRect(x: 10, y: 10, width: 130, height: 130);
-        ctx.strokeRect(x: 50, y: 50, width: 50, height: 50);
+        ctx.fillRect(10, 10, 130, 130);
+        ctx.strokeRect(50, 50, 50, 50);
     }
     
     
@@ -923,58 +939,58 @@ class ViewController: UIViewController {
         roundedRect(ctx: ctx, x: 135 * s, y: 119 * s, width: 25 * s, height: 49 * s, radius: 10 * s);
         
         ctx.beginPath();
-        ctx.arc(x: 37 * s, y: 37 * s, radius: 13 * s, startAngle: PI / 7, endAngle: -PI / 7, anticlockwise: false);
-        ctx.lineTo(x: 31 * s, y: 37 * s);
+        ctx.arc(37 * s, 37 * s, 13 * s, PI / 7, -PI / 7, false);
+        ctx.lineTo(31 * s, 37 * s);
         ctx.fill();
         
         for i in 0...7{
-            ctx.fillRect(x: Float(51 + i * 16)  * s, y: 35 * s, width: 4 * s, height: 4 * s);
+            ctx.fillRect(Float(51 + i * 16)  * s, 35 * s, 4 * s, 4 * s);
         }
         
         for i in 0...5{
-            ctx.fillRect(x: 115 * s, y: Float(51 + i * 16) * s, width: 4 * s, height: 4 * s);
+            ctx.fillRect(115 * s, Float(51 + i * 16) * s, 4 * s, 4 * s);
         }
         
         for i in 0...7{
-            ctx.fillRect(x: Float(51 + i * 16) * s, y: 99 * s, width: 4 * s, height: 4 * s);
+            ctx.fillRect(Float(51 + i * 16) * s, 99 * s, 4 * s, 4 * s);
         }
         
         
         ctx.beginPath();
-        ctx.moveTo(x: 83 * s, y: 116 * s);
-        ctx.lineTo(x: 83 * s, y: 102 * s);
-        ctx.bezierCurveTo(cp1x: 83 * s, cp1y: 94 * s, cp2x: 89 * s, cp2y: 88 * s, x: 97 * s, y: 88 * s);
-        ctx.bezierCurveTo(cp1x: 105 * s, cp1y: 88 * s, cp2x: 111 * s, cp2y: 94 * s, x: 111 * s, y: 102 * s);
-        ctx.lineTo(x: 111 * s, y: 116 * s);
-        ctx.lineTo(x: 106.333 * s, y: 111.333 * s);
-        ctx.lineTo(x: 101.666 * s, y: 116 * s);
-        ctx.lineTo(x: 97 * s, y: 111.333 * s);
-        ctx.lineTo(x: 92.333 * s, y: 116 * s);
-        ctx.lineTo(x: 87.666 * s, y: 111.333 * s);
-        ctx.lineTo(x: 83 * s, y: 116 * s);
+        ctx.moveTo(83 * s, 116 * s);
+        ctx.lineTo(83 * s, 102 * s);
+        ctx.bezierCurveTo(83 * s, 94 * s, 89 * s, 88 * s, 97 * s, 88 * s);
+        ctx.bezierCurveTo(105 * s, 88 * s, 111 * s, 94 * s, 111 * s, 102 * s);
+        ctx.lineTo(111 * s, 116 * s);
+        ctx.lineTo(106.333 * s, 111.333 * s);
+        ctx.lineTo(101.666 * s, 116 * s);
+        ctx.lineTo(97 * s, 111.333 * s);
+        ctx.lineTo(92.333 * s, 116 * s);
+        ctx.lineTo(87.666 * s, 111.333 * s);
+        ctx.lineTo(83 * s, 116 * s);
         ctx.fill();
         
         ctx.fillStyle = CanvasColorStyle.Color(color: .white);
         ctx.beginPath();
-        ctx.moveTo(x: 91 * s, y: 96 * s);
-        ctx.bezierCurveTo(cp1x: 88 * s, cp1y: 96 * s, cp2x: 87 * s, cp2y: 99 * s, x: 87 * s, y: 101 * s);
-        ctx.bezierCurveTo(cp1x: 87 * s, cp1y: 103 * s, cp2x: 88 * s, cp2y: 106 * s, x: 91 * s, y: 106 * s);
-        ctx.bezierCurveTo(cp1x: 94 * s, cp1y: 106 * s, cp2x: 95 * s, cp2y: 103 * s, x: 95 * s, y: 101 * s);
-        ctx.bezierCurveTo(cp1x: 95 * s, cp1y: 99 * s, cp2x: 94 * s, cp2y: 96 * s, x: 91 * s, y: 96 * s);
-        ctx.moveTo(x: 103 * s, y: 96 * s);
-        ctx.bezierCurveTo(cp1x: 100 * s, cp1y: 96 * s, cp2x: 99 * s, cp2y: 99 * s, x: 99 * s, y: 101 * s);
-        ctx.bezierCurveTo(cp1x: 99 * s, cp1y: 103 * s, cp2x: 100 * s, cp2y: 106 * s, x: 103 * s, y: 106 * s);
-        ctx.bezierCurveTo(cp1x: 106 * s, cp1y: 106 * s, cp2x: 107 * s, cp2y: 103 * s, x: 107 * s, y: 101 * s);
-        ctx.bezierCurveTo(cp1x: 107 * s, cp1y: 99 * s, cp2x: 106 * s, cp2y: 96 * s, x: 103 * s, y: 96 * s);
+        ctx.moveTo(91 * s, 96 * s);
+        ctx.bezierCurveTo(88 * s, 96 * s, 87 * s, 99 * s, 87 * s, 101 * s);
+        ctx.bezierCurveTo(87 * s, 103 * s, 88 * s, 106 * s, 91 * s, 106 * s);
+        ctx.bezierCurveTo(94 * s, 106 * s, 95 * s, 103 * s, 95 * s, 101 * s);
+        ctx.bezierCurveTo(95 * s, 99 * s, 94 * s, 96 * s, 91 * s, 96 * s);
+        ctx.moveTo(103 * s, 96 * s);
+        ctx.bezierCurveTo(100 * s, 96 * s, 99 * s, 99 * s, 99 * s, 101 * s);
+        ctx.bezierCurveTo(99 * s, 103 * s, 100 * s, 106 * s, 103 * s, 106 * s);
+        ctx.bezierCurveTo(106 * s, 106 * s, 107 * s, 103 * s, 107 * s, 101 * s);
+        ctx.bezierCurveTo(107 * s, 99 * s, 106 * s, 96 * s, 103 * s, 96 * s);
         ctx.fill();
         
         ctx.fillStyle = CanvasColorStyle.Color(color: .black);
         ctx.beginPath();
-        ctx.arc(x: 101 * s, y: 102 * s, radius: 2 * s, startAngle: 0 * s, endAngle: PI * 2, anticlockwise: true);
+        ctx.arc( 101 * s, 102 * s, 2 * s, 0 * s, PI * 2, true);
         ctx.fill();
         
         ctx.beginPath();
-        ctx.arc(x: 89 * s, y: 102 * s, radius: 2 * s, startAngle: 0 * s, endAngle: PI * 2, anticlockwise: true);
+        ctx.arc(89 * s, 102 * s, 2 * s, 0 * s, PI * 2, true);
         ctx.fill();
         
     }
@@ -983,28 +999,28 @@ class ViewController: UIViewController {
     
     func roundedRect(ctx: CanvasRenderingContext2D, x: Float, y: Float, width: Float, height:Float, radius:Float) {
         ctx.beginPath();
-        ctx.moveTo(x: x, y: y + radius);
-        ctx.lineTo(x: x, y: y + height - radius);
-        ctx.arcTo(x1: x, y1: y + height, x2: x + radius, y2: y + height, radius: radius);
-        ctx.lineTo(x: x + width - radius, y: y + height);
-        ctx.arcTo(x1: x + width, y1: y + height, x2: x + width, y2: y + height-radius, radius: radius);
-        ctx.lineTo(x: x + width, y: y + radius);
-        ctx.arcTo(x1: x + width, y1: y, x2: x + width - radius, y2: y, radius: radius);
-        ctx.lineTo(x: x + radius, y: y);
-        ctx.arcTo(x1: x, y1: y, x2: x, y2: y + radius, radius: radius);
+        ctx.moveTo(x, y + radius);
+        ctx.lineTo(x, y + height - radius);
+        ctx.arcTo(x, y + height, x + radius, y + height, radius);
+        ctx.lineTo(x + width - radius, y + height);
+        ctx.arcTo(x + width, y + height, x + width, y + height-radius, radius);
+        ctx.lineTo(x + width, y + radius);
+        ctx.arcTo(x + width, y, x + width - radius, y, radius);
+        ctx.lineTo(x + radius, y);
+        ctx.arcTo(x, y, x, y + radius, radius);
         ctx.stroke();
     }
     
     func drawWindow(ctx: CanvasRenderingContext2D){
         // draw background
         ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromHex: "#FD0"));
-        ctx.fillRect(x: 0, y: 0, width: Float(75 * scale), height: Float(75 * scale));
+        ctx.fillRect(0, 0, Float(75 * scale), Float(75 * scale));
         ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromHex: "#6C0"));
-        ctx.fillRect(x: Float(75 * scale), y: 0, width: Float(75 * scale), height: Float(75 * scale));
+        ctx.fillRect(Float(75 * scale), 0, Float(75 * scale), Float(75 * scale));
         ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromHex: "#09F"));
-        ctx.fillRect(x: 0, y: Float(75 * scale), width: Float(75 * scale), height: Float(75 * scale));
+        ctx.fillRect(0, Float(75 * scale), Float(75 * scale), Float(75 * scale));
         ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromHex: "#F30"));
-        ctx.fillRect(x: Float(75 * scale), y: Float(75 * scale), width: Float(75 * scale), height: Float(75 * scale));
+        ctx.fillRect(Float(75 * scale), Float(75 * scale), Float(75 * scale), Float(75 * scale));
         ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromHex: "#FFF"));
         
         // set transparency value
@@ -1014,19 +1030,19 @@ class ViewController: UIViewController {
         
         for i in 0...6 {
             ctx.beginPath();
-            ctx.arc(x: Float(75 * scale), y: Float(75 * scale), radius: Float((10 + 10 * i) * scale), startAngle: 0, endAngle: PI * 2, anticlockwise: true);
+            ctx.arc(Float(75 * scale),Float(75 * scale), Float((10 + 10 * i) * scale), 0, PI * 2, true);
             ctx.fill();
         }
     }
     
     func draw1() {
-        let ctx = canvas1?.getContext(type: "2d") as! CanvasRenderingContext2D
+        let ctx = canvas1?.getContext("2d") as! CanvasRenderingContext2D
         ctx.beginPath()
-        ctx.arc(x: 240, y: 20, radius: 40, startAngle: 0, endAngle: PI)
-        ctx.moveTo(x: 100, y: 20)
-        ctx.arc(x: 60, y: 20, radius: 40, startAngle: 0, endAngle: PI)
-        ctx.moveTo(x: 215, y: 80)
-        ctx.arc(x: 150, y: 80, radius: 65, startAngle: 0, endAngle: PI)
+        ctx.arc(240, 20, 40, 0, PI)
+        ctx.moveTo(100, 20)
+        ctx.arc(60, 20, 40, 0, PI)
+        ctx.moveTo(215, 80)
+        ctx.arc(150, 80, 65, 0, PI)
         ctx.closePath()
         ctx.lineWidth = 6
         ctx.stroke()
@@ -1034,31 +1050,31 @@ class ViewController: UIViewController {
     
     
     func scaleText(ctx: CanvasRenderingContext2D){
-        ctx.scale(x: -1, y: 1);
+        ctx.scale(-1, 1);
         ctx.font = "48px serif";
-        ctx.fillText(text: "Hello world!", x: -280, y: 90);
-        ctx.setTransform(a: 1, b: 0, c: 0, d: 1, e: 0, f: 0);
+        ctx.fillText("Hello world!", -280, 90);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
     }
     func saveRestoreExample(ctx: CanvasRenderingContext2D){
         // Save the default state
         ctx.save();
         let s = Float(UIScreen.main.scale)
         ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(red: 0, green: 128/255, blue: 0, alpha: 1.0));
-        ctx.fillRect(x: 10 * s, y: 10 * s, width: 100 * s, height: 100 * s);
+        ctx.fillRect(10 * s, 10 * s, 100 * s, 100 * s);
         
         // Restore the default state
         ctx.restore();
         
-        ctx.fillRect(x: 150 * s, y: 40 * s, width: 100 * s, height: 100 * s);
+        ctx.fillRect(150 * s, 40 * s, 100 * s, 100 * s);
         
     }
     func closePathExample(ctx: CanvasRenderingContext2D){
         ctx.beginPath();
-        ctx.arc(x: 240, y: 20, radius: 40, startAngle: 0, endAngle: PI);
-        ctx.moveTo(x: 100, y: 20);
-        ctx.arc(x: 60, y: 20, radius: 40, startAngle: 0, endAngle: PI);
-        ctx.moveTo(x: 215, y: 80);
-        ctx.arc(x: 150, y: 80, radius: 65, startAngle: 0, endAngle: PI);
+        ctx.arc(240, 20, 40, 0, PI);
+        ctx.moveTo(100, 20);
+        ctx.arc(60, 20, 40, 0, PI);
+        ctx.moveTo(215, 80);
+        ctx.arc(150, 80, 65, 0, PI);
         ctx.closePath();
         ctx.lineWidth = 6;
         ctx.stroke();
@@ -1073,22 +1089,22 @@ class ViewController: UIViewController {
         
         // Cubic Bézier curve
         ctx.beginPath()
-        ctx.moveTo(x: start.x, y: start.y)
-        ctx.bezierCurveTo(cp1x: cp1.x, cp1y: cp1.y, cp2x: cp2.x, cp2y: cp2.y, x: end.x, y: end.y)
+        ctx.moveTo(start.x, start.y)
+        ctx.bezierCurveTo(cp1.x, cp1.y, cp2.x, cp2.y, end.x, end.y)
         ctx.stroke()
         
         // Start and end points
         ctx.fillStyle = CanvasColorStyle.Color(color: .blue)
         ctx.beginPath()
-        ctx.arc(x: start.x, y: start.y, radius: 5, startAngle: 0, endAngle: TWO_PI)  // Start point
-        ctx.arc(x: end.x, y: end.y, radius: 5, startAngle: 0, endAngle: TWO_PI)      // End point
+        ctx.arc(start.x, start.y, 5, 0, TWO_PI)  // Start point
+        ctx.arc(end.x, end.y, 5, 0, TWO_PI)      // End point
         ctx.fill()
         
         // Control points
         ctx.fillStyle = CanvasColorStyle.Color(color: .red)
         ctx.beginPath()
-        ctx.arc(x: cp1.x, y: cp1.y, radius: 5, startAngle: 0, endAngle: TWO_PI)  // Control point one
-        ctx.arc(x: cp2.x, y: cp2.y, radius: 5, startAngle: 0, endAngle: TWO_PI)  // Control point two
+        ctx.arc(cp1.x, cp1.y, 5, 0, TWO_PI)  // Control point one
+        ctx.arc(cp2.x, cp2.y, 5, 0, TWO_PI)  // Control point two
         ctx.fill()
     }
     
@@ -1096,15 +1112,15 @@ class ViewController: UIViewController {
         ctx.lineWidth = 10
         
         // Wall
-        ctx.strokeRect(x: 75, y: 140, width: 150, height: 110)
+        ctx.strokeRect(75, 140, 150, 110)
         
         // Door
-        ctx.fillRect(x: 130, y: 190, width: 40, height: 60)
+        ctx.fillRect(130, 190, 40, 60)
         
         // Roof
-        ctx.moveTo(x: 50, y: 140)
-        ctx.lineTo(x: 150, y: 60)
-        ctx.lineTo(x: 250, y: 140)
+        ctx.moveTo(50, 140)
+        ctx.lineTo(150, 60)
+        ctx.lineTo(250, 140)
         ctx.closePath()
         ctx.stroke()
     }
@@ -1121,7 +1137,7 @@ class ViewController: UIViewController {
                 let endAngle      = Float32((PI + (PI * Float(j)) / 2)) // End point on circle
                 let anticlockwise = i % 2 == 1;                  // Draw anticlockwise
                 
-                ctx.arc(x: x, y: y, radius: radius, startAngle: startAngle, endAngle: endAngle, anticlockwise: anticlockwise);
+                ctx.arc(x, y, radius, startAngle, endAngle, anticlockwise);
                 if (i > 1) {
                     ctx.fill();
                 } else {
@@ -1134,14 +1150,14 @@ class ViewController: UIViewController {
     func ellipseExample(ctx: CanvasRenderingContext2D){
        // Draw the ellipse
        ctx.beginPath()
-        ctx.ellipse(x: 100, y: 100, radiusX: 50, radiusY: 75, rotation: PI / 4, startAngle: 0, endAngle: TWO_PI)
+        ctx.ellipse(100, 100, 50, 75, PI / 4, 0, TWO_PI)
        ctx.stroke()
 
        // Draw the ellipse's line of reflection
        ctx.beginPath()
-        ctx.setLineDash(segments: [5, 5])
-        ctx.moveTo(x: 0, y: 200)
-        ctx.lineTo(x: 200, y: 0)
+        ctx.setLineDash([5, 5])
+        ctx.moveTo(0, 200)
+        ctx.lineTo(200, 0)
        ctx.stroke()
     }
     
@@ -1157,22 +1173,22 @@ class ViewController: UIViewController {
         // First sub-path
         ctx.lineWidth = 26
         ctx.strokeStyle = CanvasColorStyle.Color(color: UIColor(red: 1, green: 165/255, blue: 0, alpha: 1.0))
-        ctx.moveTo(x: 20, y: 20)
-        ctx.lineTo(x: 160, y: 20)
+        ctx.moveTo(20, 20)
+        ctx.lineTo(160, 20)
         ctx.stroke()
         
         // Second sub-path
         ctx.lineWidth = 14
         ctx.strokeStyle = CanvasColorStyle.Color(color: UIColor(red: 0, green: 128/255, blue: 0, alpha: 1.0))
-        ctx.moveTo(x: 20, y: 80)
-        ctx.lineTo(x: 220, y: 80)
+        ctx.moveTo(20, 80)
+        ctx.lineTo(220, 80)
         ctx.stroke()
         
         // Third sub-path
         ctx.lineWidth = 4
         ctx.strokeStyle = CanvasColorStyle.Color(color: UIColor(red: 255/255, green: 192/255, blue: 203/255, alpha: 1.0))
-        ctx.moveTo(x: 20, y: 140)
-        ctx.lineTo(x: 280, y: 140)
+        ctx.moveTo(20, 140)
+        ctx.lineTo(280, 140)
         ctx.stroke()
     }
     
@@ -1189,7 +1205,7 @@ class ViewController: UIViewController {
         }
     }
     @IBAction func secondTap(_ sender: UITapGestureRecognizer) {
-        let ctx = canvas2?.getContext(type: "2d") as! CanvasRenderingContext2D
+        let ctx = canvas2?.getContext("2d") as! CanvasRenderingContext2D
         //_ = canvas2?.ensureIsContextIsCurrent()
         drawHouse(ctx: ctx)
     }
@@ -1199,12 +1215,12 @@ class ViewController: UIViewController {
         let x = offset.x
         let y = offset.y
         ctx.beginPath()
-        ctx.arc(x: p.x, y: p.y, radius: 2, startAngle: 0, endAngle: TWO_PI)
+        ctx.arc(p.x, p.y, 2, 0, TWO_PI)
         ctx.fill()
         var text = String(i) + ":"
         text = text + String(Int(p.x)) + ","
         text = text + String(Int(p.y))
-        ctx.fillText(text: text, x: p.x + x, y: p.y + y);
+        ctx.fillText(text, p.x + x, p.y + y);
     }
     
     private func drawPoints(ctx: CanvasRenderingContext2D, points: [KeyValue]){
@@ -1221,9 +1237,9 @@ class ViewController: UIViewController {
         p2 = points[1]
         p3 = points[2]
         
-        ctx.moveTo(x: p1.x, y: p1.y)
-        ctx.arcTo(x1: p2.x, y1: p2.y, x2: p3.x, y2: p3.y, radius: r)
-        ctx.lineTo(x: p3.x, y: p3.y)
+        ctx.moveTo(p1.x, p1.y)
+        ctx.arcTo(p2.x, p2.y, p3.x, p3.y, r)
+        ctx.lineTo(p3.x, p3.y)
         ctx.stroke()
     }
     
@@ -1231,13 +1247,13 @@ class ViewController: UIViewController {
     
     func drawFace(ctx: CanvasRenderingContext2D) {
         ctx.beginPath()
-        ctx.arc(x: 75, y: 75, radius: 50, startAngle: 0,endAngle: TWO_PI, anticlockwise: true) // Outer circle
-        ctx.moveTo(x: 110, y: 75)
-        ctx.arc(x: 75, y: 75, radius: 35, startAngle: 0, endAngle: PI, anticlockwise: false) // Mouth (clockwise)
-        ctx.moveTo(x: 65, y: 65)
-        ctx.arc(x: 60, y: 65, radius: 5, startAngle: 0, endAngle: TWO_PI, anticlockwise: true)  // Left eye
-        ctx.moveTo(x: 95, y: 65);
-        ctx.arc(x: 90, y: 65, radius: 5, startAngle: 0, endAngle: TWO_PI, anticlockwise: true)  // Right eye
+        ctx.arc(75,75, 50,0, TWO_PI, true) // Outer circle
+        ctx.moveTo(110, 75)
+        ctx.arc(75, 75, 35, 0, PI, false) // Mouth (clockwise)
+        ctx.moveTo(65, 65)
+        ctx.arc(60, 65, 5, 0, TWO_PI, true)  // Left eye
+        ctx.moveTo(95, 65);
+        ctx.arc(90, 65, 5, 0, TWO_PI, true)  // Right eye
         ctx.strokeStyle = CanvasColorStyle.Color(color: UIColor(fromString: "blue"))
         ctx.stroke();
         
@@ -1249,7 +1265,7 @@ class ViewController: UIViewController {
         let t0 = t / 1000
         let a  = t0.truncatingRemainder(dividingBy: PI2);
         let rr = abs(cos(a) * r)
-        ctx.clearRect(x: 0, y: 0, width: ctx.getCanvas().width, height: ctx.getCanvas().height);
+        ctx.clearRect(0, 0, ctx.getCanvas().width, ctx.getCanvas().height);
         drawArc(ctx: ctx,points: points, r: rr)
         drawPoints(ctx: ctx,points: points)
         AnimationFrame.requestAnimationFrame(toLoop: { (id) in
@@ -1269,7 +1285,7 @@ class ViewController: UIViewController {
         }
         func draw(ctx: CanvasRenderingContext2D){
             ctx.beginPath();
-            ctx.arc(x: Float(x), y: Float(y),radius: radius, startAngle: 0, endAngle: .pi * 2, anticlockwise: true);
+            ctx.arc(Float(x), Float(y),radius, 0, .pi * 2, true);
             ctx.closePath();
             ctx.fillStyle = CanvasColorStyle.Color(color: color)
             ctx.fill();
@@ -1283,7 +1299,7 @@ class ViewController: UIViewController {
         ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromString: "rgba(255, 255, 255, 0.3)"))
         let width = canvas.width
         let height = canvas.height
-        ctx.fillRect(x: 0, y: 0, width: Float(width), height: Float(height));
+        ctx.fillRect(0, 0, Float(width), Float(height));
         ball.draw(ctx: ctx)
         ball.x += ball.vx;
         ball.y += ball.vy;
@@ -1317,10 +1333,10 @@ class ViewController: UIViewController {
         ctx.globalCompositeOperation = CanvasCompositeOperationType(rawValue: "xor")!
         
         ctx.fillStyle = CanvasColorStyle.Color(color: .blue)
-        ctx.fillRect(x: 10, y: 10, width: 100, height: 100)
+        ctx.fillRect(10, 10, 100, 100)
         
         ctx.fillStyle = CanvasColorStyle.Color(color: .red)
-        ctx.fillRect(x: 50, y: 50, width: 100, height: 100)
+        ctx.fillRect(50, 50, 100, 100)
     }
     
     
@@ -1328,7 +1344,7 @@ class ViewController: UIViewController {
         // Create a radial gradient
         // The inner circle is at x=110, y=90, with radius=30
         // The outer circle is at x=100, y=100, with radius=70
-        let gradient = ctx.createRadialGradient(x0: 110,y0: 90,r0: 30, x1: 100,y1: 100,r1: 70);
+        let gradient = ctx.createRadialGradient(110,90,30, 100,100,70);
         // Add three color stops
         //gradient.addColorStop(offset: 0, color: UIColor(red: 1.0, green: 192/255, blue: 203/255, alpha: 1.0));
         // gradient.addColorStop(offset: 0.9, color: .white);
@@ -1336,7 +1352,7 @@ class ViewController: UIViewController {
         
         // Set the fill style and draw a rectangle
         ctx.fillStyle = gradient;
-        ctx.fillRect(x: 20, y: 20, width: 160, height: 160);
+        ctx.fillRect(20, 20, 160, 160);
     }
     
     
@@ -1344,7 +1360,7 @@ class ViewController: UIViewController {
         // Create a linear gradient
         // The start gradient point is at x=20, y=0
         // The end gradient point is at x=220, y=0
-        let gradient = ctx.createLinearGradient(x0: 20,y0: 0, x1: 220,y1: 0);
+        let gradient = ctx.createLinearGradient(20,0, 220,0);
         
         // Add three color stops
         let green = UIColor(red: 0.0, green: 128/255, blue: 0.0, alpha: 1.0)
@@ -1354,7 +1370,7 @@ class ViewController: UIViewController {
         
         // Set the fill style and draw a rectangle
         ctx.fillStyle = gradient;
-        ctx.fillRect(x: 20, y: 20, width: 200, height: 100);
+        ctx.fillRect(20, 20, 200, 100);
     }
     var scale = 0
     var r  = Float(100.0) * 3 ; // Radius
@@ -1376,30 +1392,30 @@ class ViewController: UIViewController {
         // Tangential lines
         ctx.beginPath()
         ctx.strokeStyle = CanvasColorStyle.Color(color: .darkGray)
-        ctx.moveTo(x: 200, y: 20)
-        ctx.lineTo(x: 200, y: 130)
-        ctx.lineTo(x: 50, y: 20)
+        ctx.moveTo(200, 20)
+        ctx.lineTo(200, 130)
+        ctx.lineTo(50, 20)
         ctx.stroke()
         
         // Arc
         ctx.beginPath()
         ctx.strokeStyle = CanvasColorStyle.Color(color: .black)
         ctx.lineWidth = 5
-        ctx.moveTo(x: 200, y: 20)
-        ctx.arcTo(x1: 200, y1: 130, x2: 50, y2: 20, radius: 40)
+        ctx.moveTo(200, 20)
+        ctx.arcTo(200, 130, 50, 20, 40)
         ctx.stroke()
         
         // Start point
         ctx.beginPath()
         ctx.fillStyle = CanvasColorStyle.Color(color: .blue)
-        ctx.arc(x: 200, y: 20, radius: 5, startAngle: 0, endAngle: (TWO_PI))
+        ctx.arc(200, 20, 5, 0, (TWO_PI))
         ctx.fill()
         
         // Control points
         ctx.beginPath()
         ctx.fillStyle = CanvasColorStyle.Color(color: .red)
-        ctx.arc(x: 200, y: 130, radius: 5, startAngle: 0, endAngle: TWO_PI) // Control point one
-        ctx.arc(x: 50, y: 20, radius: 5, startAngle: 0, endAngle: TWO_PI)   // Control point two
+        ctx.arc(200, 130, 5, 0, TWO_PI) // Control point one
+        ctx.arc(50, 20, 5, 0, TWO_PI)   // Control point two
         ctx.fill()
     }
     
@@ -1409,113 +1425,113 @@ class ViewController: UIViewController {
         let height = ctx.getCanvas().height
         ctx.beginPath();
         ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromHex: "#ff6"))
-        ctx.fillRect(x: 0, y: 0, width: width, height: height);
+        ctx.fillRect(0, 0, width, height);
         
         // Draw blue triangle
         ctx.beginPath();
         ctx.fillStyle = CanvasColorStyle.Color(color: .blue);
-        ctx.moveTo(x: 20, y: 20);
-        ctx.lineTo(x: 180, y: 20);
-        ctx.lineTo(x: 130, y: 130);
+        ctx.moveTo(20, 20);
+        ctx.lineTo(180, 20);
+        ctx.lineTo(130, 130);
         ctx.closePath();
         ctx.fill();
         
         // Clear part of the canvas
-        ctx.clearRect(x: 10, y: 10, width: 120, height: 100);
+        ctx.clearRect(10, 10, 120, 100);
     }
     
     func fontExample(ctx: CanvasRenderingContext2D){
         ctx.font = "bold 48px serif"
-        ctx.strokeText(text: "Hello world", x: 50, y: 100);
+        ctx.strokeText("Hello world", 50, 100);
         
         ctx.font = "50px serif"
-        ctx.fillText(text: "Hello world", x:50, y:190);
+        ctx.fillText("Hello world", 50, 190);
     }
     
     func setTransformExample(ctx: CanvasRenderingContext2D){
-        ctx.setTransform(a: 1, b: 0.2, c: 0.8, d: 1, e: 0, f: 0);
-        ctx.fillRect(x: 0, y: 0, width: 100, height: 100);
+        ctx.setTransform(1, 0.2, 0.8, 1, 0, 0);
+        ctx.fillRect(0, 0, 100, 100);
     }
     
     func scaleExample(ctx: CanvasRenderingContext2D){
         // Scaled rectangle
-        ctx.scale(x: 9, y: 3)
+        ctx.scale(9, 3)
         ctx.fillStyle = CanvasColorStyle.Color(color: .red)
-        ctx.fillRect(x: 10, y: 10, width: 8, height: 20);
+        ctx.fillRect(10, 10, 8, 20);
         
         // Reset current transformation matrix to the identity matrix
-        ctx.setTransform(a: 1, b: 0, c: 0, d: 1, e: 0, f: 0);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
         
         // Non-scaled rectangle
         ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(red: 128/255, green: 128/255, blue: 128/255, alpha: 1.0))
-        ctx.fillRect(x: 10, y: 10, width: 8, height: 20);
+        ctx.fillRect(10, 10, 8, 20);
     }
     
     func rotateAngleExample(ctx: CanvasRenderingContext2D){
         // Point of transform origin
-        ctx.arc(x: 0, y: 0, radius: 5, startAngle: 0, endAngle: TWO_PI);
+        ctx.arc(0, 0, 5, 0, TWO_PI);
         ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 1.0));
         ctx.fill();
         
         // Non-rotated rectangle
         ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(red: 128/255, green: 128/255, blue: 128/255, alpha: 1.0))
-        ctx.fillRect(x: 100, y: 0, width: 80, height: 20);
+        ctx.fillRect(100, 0, 80, 20);
         
         // Rotated rectangle
-        ctx.rotate(angle: 45 * PI / 180);
+        ctx.rotate(45 * PI / 180);
         ctx.fillStyle =  CanvasColorStyle.Color(color: .red)
-        ctx.fillRect(x: 100, y: 0, width: 80, height: 20);
+        ctx.fillRect(100, 0, 80, 20);
         
         // Reset transformation matrix to the identity matrix
-        ctx.setTransform(a: 1, b: 0, c: 0, d: 1, e: 0, f: 0);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
     }
     
     func secondRotateAngleExample(ctx: CanvasRenderingContext2D) {
         // Non-rotated rectangle
         ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(red: 128/255, green: 128/255, blue: 128/255, alpha: 1.0))
-        ctx.fillRect(x: 80, y: 60, width: 140, height: 30);
+        ctx.fillRect(80, 60, 140, 30);
         
         // Matrix transformation
-        ctx.translate(x: 150, y: 75);
-        ctx.rotate(angle: PI / 2);
-        ctx.translate(x: -150, y: -75);
+        ctx.translate(150, 75);
+        ctx.rotate(PI / 2);
+        ctx.translate(-150, -75);
         
         // Rotated rectangle
         ctx.fillStyle = CanvasColorStyle.Color(color: .red)
-        ctx.fillRect(x: 80, y: 60, width: 140, height: 30);
+        ctx.fillRect(80, 60, 140, 30);
     }
     
     func translateExample(ctx: CanvasRenderingContext2D){
-        ctx.translate(x: 110, y: 30);
+        ctx.translate(110, 30);
         ctx.fillStyle = CanvasColorStyle.Color(color: .red)
-        ctx.fillRect(x: 0, y: 0, width: 80, height: 80);
+        ctx.fillRect(0, 0, 80, 80);
         
         // Reset current transformation matrix to the identity matrix
-        ctx.setTransform(a: 1, b: 0, c: 0, d: 1, e: 0, f: 0);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
         
         // Unmoved square
         ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(red: 128/255, green: 128/255, blue: 128/255, alpha: 1.0))
-        ctx.fillRect(x: 0, y: 0, width: 80, height: 80);
+        ctx.fillRect(0, 0, 80, 80);
     }
     
     func quadraticCurveToExample(ctx: CanvasRenderingContext2D){
         // Quadratic Bézier curve
         ctx.beginPath();
-        ctx.moveTo(x: 50, y: 20);
-        ctx.quadraticCurveTo(cpx: 230, cpy: 30, x: 50, y: 100);
+        ctx.moveTo(50, 20);
+        ctx.quadraticCurveTo(230, 30, 50, 100);
         ctx.stroke();
         
         // Start and end points
         ctx.fillStyle = CanvasColorStyle.Color(color: .blue)
         ctx.beginPath();
-        ctx.arc(x: 50, y: 20, radius: 5, startAngle: 0, endAngle: TWO_PI);   // Start point
-        ctx.arc(x: 50, y: 100, radius: 5, startAngle: 0, endAngle: TWO_PI);  // End point
+        ctx.arc(50, 20, 5, 0, TWO_PI);   // Start point
+        ctx.arc(50, 100, 5, 0, TWO_PI);  // End point
         ctx.fill();
         
         // Control point
         ctx.fillStyle = CanvasColorStyle.Color(color: .red)
         ctx.beginPath();
-        ctx.arc(x: 230, y: 30, radius: 5, startAngle: 0, endAngle: TWO_PI);
+        ctx.arc(230, 30, 5, 0, TWO_PI);
         ctx.fill();
     }
     
@@ -1532,7 +1548,7 @@ class ViewController: UIViewController {
                 image = UIImage(contentsOfFile: rhino.path)
             }
             
-            ctx.drawImage(image: image!, dx: 0,dy: 0);
+            ctx.drawImage(image!, 0,0);
         } catch  {
             
         }
@@ -1572,12 +1588,12 @@ class ViewController: UIViewController {
             
             
             ctx.globalCompositeOperation = CanvasCompositeOperationType.DestinationOver
-            ctx.clearRect(x: 0, y: 0, width: 300, height: 300); // clear canvas
+            ctx.clearRect(0, 0, 300, 300); // clear canvas
             
             ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(red: 0, green: 0, blue: 0, alpha: 0.4))
             ctx.strokeStyle = CanvasColorStyle.Color(color: UIColor(red: 0.0, green: 153/255, blue: 1.0, alpha: 0.4))
             ctx.save();
-            ctx.translate(x: 150, y: 150);
+            ctx.translate(150, 150);
             
             // Earth
             let time = Date()
@@ -1591,10 +1607,10 @@ class ViewController: UIViewController {
             let first_angle = part_one + part_two
             
         
-            ctx.rotate(angle: first_angle)
-            ctx.translate(x: 105, y: 0);
-            ctx.fillRect(x: 0, y: -12, width: 40, height: 24); // Shadow
-            ctx.drawImage(image: earth!, dx: -12, dy: -12);
+            ctx.rotate(first_angle)
+            ctx.translate(105, 0);
+            ctx.fillRect(0, -12, 40, 24); // Shadow
+            ctx.drawImage(earth!, -12, -12);
             
             
             // Moon
@@ -1602,18 +1618,18 @@ class ViewController: UIViewController {
             let part_one_second = (TWO_PI / 6) * Float(seconds)
             let part_two_second = (TWO_PI / 60000) * Float(milliseconds)
             let second_angle = part_one_second + part_two_second
-            ctx.rotate(angle: second_angle)
-            ctx.translate(x: 0, y: 28.5);
-            ctx.drawImage(image: moon!, dx: -3.5, dy: -3.5);
+            ctx.rotate(second_angle)
+            ctx.translate(0, 28.5);
+            ctx.drawImage(moon!, -3.5, -3.5);
             ctx.restore();
             
             ctx.restore();
             
             ctx.beginPath();
-            ctx.arc(x: 150, y: 150, radius: 105, startAngle: 0, endAngle: TWO_PI, anticlockwise: false); // Earth orbit
+            ctx.arc(150, 150, 105, 0, TWO_PI, false); // Earth orbit
             ctx.stroke();
             
-            ctx.drawImage(image: sun!, dx: 0, dy: 0, dWidth: 300, dHeight: 300);
+            ctx.drawImage(sun!, 0, 0, 300, 300);
             
             if(!didScaleSolar){
               //  ctx.scale(x: ctx.getCanvas().width / 300, y: ctx.getCanvas().height / 300)
@@ -1645,10 +1661,10 @@ class ViewController: UIViewController {
         let hours = components.hour!
         ctx.save();
         let scale = UIScreen.main.scale
-        ctx.clearRect(x: 0, y: 0, width: Float(150 ), height: Float(150 ));
-        ctx.translate(x: Float(75 ), y: Float(75 ));
-        ctx.scale(x: 0.4, y: 0.4);
-        ctx.rotate(angle: -PI / 2);
+        ctx.clearRect(0, 0, Float(150 ), Float(150 ));
+        ctx.translate(Float(75 ), Float(75 ));
+        ctx.scale(0.4, 0.4);
+        ctx.rotate(-PI / 2);
         ctx.strokeStyle = CanvasColorStyle.Color(color: .black);
         ctx.fillStyle = CanvasColorStyle.Color(color: .white);
         ctx.lineWidth = Float(8  );
@@ -1658,9 +1674,9 @@ class ViewController: UIViewController {
         ctx.save();
         for _ in 0...11{
             ctx.beginPath();
-            ctx.rotate(angle: PI / 6);
-            ctx.moveTo(x: Float(100 ), y: 0);
-            ctx.lineTo(x: Float(120 ), y: 0);
+            ctx.rotate(PI / 6);
+            ctx.moveTo(Float(100 ), 0);
+            ctx.lineTo(Float(120 ), 0);
             ctx.stroke();
         }
         ctx.restore();
@@ -1671,11 +1687,11 @@ class ViewController: UIViewController {
         for i in 0...59{
             if (i % 5 != 0) {
                 ctx.beginPath();
-                ctx.moveTo(x: Float(117 ), y: 0);
-                ctx.lineTo(x: Float(120 ), y: 0);
+                ctx.moveTo(Float(117 ), 0);
+                ctx.lineTo(Float(120 ), 0);
                 ctx.stroke();
             }
-            ctx.rotate(angle: PI / 30);
+            ctx.rotate(PI / 30);
         }
         ctx.restore();
         
@@ -1691,49 +1707,49 @@ class ViewController: UIViewController {
         let first = hr * (PI / 6)
         let second = first + (PI / 360) * min
         let third = second  + (PI / 21600) * sec
-        ctx.rotate(angle: third)
+        ctx.rotate(third)
         ctx.lineWidth = Float(14 );
         ctx.beginPath();
-        ctx.moveTo(x: Float(-20 ), y: 0);
-        ctx.lineTo(x: Float(80 ), y: 0);
+        ctx.moveTo(Float(-20 ), 0);
+        ctx.lineTo(Float(80 ), 0);
         ctx.stroke();
         ctx.restore();
         
         // write Minutes
         ctx.save();
-        ctx.rotate(angle: (PI / 30) * min + (PI / 1800) * sec);
+        ctx.rotate((PI / 30) * min + (PI / 1800) * sec);
         ctx.lineWidth = Float(10 );
         ctx.beginPath();
-        ctx.moveTo(x: Float(-28 ), y: 0);
-        ctx.lineTo(x: Float(112 ), y: 0);
+        ctx.moveTo(Float(-28 ), 0);
+        ctx.lineTo(Float(112 ), 0);
         ctx.stroke();
         ctx.restore();
         
         // Write seconds
         ctx.save();
-        ctx.rotate(angle: sec * PI / 30);
+        ctx.rotate(sec * PI / 30);
         ctx.strokeStyle = CanvasColorStyle.Color(color: UIColor(fromHex: "#D40000"));
         ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromHex: "#D40000"));
         ctx.lineWidth = Float(6 );
         ctx.beginPath();
-        ctx.moveTo(x: Float(-30 ), y: 0);
-        ctx.lineTo(x: Float(83 ), y: 0);
+        ctx.moveTo(Float(-30 ), 0);
+        ctx.lineTo(Float(83 ), 0);
         ctx.stroke();
         ctx.beginPath();
-        ctx.arc(x: 0, y: 0, radius: Float(10 ), startAngle: 0, endAngle: PI * 2, anticlockwise: true);
+        ctx.arc( 0, 0, Float(10 ), 0, PI * 2, true);
         ctx.fill();
         ctx.beginPath();
-        ctx.arc(x: Float(95 ), y: 0, radius: Float(10 ), startAngle: 0, endAngle: PI * 2, anticlockwise: true);
+        ctx.arc(Float(95 ), 0, Float(10 ), 0, PI * 2, true);
         ctx.stroke();
         ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(red: 0, green: 0, blue: 0, alpha: 0));
-        ctx.arc(x: 0, y: 0, radius: Float(3 ), startAngle: 0, endAngle: PI * 2, anticlockwise: true);
+        ctx.arc(0, 0, Float(3 ), 0, PI * 2, true);
         ctx.fill();
         ctx.restore();
         
         ctx.beginPath();
         ctx.lineWidth = Float(14 );
         ctx.strokeStyle = CanvasColorStyle.Color(color: UIColor(fromHex: "#325FA2"));
-        ctx.arc(x: 0, y: 0, radius: Float(142 ), startAngle: 0, endAngle: PI * 2, anticlockwise: true);
+        ctx.arc(0, 0, Float(142 ), 0, PI * 2, true);
         ctx.stroke();
         
         ctx.restore();
@@ -1751,10 +1767,10 @@ class ViewController: UIViewController {
         let minutes = components.minute!
         let hours = components.hour!
         ctx.save();
-        ctx.clearRect(x: 0, y: 0, width: 150, height: 150);
-        ctx.translate(x: 75, y: 75);
-        ctx.scale(x: 0.5, y: 0.5);
-        ctx.rotate(angle: -PI / 2);
+        ctx.clearRect(0, 0, 150, 150);
+        ctx.translate(75, 75);
+        ctx.scale(0.5, 0.5);
+        ctx.rotate(-PI / 2);
         ctx.strokeStyle = CanvasColorStyle.Color(color: .black);
         ctx.fillStyle = CanvasColorStyle.Color(color: .white);
         ctx.lineWidth = 8;
@@ -1764,9 +1780,9 @@ class ViewController: UIViewController {
         ctx.save();
         for _ in 0...11{
             ctx.beginPath();
-            ctx.rotate(angle: PI / 6);
-            ctx.moveTo(x: 100, y: 0);
-            ctx.lineTo(x: 120, y: 0);
+            ctx.rotate(PI / 6);
+            ctx.moveTo(100, 0);
+            ctx.lineTo(120, 0);
             ctx.stroke();
         }
         ctx.restore();
@@ -1777,11 +1793,11 @@ class ViewController: UIViewController {
         for i in 0...59{
             if (i % 5 != 0) {
                 ctx.beginPath();
-                ctx.moveTo(x: 117, y: 0);
-                ctx.lineTo(x: 120, y: 0);
+                ctx.moveTo(117, 0);
+                ctx.lineTo(120, 0);
                 ctx.stroke();
             }
-            ctx.rotate(angle: PI / 30);
+            ctx.rotate(PI / 30);
         }
         ctx.restore();
         
@@ -1797,49 +1813,49 @@ class ViewController: UIViewController {
         let first = hr * (PI / 6)
         let second = first + (PI / 360) * min
         let third = second  + (PI / 21600) * sec
-        ctx.rotate(angle: third)
+        ctx.rotate(third)
         ctx.lineWidth = 14;
         ctx.beginPath();
-        ctx.moveTo(x: -20, y: 0);
-        ctx.lineTo(x: 80, y: 0);
+        ctx.moveTo(-20, 0);
+        ctx.lineTo(80, 0);
         ctx.stroke();
         ctx.restore();
         
         // write Minutes
         ctx.save();
-        ctx.rotate(angle: (PI / 30) * min + (PI / 1800) * sec);
+        ctx.rotate((PI / 30) * min + (PI / 1800) * sec);
         ctx.lineWidth = 10;
         ctx.beginPath();
-        ctx.moveTo(x: -28, y: 0);
-        ctx.lineTo(x: 112, y: 0);
+        ctx.moveTo(-28, 0);
+        ctx.lineTo(112, 0);
         ctx.stroke();
         ctx.restore();
         
         // Write seconds
         ctx.save();
-        ctx.rotate(angle: sec * PI / 30);
+        ctx.rotate(sec * PI / 30);
         ctx.strokeStyle = CanvasColorStyle.Color(color: UIColor(fromHex: "#D40000"));
         ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(fromHex: "#D40000"));
         ctx.lineWidth = 6;
         ctx.beginPath();
-        ctx.moveTo(x: -30, y: 0);
-        ctx.lineTo(x: 83, y: 0);
+        ctx.moveTo(-30, 0);
+        ctx.lineTo(83, 0);
         ctx.stroke();
         ctx.beginPath();
-        ctx.arc(x: 0, y: 0, radius: 10, startAngle: 0, endAngle: PI * 2, anticlockwise: true);
+        ctx.arc(0,0, 10, 0, PI * 2, true);
         ctx.fill();
         ctx.beginPath();
-        ctx.arc(x: 95, y: 0, radius: 10, startAngle: 0, endAngle: PI * 2, anticlockwise: true);
+        ctx.arc(95, 0, 10, 0, PI * 2, true);
         ctx.stroke();
         ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(red: 0, green: 0, blue: 0, alpha: 0));
-        ctx.arc(x: 0, y: 0, radius: 3, startAngle: 0, endAngle: PI * 2, anticlockwise: true);
+        ctx.arc(0,0, 3, 0,PI * 2, true);
         ctx.fill();
         ctx.restore();
         
         ctx.beginPath();
         ctx.lineWidth = 14;
         ctx.strokeStyle = CanvasColorStyle.Color(color: UIColor(fromHex: "#325FA2"));
-        ctx.arc(x: 0, y: 0, radius: 142, startAngle: 0, endAngle: PI * 2, anticlockwise: true);
+        ctx.arc(0,0, 142, 0, PI * 2, true);
         ctx.stroke();
         
         ctx.restore();
@@ -1862,7 +1878,7 @@ class ViewController: UIViewController {
     // Function to paint the canvas black
     func paintCanvas(ctx: CanvasRenderingContext2D) {
         ctx.fillStyle = blackColor
-        ctx.fillRect(x: 0,y: 0,width: Float(W),height: Float(H));
+        ctx.fillRect(0,0,Float(W),Float(H));
     }
     
     
@@ -1891,7 +1907,7 @@ class ViewController: UIViewController {
         func draw (ctx: CanvasRenderingContext2D) {
             ctx.fillStyle = color
             ctx.beginPath()
-            ctx.arc(x: x, y: y, radius: Float(radius), startAngle: 0, endAngle: Particle.PI_TWO, anticlockwise: false);
+            ctx.arc(x, y,  Float(radius),  0, Particle.PI_TWO, false);
             ctx.closePath()
             ctx.fill()
         }
@@ -1993,8 +2009,8 @@ class ViewController: UIViewController {
             colorIndex = Int((100.0 * dist/minDist)) + 25
              ctx.strokeStyle = whiteColor
 //            ctx.strokeStyle = CanvasColorStyle.Color(color: UIColor(hue: 2/360, saturation: CGFloat(colorIndex/100), brightness: 0.5, alpha: (CGFloat(1.2-dist/minDist))))
-            ctx.moveTo(x: p1.x, y: p1.y)
-            ctx.lineTo(x: p2.x, y: p2.y)
+            ctx.moveTo(p1.x, p1.y)
+            ctx.lineTo(p2.x, p2.y)
             ctx.closePath()
             ctx.stroke()
             
@@ -2040,17 +2056,17 @@ class ViewController: UIViewController {
         func draw(ctx: CanvasRenderingContext2D) {
             let width = ctx.getCanvas().width
             let height = ctx.getCanvas().height
-            ctx.clearRect(x: 0, y: 0, width: width, height: height);
+            ctx.clearRect(0, 0, width, height);
             var count = 0;
             
             for i in stride(from: 0, to: 360, by: 6) {
                 ctx.beginPath();
                 ctx.ellipse(
-                    x: Float(width/2),
-                    y: Float(height/2),
-                    radiusX: 15, radiusY: 235,
-                    rotation: Float(Int(angle) + i) * Float.pi / 180,
-                    startAngle: 0, endAngle: 2 * .pi
+                    Float(width/2),
+                    Float(height/2),
+                    15, 235,
+                    Float(Int(angle) + i) * Float.pi / 180,
+                    0, 2 * .pi
                 );
                 
                 switch(count) {
@@ -2103,7 +2119,7 @@ class ViewController: UIViewController {
         func draw(ctx: CanvasRenderingContext2D) {
             let width = ctx.getCanvas().width
             let height = ctx.getCanvas().height
-            ctx.clearRect(x: 0, y: 0, width: width, height: height);
+            ctx.clearRect(0, 0, width, height);
             
             for i in 0...23 {
                 for j in 0...23 {
@@ -2118,7 +2134,7 @@ class ViewController: UIViewController {
             let blue = randomHue()/255
             
             ctx.beginPath();
-            ctx.rect(x: (x * 25) , y: (y * 25) , width: Float(24 ) , height: Float(24 ));
+            ctx.rect((x * 25) , (y * 25) , Float(24 ) , Float(24 ));
             ctx.fillStyle = CanvasColorStyle.Color(color: UIColor(red: CGFloat(red), green: CGFloat(green), blue: CGFloat(blue), alpha: 1.0))
             ctx.fill();
         }

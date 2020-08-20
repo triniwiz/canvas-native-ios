@@ -11,7 +11,7 @@ import Foundation
 public class WebGLActiveInfo: NSObject {
     var _name: String
     var _size: Int32
-    var _type: Int32
+    var _type: UInt32
     
     public var name: String {
         get {
@@ -24,11 +24,11 @@ public class WebGLActiveInfo: NSObject {
         }
     }
     
-    public var type: Int32 {
+    public var type: UInt32 {
         return _type
     }
     
-    public init(name: String, size: Int32, type: Int32) {
+    public init(name: String, size: Int32, type: UInt32) {
         _name = name
         _size = size
         _type = type

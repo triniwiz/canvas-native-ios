@@ -16,6 +16,9 @@ public protocol Renderer {
     var height: Float {get}
     var isDirty: Bool {get set}
     var isOpaque: Bool {get set}
+    var didMoveOffMain: Bool {get set}
+    var attributes: [String: Any] {get set}
+    func updateDirection(_ direction: String)
     func setup()
     func render()
     func flush()

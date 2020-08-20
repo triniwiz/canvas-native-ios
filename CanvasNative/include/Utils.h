@@ -12,9 +12,23 @@ void flipInPlace(unsigned char* data, int width, int height);
 void flipInPlaceRaw(void *data, int width, int height);
 void flipInPlace3D(unsigned char *data, int width, int height, int depth);
 void flipInPlace3D(unsigned char *data, int width, int height, int depth);
-void offsetBy(uint8_t *data, int offset);
 unsigned char* loadImagePath(const char *path, int *width, int *height, int *channels);
 unsigned char* loadImageBytes(unsigned char *buffer, int length, int *width, int *height, int *channels);
 void free_image(unsigned char* image);
 const char* image_load_error();
+void offsetU8By(uint8_t *data, int offset);
+
+void offsetI8By(int8_t *data, int offset);
+
+void offsetU16By(uint16_t *data, int offset);
+
+void offsetI16By(int16_t *data, int offset);
+
+void offsetU32By(uint32_t *data, int offset);
+
+void offsetI32By(int32_t *data, int offset);
+
+void offsetF32By(float *data, int offset);
+
+void offsetF64By(double *data, int offset);
 #endif /* Utils_h */

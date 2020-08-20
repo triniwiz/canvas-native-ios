@@ -27,6 +27,12 @@ public class FramebufferAttachmentParameter: NSObject {
             return _value
         }
     }
+    
+    public override init() {
+        _isTexture = false
+        _isRenderbuffer = false
+        _value = 0
+    }
     public init(isTexture: Bool, isRenderbuffer: Bool, value: Int32) {
         _isTexture = isTexture
         _isRenderbuffer = isRenderbuffer

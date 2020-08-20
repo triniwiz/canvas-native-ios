@@ -21,8 +21,9 @@
         func ensureIsContextIsCurrent() -> Bool {
             return canvas.renderer?.ensureIsContextIsCurrent() ?? false
         }
-        public init(canvas: Canvas) {
+        public init(_ canvas: Canvas) {
             self.canvas = canvas
+            super.init()
             let _ = (canvas.renderer as? GLRenderer)?.ensureIsContextIsCurrent()
         }
         
@@ -348,41 +349,41 @@
             }
         }
         
-        public func fillRect(x: Float, y: Float, width: Float, height: Float) {
+        public func fillRect(_ x: Float,_ y: Float,_ width: Float,_ height: Float) {
             let _ = ensureIsContextIsCurrent()
             self.canvas.canvas = native_fill_rect(self.canvas.canvas, x, y, width, height, self.canvas.getViewPtr())
             self.canvas.doDraw()
         }
         
-        public func strokeRect(x: Float, y: Float, width: Float, height: Float) {
+        public func strokeRect(_ x: Float,_ y: Float,_ width: Float,_ height: Float) {
             let _ = ensureIsContextIsCurrent()
             canvas.canvas = native_stroke_rect(canvas.canvas, x, y, width, height,self.canvas.getViewPtr())
             canvas.doDraw()
         }
         
-        public func fillText(text: String, x: Float, y:Float) {
+        public func fillText(_ text: String,_ x: Float,_ y:Float) {
             let _ = ensureIsContextIsCurrent()
-            fillText(text: text, x: x, y: y, width: 0)
+            fillText(text, x, y, 0)
         }
         
-        public func fillText(text: String, x: Float, y:Float, width: Float) {
+        public func fillText(_ text: String,_ x: Float,_ y:Float,_ width: Float) {
             let _ = ensureIsContextIsCurrent()
             canvas.canvas = native_fill_text(canvas.canvas, text, x, y, width,self.canvas.getViewPtr())
             canvas.doDraw()
         }
         
-        public func strokeText(text: String, x: Float, y:Float) {
+        public func strokeText(_ text: String,_ x: Float,_ y:Float) {
             let _ = ensureIsContextIsCurrent()
-            strokeText(text: text, x: x, y: y, width: 0)
+            strokeText(text, x, y, 0)
         }
         
-        public func strokeText(text: String, x: Float, y:Float, width: Float) {
+        public func strokeText(_ text: String,_ x: Float,_ y:Float,_ width: Float) {
             let _ = ensureIsContextIsCurrent()
             canvas.canvas = native_stroke_text(canvas.canvas, text, x, y, width,self.canvas.getViewPtr())
             canvas.doDraw()
         }
         
-        public func rect(x: Float, y: Float, width: Float, height: Float) {
+        public func rect(_ x: Float,_ y: Float,_ width: Float,_ height: Float) {
             let _ = ensureIsContextIsCurrent()
             canvas.canvas = native_rect(canvas.canvas, x, y, width, height)
         }
@@ -393,19 +394,27 @@
             canvas.doDraw()
         }
         
-        public func fill(rule: String) {
+        public func fill(value: Any){
+            if let rule = value as? String {
+                fill(rule: rule)
+            }else if let rule = value as? CanvasPath2D {
+                fill(path: rule)
+            }
+        }
+        
+        @nonobjc func fill(rule: String) {
             let _ = ensureIsContextIsCurrent()
             canvas.canvas = native_fill_rule(canvas.canvas,rule,self.canvas.getViewPtr())
             canvas.doDraw()
         }
         
-        public func fill(path: CanvasPath2D) {
+        @nonobjc func fill(path: CanvasPath2D) {
             let _ = ensureIsContextIsCurrent()
             canvas.canvas = native_fill_path_rule(canvas.canvas,path.path,"",self.canvas.getViewPtr())
             canvas.doDraw()
         }
         
-        public func fill(path: CanvasPath2D, rule: String) {
+        public func fill(_ path: CanvasPath2D,_ rule: String) {
             let _ = ensureIsContextIsCurrent()
             canvas.canvas = native_fill_path_rule(canvas.canvas,path.path,rule,self.canvas.getViewPtr())
             canvas.doDraw()
@@ -417,7 +426,7 @@
             canvas.doDraw()
         }
         
-        public func stroke(path: CanvasPath2D) {
+        public func stroke(_ path: CanvasPath2D) {
             let _ = ensureIsContextIsCurrent()
             canvas.canvas = native_stroke_path(canvas.canvas,path.path,self.canvas.getViewPtr())
             canvas.doDraw()
@@ -428,12 +437,12 @@
             canvas.canvas = native_begin_path(canvas.canvas)
         }
         
-        public func moveTo(x: Float, y: Float) {
+        public func moveTo(_ x: Float,_ y: Float) {
             let _ = ensureIsContextIsCurrent()
             canvas.canvas = native_move_to(canvas.canvas, x, y)
         }
         
-        public func lineTo(x: Float, y: Float) {
+        public func lineTo(_ x: Float,_ y: Float) {
             let _ = ensureIsContextIsCurrent()
             canvas.canvas = native_line_to(canvas.canvas, x, y)
         }
@@ -443,32 +452,32 @@
             canvas.canvas = native_close_path(canvas.canvas)
         }
         
-        public func arc(x: Float, y: Float, radius: Float, startAngle: Float, endAngle: Float) {
+        public func arc(_ x: Float,_ y: Float,_ radius: Float,_ startAngle: Float,_ endAngle: Float) {
             let _ = ensureIsContextIsCurrent()
-            arc(x: x, y: y, radius: radius, startAngle: startAngle, endAngle: endAngle, anticlockwise: false);
+            arc(x, y, radius, startAngle, endAngle, false);
         }
         
-        public func arc(x: Float, y: Float, radius: Float, startAngle: Float, endAngle: Float, anticlockwise: Bool) {
+        public func arc(_ x: Float,_ y: Float,_ radius: Float,_ startAngle: Float,_ endAngle: Float,_ anticlockwise: Bool) {
             let _ = ensureIsContextIsCurrent()
             canvas.canvas = native_arc(canvas.canvas, x, y, radius, startAngle, endAngle, anticlockwise)
         }
         
-        public func arcTo(x1: Float, y1: Float, x2: Float, y2: Float, radius: Float) {
+        public func arcTo(_ x1: Float,_  y1: Float,_ x2: Float,_ y2: Float,_ radius: Float) {
             let _ = ensureIsContextIsCurrent()
             canvas.canvas = native_arc_to(canvas.canvas, x1, y1, x2, y2, radius)
         }
         
-        public func bezierCurveTo(cp1x: Float, cp1y: Float, cp2x: Float, cp2y: Float, x: Float, y: Float) {
+        public func bezierCurveTo(_ cp1x: Float,_ cp1y: Float,_ cp2x: Float,_ cp2y: Float,_ x: Float,_ y: Float) {
             let _ = ensureIsContextIsCurrent()
             canvas.canvas = native_bezier_curve_to(canvas.canvas, cp1x, cp1y, cp2x, cp2y, x, y)
         }
         
-        public func ellipse(x: Float, y: Float, radiusX: Float, radiusY: Float, rotation: Float, startAngle: Float, endAngle: Float) {
+        public func ellipse(_ x: Float,_ y: Float,_ radiusX: Float,_ radiusY: Float,_ rotation: Float,_ startAngle: Float,_ endAngle: Float) {
             let _ = ensureIsContextIsCurrent()
-            ellipse(x: x, y: y, radiusX: radiusX, radiusY: radiusY, rotation: rotation, startAngle: startAngle, endAngle: endAngle, anticlockwise: false)
+            ellipse(x, y, radiusX, radiusY, rotation, startAngle, endAngle, false)
         }
         
-        public func ellipse(x: Float, y: Float, radiusX: Float, radiusY: Float, rotation: Float, startAngle: Float, endAngle: Float, anticlockwise: Bool) {
+        public func ellipse(_ x: Float,_  y: Float,_ radiusX: Float,_ radiusY: Float,_ rotation: Float,_ startAngle: Float,_ endAngle: Float,_ anticlockwise: Bool) {
             let _ = ensureIsContextIsCurrent()
             canvas.canvas = native_ellipse(canvas.canvas, x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise)
         }
@@ -477,28 +486,39 @@
             let _ = ensureIsContextIsCurrent()
             canvas.canvas = native_clip(canvas.canvas,self.canvas.getViewPtr())
         }
-        public func clip(rule: String) {
+        
+        public func clip(_ value: Any){
+            if let rule = value as? String{
+                clip(rule: rule)
+            }else if let rule = value as? CanvasPath2D{
+                clip(path: rule)
+            }
+        }
+        @nonobjc func clip(rule: String) {
             let _ = ensureIsContextIsCurrent()
             canvas.canvas = native_clip_rule(canvas.canvas, rule,self.canvas.getViewPtr())
         }
         
-        public func clip(path:CanvasPath2D , rule: String ) {
+        @nonobjc func clip(path:CanvasPath2D) {
+            clip(path, "nonzero")
+        }
+        
+        
+        public func clip(_ path:CanvasPath2D ,_  rule: String ) {
             let _ = ensureIsContextIsCurrent()
             canvas.canvas = native_clip_path_rule(canvas.canvas, path.path,rule,self.canvas.getViewPtr())
         }
         
-        public func clip(path:CanvasPath2D) {
-            clip(path: path, rule: "nonzero")
-        }
-        
-        public func clearRect(x: Float, y: Float, width: Float, height: Float){
+    
+        public func clearRect(_ x: Float, _ y: Float,_ width: Float,_ height: Float){
             let _ = ensureIsContextIsCurrent()
             canvas.canvas = native_clear_rect(canvas.canvas, x, y, width, height,self.canvas.getViewPtr())
             canvas.doDraw()
             
         }
         private var _lineDashSegments: [Float32] = []
-        public func setLineDash(segments: [Float32]){
+        
+        public func setLineDash(_ segments: [Float32]){
             var array: [Float32] = []
             array.append(contentsOf: segments)
             canvas.canvas = native_set_line_dash(canvas.canvas, segments.count, &array)
@@ -510,66 +530,83 @@
         }
         
         
-        public func createLinearGradient(x0: Float, y0: Float, x1: Float,y1: Float) -> CanvasColorStyle.LinearGradient {
+        public func createLinearGradient(_ x0: Float,_ y0: Float,_ x1: Float,_ y1: Float) -> CanvasColorStyle.LinearGradient {
             return CanvasColorStyle.LinearGradient(x0: x0, y0: y0, x1: x1, y1: y1);
         }
         
-        public func createRadialGradient(x0: Float, y0: Float, r0: Float, x1: Float, y1: Float, r1: Float) -> CanvasColorStyle.RadialGradient {
+        public func createRadialGradient(_ x0: Float,_ y0: Float,_ r0: Float,_ x1: Float,_ y1: Float,_ r1: Float) -> CanvasColorStyle.RadialGradient {
             return CanvasColorStyle.RadialGradient(x0: x0, y0: y0, r0: r0, x1: x1, y1: y1, r1: r1);
         }
         
-        public func drawImage(canvas : Canvas, dx: Float, dy: Float){
-            var ss = canvas.snapshot()
-            let _ = ensureIsContextIsCurrent()
-            self.canvas.canvas = native_draw_image(self.canvas.canvas, &ss, ss.count, Int32(canvas.width), Int32(canvas.height), dx, dy, self.canvas.getViewPtr())
-            self.canvas.doDraw()
+        
+        public func createPattern(_ value: Any,_  repetition: PatternRepetition) -> Any {
+            if let canvas = value as? Canvas {
+                return CanvasColorStyle.Pattern(canvas: canvas, pattern: repetition)
+            }else if let src = value as? UIImage {
+                 return CanvasColorStyle.Pattern(src: src, pattern: repetition)
+            }else if let asset = value as? ImageAsset {
+                return CanvasColorStyle.Pattern(asset: asset, pattern: repetition)
+            }else {
+                return NSNull()
+            }
+            
         }
         
         
-        public func createPattern(canvas: Canvas, repetition: PatternRepetition) -> CanvasColorStyle.Pattern {
+        @nonobjc func createPattern(canvas: Canvas,repetition: PatternRepetition) -> CanvasColorStyle.Pattern {
             return CanvasColorStyle.Pattern(canvas: canvas, pattern: repetition)
         }
         
-        public func createPattern(src: UIImage, repetition: PatternRepetition) -> CanvasColorStyle.Pattern {
+        @nonobjc func createPattern(src: UIImage,repetition: PatternRepetition) -> CanvasColorStyle.Pattern {
             return CanvasColorStyle.Pattern(src: src, pattern: repetition)
         }
         
-        public func createPattern(asset src: ImageAsset, repetition: PatternRepetition) -> CanvasColorStyle.Pattern {
+        @nonobjc func createPattern(src: ImageAsset,repetition: PatternRepetition) -> CanvasColorStyle.Pattern {
             return CanvasColorStyle.Pattern(asset: src, pattern: repetition)
         }
         
         
-        public func setTransform(a: Float, b: Float, c: Float, d: Float, e: Float, f: Float){
+        public func setTransform(_ a: Float,_ b: Float,_ c: Float,_ d: Float, _ e: Float,_ f: Float){
             let _ = ensureIsContextIsCurrent()
             canvas.canvas = native_set_transform(canvas.canvas, a, b, c, d, e, f,self.canvas.getViewPtr())
             canvas.doDraw()
             
         }
         
-        public func scale(x: Float, y: Float){
+        public func scale(_ x: Float,_ y: Float){
             let _ = ensureIsContextIsCurrent()
             canvas.canvas = native_scale(canvas.canvas, x, y,self.canvas.getViewPtr())
             canvas.doDraw()
         }
         
-        public func rotate(angle: Float){
+        public func rotate(_ angle: Float){
             let _ = ensureIsContextIsCurrent()
             canvas.canvas = native_rotate(canvas.canvas, angle,self.canvas.getViewPtr())
             canvas.doDraw()
         }
         
-        public func translate(x: Float, y: Float){
+        public func translate(_ x: Float,_ y: Float){
             let _ = ensureIsContextIsCurrent()
             canvas.canvas = native_translate(canvas.canvas, x, y,self.canvas.getViewPtr())
             canvas.doDraw()
         }
         
-        public func quadraticCurveTo(cpx: Float, cpy: Float, x: Float, y: Float){
+        public func quadraticCurveTo(_ cpx: Float,_ cpy: Float,_ x: Float,_ y: Float){
             let _ = ensureIsContextIsCurrent()
             canvas.canvas = native_quadratic_curve_to(canvas.canvas, cpx, cpy, x, y)
         }
         
-        public func drawImage(asset image: ImageAsset, dx: Float, dy: Float){
+        public func drawImage(_ image: Any,_ dx: Float, _ dy: Float){
+            if let image = image as? ImageAsset {
+                drawImage(image: image, dx: dx, dy: dy)
+            }else if let image = image as? UIImage {
+                drawImage(image: image, dx: dx, dy: dy)
+            }else if let image = image as? Canvas {
+                drawImage(canvas: image, dx: dx, dy: dy)
+            }
+        }
+        
+        @nonobjc func drawImage(image: ImageAsset, dx: Float, dy: Float){
             let _ = ensureIsContextIsCurrent()
             let size = image.width * image.height * 4
             let width = image.width
@@ -579,7 +616,7 @@
             canvas.doDraw()
         }
         
-        public func drawImage(image: UIImage, dx: Float, dy: Float){
+        @nonobjc func drawImage(image: UIImage, dx: Float, dy: Float){
             let _ = ensureIsContextIsCurrent()
             let cgRef = image.cgImage
             var data = image.pngData() ?? Data()
@@ -605,8 +642,30 @@
             }
         }
         
+    
         
-        public func drawImage(asset image: ImageAsset, dx: Float, dy: Float, dWidth: Float, dHeight: Float){
+        
+        @nonobjc func drawImage(canvas : Canvas, dx: Float,dy: Float){
+                   var ss = canvas.snapshot()
+                   let _ = ensureIsContextIsCurrent()
+                   self.canvas.canvas = native_draw_image(self.canvas.canvas, &ss, ss.count, Int32(canvas.width), Int32(canvas.height), dx, dy, self.canvas.getViewPtr())
+                   self.canvas.doDraw()
+        }
+        
+        
+        public func drawImage(_ image: Any, _ dx: Float,_ dy: Float,_ dWidth: Float,_ dHeight: Float){
+            if let image = image as? ImageAsset {
+                drawImage(image: image, dx: dx, dy: dy, dWidth: dWidth, dHeight: dHeight)
+            }else if let image = image as? UIImage {
+                drawImage(image: image, dx: dx, dy: dy, dWidth: dWidth, dHeight: dHeight)
+            }else if let image = image as? Canvas {
+                drawImage(canvas: image, dx: dx, dy: dy, dWidth: dWidth, dHeight: dHeight)
+            }
+        }
+        
+        
+        
+        @nonobjc func drawImage(image: ImageAsset, dx: Float, dy: Float, dWidth: Float, dHeight: Float){
             let _ = ensureIsContextIsCurrent()
             let size = image.width * image.height * 4
             let width = image.width
@@ -617,7 +676,7 @@
         }
         
         
-        public func drawImage(canvas: Canvas, dx: Float, dy: Float, dWidth: Float, dHeight: Float){
+        @nonobjc func drawImage(canvas: Canvas, dx: Float, dy: Float, dWidth: Float, dHeight: Float){
             let _ = ensureIsContextIsCurrent()
             var ss = canvas.snapshot()
             if let gl = self.canvas.renderer as? GLRenderer{
@@ -628,7 +687,7 @@
         }
         
         
-        public func drawImage(image: UIImage, dx: Float, dy: Float, dWidth: Float, dHeight: Float){
+        @nonobjc func drawImage(image: UIImage, dx: Float, dy: Float, dWidth: Float, dHeight: Float){
             let _ = ensureIsContextIsCurrent()
             let cgRef = image.cgImage
             var data = image.pngData() ?? Data()
@@ -654,7 +713,19 @@
             }
         }
         
-        public func drawImage(asset image: ImageAsset, sx: Float, sy: Float, sWidth: Float, sHeight: Float, dx: Float, dy: Float, dWidth: Float, dHeight: Float){
+        
+        public func drawImage(_ image: Any,_ sx: Float,_ sy: Float,_ sWidth: Float,_ sHeight: Float,_ dx: Float,_ dy: Float,_ dWidth: Float,_ dHeight: Float){
+            if let image = image as? ImageAsset {
+                drawImage(image: image, sx: sx, sy: sy, sWidth: sWidth, sHeight: sHeight, dx: dx, dy: dy, dWidth: dWidth, dHeight: dHeight)
+            }else if let image = image as? UIImage {
+                drawImage(image: image, sx: sx, sy: sy, sWidth: sWidth, sHeight: sHeight, dx: dx, dy: dy, dWidth: dWidth, dHeight: dHeight)
+            }else if let image = image as? Canvas {
+                drawImage(canvas: image, sx: sx, sy: sy, sWidth: sWidth, sHeight: sHeight, dx: dx, dy: dy, dWidth: dWidth, dHeight: dHeight)
+            }
+        }
+        
+        
+        @nonobjc func drawImage(image: ImageAsset, sx: Float, sy: Float, sWidth: Float, sHeight: Float, dx: Float, dy: Float, dWidth: Float, dHeight: Float){
             let _ = ensureIsContextIsCurrent()
             let size = image.width * image.height * 4
             let width = image.width
@@ -664,7 +735,7 @@
         }
         
         
-        public func drawImage(canvas: Canvas, sx: Float, sy: Float, sWidth: Float, sHeight: Float, dx: Float, dy: Float, dWidth: Float, dHeight: Float){
+        @nonobjc func drawImage(canvas: Canvas, sx: Float, sy: Float, sWidth: Float, sHeight: Float, dx: Float, dy: Float, dWidth: Float, dHeight: Float){
             var ss = canvas.snapshot()
            let _ = ensureIsContextIsCurrent()
             self.canvas.canvas = native_draw_image_sw(self.canvas.canvas, &ss, ss.count, Int32(canvas.width), Int32(canvas.height), sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight, self.canvas.getViewPtr())
@@ -672,7 +743,7 @@
         }
         
         
-        public func drawImage(image: UIImage, sx: Float, sy: Float, sWidth: Float, sHeight: Float, dx: Float, dy: Float, dWidth: Float, dHeight: Float){
+        @nonobjc func drawImage(image: UIImage, sx: Float, sy: Float, sWidth: Float, sHeight: Float, dx: Float, dy: Float, dWidth: Float, dHeight: Float){
             let _ = ensureIsContextIsCurrent()
             let cgRef = image.cgImage
             var data = image.pngData() ?? Data()
@@ -691,28 +762,28 @@
             
         }
         
-        public func createImageData(width: Int, height: Int)-> ImageData{
+        public func createImageData(_ width: Int,_ height: Int)-> ImageData {
             return ImageData(width: width, height: height)
         }
         
-        public func createImageData(imageData: ImageData)-> ImageData{
+        public func createImageData(_ imageData: ImageData)-> ImageData{
             return ImageData(width: imageData.width, height: imageData.height)
         }
         
-        public func getImageData(sx: Float, sy: Float, sw:Int, sh:Int) -> ImageData{
+        public func getImageData(_ sx: Float,_ sy: Float, _ sw:Int,_ sh:Int) -> ImageData {
             let _ = ensureIsContextIsCurrent()
             let nativeData = native_get_image_data(canvas.canvas, sx, sy, sw, sh)
-            let data = [UInt8](Data(bytes: nativeData.array, count: nativeData.length))
+            let data = Data(bytes: nativeData.array, count: nativeData.length)
             native_drop_image_data(nativeData)
             return ImageData(width:sw , height: sh, data: data)
         }
         
         
-        public func putImageData(imageData: ImageData, dx: Float, dy: Float){
-            putImageData(imageData: imageData, dx: dx, dy: dy, dirtyX: 0, dirtyY: 0, dirtyWidth: -1, dirtyHeight: -1)
+        public func putImageData(_ imageData: ImageData,_ dx: Float,_ dy: Float){
+            putImageData(imageData, dx, dy,  0,  0,  -1, -1)
         }
         
-        public func putImageData(imageData: ImageData, dx: Float, dy: Float, dirtyX: Float, dirtyY: Float, dirtyWidth:Int, dirtyHeight: Int){
+        public func putImageData(_ imageData: ImageData,_ dx: Float,_ dy: Float,_ dirtyX: Float,_ dirtyY: Float,_ dirtyWidth:Int,_ dirtyHeight: Int){
             let _ = ensureIsContextIsCurrent()
             /*
              let count = imageData.data.count / MemoryLayout<UInt8>.size
@@ -744,7 +815,7 @@
             canvas.canvas = native_restore(canvas.canvas)
         }
         
-        public func measureText(text: String) -> TextMetrics {
+        public func measureText(_ text: String) -> TextMetrics {
             let _ = ensureIsContextIsCurrent()
             let data = native_measure_text(canvas.canvas, text)
             return TextMetrics(metrics: data)
@@ -755,31 +826,31 @@
             canvas.doDraw()
         }
         
-        public func transform(a: Float, b: Float, c: Float, d: Float, e: Float, f: Float){
+        public func transform(_ a: Float,_ b: Float,_ c: Float,_ d: Float,_ e: Float,_ f: Float){
             let _ = ensureIsContextIsCurrent()
             canvas.canvas = native_transform(canvas.canvas, a, b, c, d, e, f,self.canvas.getViewPtr())
             canvas.doDraw()
         }
         
-        public func isPointInPath(x: Float, y: Float) -> Bool {
+        public func isPointInPath(_ x: Float,_ y: Float) -> Bool {
             return native_is_point_in_path(canvas.canvas, x, y) == 1
         }
         
-        public func isPointInPath(x: Float, y: Float, fillRule: String) -> Bool {
+        public func isPointInPath(_ x: Float,_ y: Float,_ fillRule: String) -> Bool {
             let ptr = (fillRule as NSString).utf8String
             return native_is_point_in_path_with_rule(canvas.canvas, x, y, ptr) == 1
         }
         
-        public func isPointInPath(path: CanvasPath2D,x: Float, y: Float, fillRule: String) -> Bool {
+        public func isPointInPath(_ path: CanvasPath2D, _ x: Float,_ y: Float,_ fillRule: String) -> Bool {
             let ptr = (fillRule as NSString).utf8String
             return native_is_point_in_path_with_path_rule(canvas.canvas, path.path, x, y, ptr) == 1
         }
         
-        public func isPointInStroke(x: Float, y: Float) -> Bool {
+        public func isPointInStroke(_ x: Float,_ y: Float) -> Bool {
             return native_is_point_in_stroke(canvas.canvas, x, y) == 1
         }
         
-        public func isPointInStroke(path: CanvasPath2D, x: Float, y: Float) -> Bool {
+        public func isPointInStroke(_ path: CanvasPath2D, _ x:Float,_ y: Float) -> Bool {
             return native_is_point_in_stroke_with_path(canvas.canvas, path.path, x, y) == 1
         }
     }

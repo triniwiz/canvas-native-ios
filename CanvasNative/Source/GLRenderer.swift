@@ -37,6 +37,13 @@ public class CanvasGLKView: GLKView {
 
 
 public class GLRenderer: NSObject, Renderer, GLKViewDelegate {
+    
+    public var attributes: [String : Any] = [:]
+    
+    public func updateDirection(_ direction: String) {
+        cachedDirection = direction
+    }
+    
     public var isDirty: Bool {
         set{
             glkView.isDirty = newValue
@@ -52,7 +59,6 @@ public class GLRenderer: NSObject, Renderer, GLKViewDelegate {
     var depthRenderbuffer: GLuint
     static var sharedGroup: EAGLSharegroup =  EAGLSharegroup()
     public var canvasState: [Int64] = []
-    
     public var canvas: Int64 = 0
     
     public var view: UIView {
@@ -61,14 +67,22 @@ public class GLRenderer: NSObject, Renderer, GLKViewDelegate {
         }
     }
     
+    var cachedFrame: CGRect = .zero
+    public var didMoveOffMain: Bool = false
     public var width: Float {
         get {
+            if(didMoveOffMain){
+                return Float(cachedFrame.size.width * CGFloat(scale))
+            }
             return Float(view.frame.size.width * CGFloat(scale))
         }
     }
     
     public var height: Float {
         get {
+            if(didMoveOffMain){
+                return Float(cachedFrame.height * CGFloat(scale))
+            }
             return Float(view.frame.height * CGFloat(scale))
         }
     }
@@ -78,6 +92,7 @@ public class GLRenderer: NSObject, Renderer, GLKViewDelegate {
     var didExit: Bool = false
     var context: EAGLContext
     var currentOrientation: UIDeviceOrientation
+    var cachedDirection: String = "ltr"
     public override init() {
         glkView = CanvasGLKView() //GLKView()
         displayFramebuffer = GLuint()
@@ -107,6 +122,7 @@ public class GLRenderer: NSObject, Renderer, GLKViewDelegate {
         glkView.enableSetNeedsDisplay = false
         glkView.delegate = self
         glkView.contentMode = .bottomLeft
+        glkView.backgroundColor = UIColor(named: "blue")
         // TODO disable for now
         // glkView.drawableMultisample = .multisample4X
       //  _ = ensureIsContextIsCurrent()
@@ -131,7 +147,9 @@ public class GLRenderer: NSObject, Renderer, GLKViewDelegate {
             return (glkView.layer as! CAEAGLLayer).isOpaque
         }
         set {
-            (glkView.layer as! CAEAGLLayer).isOpaque = newValue
+            DispatchQueue.main.async {
+                (self.glkView.layer as! CAEAGLLayer).isOpaque = newValue
+            }
         }
     }
     
@@ -154,9 +172,14 @@ public class GLRenderer: NSObject, Renderer, GLKViewDelegate {
             let height = Int32(self.height)
             glClear(GLbitfield(GL_COLOR_BUFFER_BIT))
             var direction = "ltr"
-            if(UIView.userInterfaceLayoutDirection(for: glkView.semanticContentAttribute) == .rightToLeft){
-                direction = "rtl"
+            if(didMoveOffMain){
+                direction = cachedDirection
+            }else {
+                if(UIView.userInterfaceLayoutDirection(for: glkView.semanticContentAttribute) == .rightToLeft){
+                    direction = "rtl"
+                }
             }
+            
             canvas = native_init_legacy(width, height, Int32(displayFramebuffer), Float(scale),(direction as NSString).utf8String)
             didInit = true
         }
@@ -170,24 +193,42 @@ public class GLRenderer: NSObject, Renderer, GLKViewDelegate {
         let width = Int32(self.width)
         let height = Int32(self.height)
         if(!done && (width > 0 && height > 0 && displayFramebuffer == 0)){
-            glClearColor(0, 0, 0, 0)
+            let alpha = attributes["alpha"] as? Bool ?? true
+            print(alpha,attributes)
+            if(alpha){
+                glClearColor(0, 0, 0, 0)
+            }else {
+                glClearColor(0, 0, 0, 1)
+            }
             glClearDepthf(1)
             glClearStencil(0)
             glClear(GLbitfield(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT))
             var binding = GLint(0)
             glGetIntegerv(GLenum(GL_FRAMEBUFFER_BINDING), &binding)
             displayFramebuffer = GLuint(binding)
+            if(displayRenderbuffer > 0){
+                done = true
+            }
         }
         if(contextType == .twoD && canvas == 0 && displayFramebuffer > 0){
             if(canvas == 0){
                 done = true
                 let scale:CGFloat = CGFloat(self.scale)
                 glViewport(0, 0, width, height)
-                glClearColor(1.0, 1.0, 1.0, 1.0)
-                glClear(GLbitfield(GL_COLOR_BUFFER_BIT))
+                let alpha = attributes["alpha"] as? Bool ?? true
+                if(alpha){
+                    glClearColor(0, 0, 0, 0)
+                }else {
+                    glClearColor(0, 0, 0, 1)
+                }
+                glClear(GLbitfield(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT))
                 var direction = "ltr"
-                if(UIView.userInterfaceLayoutDirection(for: glkView.semanticContentAttribute) == .rightToLeft){
-                    direction = "rtl"
+                if(didMoveOffMain){
+                    direction = cachedDirection
+                }else {
+                    if(UIView.userInterfaceLayoutDirection(for: glkView.semanticContentAttribute) == .rightToLeft){
+                        direction = "rtl"
+                    }
                 }
                 canvas = native_init_legacy(Int32(self.width), Int32(self.height), Int32(displayFramebuffer), Float(scale), (direction as NSString).utf8String)
                 didInit = true
@@ -197,6 +238,7 @@ public class GLRenderer: NSObject, Renderer, GLKViewDelegate {
     
     var didInit = false
     public var contextType: ContextType  = .none
+    public var count = 0
     public func render() {
         if(didExit){return}
         let _ = ensureIsContextIsCurrent()
@@ -261,6 +303,8 @@ public class GLRenderer: NSObject, Renderer, GLKViewDelegate {
             glViewport(0, 0, GLsizei(self.width), GLsizei(self.height))
             glkView.display()
         }
+        
+        cachedFrame = glkView.frame
     }
     
     public func pause(){

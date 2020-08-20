@@ -12,12 +12,12 @@ import Foundation
 public class ImageData: NSObject {
     private var _width: Int
     private var _height: Int
-    private var _data: [UInt8]
+    private var _data: Data
     public init(width: Int, height: Int) {
         _width = width
         _height = height
         let data = native_create_image_data(width, height)
-        _data = [UInt8](Data(bytes: data.array, count: data.length))
+        _data = Data(bytes: data.array, count: data.length)
         native_drop_image_data(data)
     }
     public var width: Int {
@@ -30,13 +30,13 @@ public class ImageData: NSObject {
             return _height
         }
     }
-    public var data: [UInt8] {
+    public var data: Data {
         get {
             return _data
         }
     }
     
-    init(width: Int, height: Int, data: [UInt8]) {
+    init(width: Int, height: Int, data: Data) {
         _width = width
         _height = height
         _data = data
